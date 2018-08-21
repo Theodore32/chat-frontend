@@ -1,0 +1,22 @@
+.footer-app{
+  text-align: center;
+  color: rgb(255, 255, 255);
+  background-color: #f2711c;
+  width: 100%;
+  line-height: 50px;
+  position: absolute;
+  box-sizing: border-box;
+  bottom: 0 ;
+}
+
+.inputBarMessage input[type = text]{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.message{
+  border: 1px solid #5b5b5b;
+  width: 85%;
+  height: 40px;
+  border-radius: 4px;
+}

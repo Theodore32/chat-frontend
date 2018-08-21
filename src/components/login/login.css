@@ -1,0 +1,42 @@
+.formLogin{
+  padding-top: 3%;
+  animation: fade-in 0.4s;
+}
+
+.formModal{
+  margin:0 auto;
+  width: 35%;
+  background-color: rgb(255, 255, 255);
+  align-content: center;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.logo{
+  width: 150px;
+  height: 150px;
+}
+
+.logo-position{
+  width: 100%;
+  text-align: center;
+}
+
+.login-position{
+  text-align: center;
+}
+
+.errorMessage{
+  color: #e38d8d;
+  font-family: arial;
+  font-weight: 520;
+  display: inline-block;
+  float: left;
+}
+
+.buttonForm{
+  width: 100%;
+  text-align: center;
+  background-color: rgb(242, 113, 28) !important;
+  color: #222 !important;
+}

@@ -1,0 +1,67 @@
+.background-top{
+  width: 100%;
+  height: 150px;
+  background-color:#f2711c;
+}
+
+.container-page{
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0 ,0 , 0.2);
+  width: 95%;
+  height: 98%;
+  margin: auto;
+  position: absolute;
+  top: 1%;
+  left: 2.5%;
+  background-color: #ffffff;
+}
+
+.rightColumn{
+  width : 70%;
+  height: 100%;
+  float: right;
+  border : 1px solid #aaa;
+  position: relative;
+  background-color: #f7f9fa;
+  vertical-align: middle;
+  background: url('../../picture/logo.png') no-repeat;
+  background-position: center;
+}
+
+.left-column{
+  width : 30%;
+  height: 100%;
+  float: left;
+  border : 1px solid #aaa;
+  border-right: 0px;
+  position: relative;
+}
+
+.searchBarContent{
+  width: 100%;
+  height: 55px;
+  position : relative;
+}
+
+.searchBarContent input[type = text]{
+  padding-left: 45px;
+  outline: none;
+  box-sizing: border-box;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px solid #aaa;
+}
+
+.searchBarContent input[type = text]:focus{
+  border-color: rgb(217, 143, 46);
+  box-shadow: 0 0 8px 0 rgb(217, 143, 46);
+}
+
+.searchBarContent img{
+  width: 20px;
+  height: 20px;
+  top: 15px;
+  left : 15px;
+  position: absolute;
+}
