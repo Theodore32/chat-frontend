@@ -4,10 +4,8 @@ import Message from '../text-message/text-message';
 import Profile from '../profile/profile';
 import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
-import FriendList from'../friendlist/friend-list';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
-import {Route} from 'react-router-dom';
 
 export default class RoomChat extends React.Component{
   constructor(props){

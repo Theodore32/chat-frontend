@@ -6,11 +6,6 @@ import addcontact from '../../picture/add-user.png';
 
 import {Modal,Button} from 'semantic-ui-react';
 
-import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
-
 export default class AddFriend extends React.Component{
   constructor(props){
     super(props);
@@ -242,20 +237,17 @@ export default class AddFriend extends React.Component{
   }
   logout(e) {
     e.preventDefault()
-     const obj = getFromStorage('http://localhost:3000');
-     if (obj && obj.token) {
-       const { token } = obj;
        // Verify token
-       fetch('http://10.183.28.154:3001/logout?token=' + token)
+       fetch('/logout',{
+         credentials:'include'
+       })
          .then(res => res.json())
          .then(json => {
            if (json.success) {
-             setInStorage('http://localhost:3000', null)
              this.props.history.push('/LoginForm')
            }
           }
         );
-     }
    }
    show = (size,name) => {
      this.setState(
@@ -302,7 +294,7 @@ export default class AddFriend extends React.Component{
               {filteredList.map((friend) =>(
                     <li key = {friend.id} className = "addfriend-text">{friend.title}
                       <button className = "addfriend-button-setting" onClick = {() => {this.show('mini',friend.title)}}>
-                        <img src ={addcontact} className = "addfriend-icon" />
+                        <img src ={addcontact} className = "addfriend-icon" alt=''/>
                       </button>
                     </li>
                   )

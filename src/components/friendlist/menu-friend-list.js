@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import './friendlist.css';
 import FriendList from './friend-list';
-import GroupList from '../grouplist/group-list';
 
 export default class SideNav extends Component {
     constructor(props) {

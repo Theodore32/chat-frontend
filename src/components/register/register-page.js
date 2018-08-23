@@ -1,7 +1,6 @@
 import React from 'react'
-import ReactDOM from 'react-dom';
 import './register.css';
-import { Button, Checkbox, Form } from 'semantic-ui-react';
+import { Button, Form } from 'semantic-ui-react';
 import {Link} from "react-router-dom";
 import logo from '../../picture/logo2.png';
 
