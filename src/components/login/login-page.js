@@ -39,12 +39,14 @@ class LoginForm extends React.Component{
       }
     })
   }
+
   ChangeHandler(e){
     const inputname = e.target.name;
     this.setState({
       [inputname]:e.target.value
     })
   }
+
   onLogin(e) {
       e.preventDefault()
        // Grab state
@@ -92,7 +94,7 @@ class LoginForm extends React.Component{
       isLoading,
       signInError
     } = this.state;
-
+    console.log("Loading :"+ isLoading);
     if(isLoading){
       return(
         <div><p>Loading</p></div>

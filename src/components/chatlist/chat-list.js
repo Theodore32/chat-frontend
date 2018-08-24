@@ -1,24 +1,11 @@
 import React from 'react';
-import './addfriend.css';
+import './chatlist.css';
 
-import SearchAddFriend from './search-add-friend';
-import ChangePassword from '../change-password/change-password';
-import addcontact from '../../picture/add-user.png';
-
-import {Modal,Button, Form} from 'semantic-ui-react';
-
-import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
-
-export default class AddFriend extends React.Component{
+export default class FriendList extends React.Component{
   constructor(props){
     super(props);
 
     this.state = {
-      open : false,
-      search : '',
       location: [
         {
             id: 0,
@@ -238,93 +225,36 @@ export default class AddFriend extends React.Component{
         }
       ]
     }
-
-    this.logout = this.logout.bind(this)
   }
-
-  logout(e) {
-   e.preventDefault()
-      // Verify token
-      fetch('/logout',{
-        credentials:'include'
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.success) {
-            this.props.history.push('/LoginForm')
-          }
-         }
-       );
-  }
-
-   show = (size,name) => {
-     this.setState(
-       {
-         size,
-         open: true,
-         name : name
-       }
-     )
-   }
-
-   close = () => {
-     this.setState({ open: false })
-   }
-
-   inputSearch = (e) =>{
-     this.setState ({
-       search : e.target.value
-     })
-   }
 
   render(){
-    const { open, size } = this.state;
     const list = this.state.location;
     const filteredList = list.filter(
-      (friend) => {
+      (item) => {
         return (
-          friend.title.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
+          item.title.toLowerCase().indexOf(this.props.search.toLowerCase()) !== -1
         );
       }
     );
-    console.log("Nmr : ",filteredList);
+
     return(
-      <div className = {"popup-container "+ this.props.modal}>
-        <Modal trigger={<li onClick = {this.props.click}>Add Friend</li>}
-          centered={false} size = "mini" className = "addfriend-modal">
-          <Modal.Header><center>Add Friends</center></Modal.Header>
-          <div className = "searchAddFriend">
-            <SearchAddFriend
-              onChange = {this.inputSearch}
-              search = {this.state.value}/>
-          </div>
-          <div className = "addfriend-box">
-              {filteredList.map((friend) =>(
-                    <li key = {friend.id} className = "addfriend-text">{friend.title}
-                      <button className = "addfriend-button-setting" onClick = {() => {this.show('mini',friend.title)}}>
-                        <img src ={addcontact} className = "addfriend-icon" />
-                      </button>
-                    </li>
+        <div className = "chat-list-container">
+          <div className="chat-list-box">
+            <div className="chat-list-text">
+              {filteredList.map((item) => (
+                      <li className = "chat-list-text" key={item.id}
+                        onClick={() =>
+                          this.props.changeName(item.title)
+                        }
+                      >
+                        {item.title}
+                      </li>
                   )
                 )
               }
+            </div>
           </div>
-        </Modal>
-        <ChangePassword
-          onClick = {this.props.click}
-        />
-        <li onClick={this.logout}>Log Out</li>
-          <Modal size={size} open={open} onClose={this.close}>
-            <Modal.Header>Add Friend</Modal.Header>
-            <Modal.Content>
-              <p>Add {this.state.name} as a friend?</p>
-            </Modal.Content>
-            <Modal.Actions>
-              <Button negative onClick = {this.close}>No</Button>
-              <Button positive>Yes</Button>
-            </Modal.Actions>
-          </Modal>
-      </div>
+        </div>
     );
   }
 }

@@ -25,34 +25,24 @@ class RegisterForm extends React.Component{
     }
   }
 
-  handleUserData = (event) =>{
-    event.preventDefault();
-    let username = this.refs.username.value;
-    let email = this.refs.email.value;
-    let password = this.refs.password.value;
-    let retypePassword = this.refs.retypePassword.value;
-    let firstName = this.refs.firstName.value;
-    let lastName = this.refs.lastName.value;
-    let regex = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-
-    if(!username){
-      this.setState({
-        usernameIsValid : false,
-        messageUsername : "This field is required"
-      });
-    }
-    else if(username.length < 5){
+  usernameValidation = (username) => {
+    if(username.length < 5){
       this.setState({
         usernameIsValid : false,
         messageUsername : "Username must at least 5 characters"
       });
+      return false
     }
-    else if (username !== '' || username.length > 5){
+    else if (username !== '' && username.length > 5){
       this.setState({
         usernameIsValid : true,
         messageUsername : ''
       });
+      return true
     }
+  }
+
+  nameValidation = (firstName,lastName) => {
     if(!firstName){
       this.setState ({
         firstNameIsValid : false,
@@ -70,38 +60,36 @@ class RegisterForm extends React.Component{
         lastNameIsValid : false,
         messageLastName : "this field is required"
       })
+      return false
     }
     else if (lastName !== ''){
       this.setState({
         lastNameIsValid : true,
         messageLastName : ''
       })
+      return true
     }
-    if (!email){
-      this.setState({
-        emailIsValid : false,
-        messageEmail : "This field is required"
-      });
-    }
-    else if(!regex.test(email)){
+  }
+
+  emailValidation = (email,regex) =>{
+    if(!regex.test(email)){
       this.setState({
         emailIsValid : false,
         messageEmail : "Email invalid"
       });
+      return false
     }
     else if (email !== '' || regex.text(email)){
       this.setState({
         emailIsValid : true,
         messageEmail : ''
       });
+      return true
     }
-    if (!password){
-      this.setState({
-        passwordIsValid : false,
-        messagePass : "This field is required"
-      });
-    }
-    else if(password.length < 6){
+  }
+
+  passwordValidation = (password,retypePassword) =>{
+    if(password.length < 6){
       this.setState({
         passwordIsValid : false,
         messagePass : "Password must at least 6 characters"
@@ -117,21 +105,35 @@ class RegisterForm extends React.Component{
       this.setState({
         retypeIsValid : false,
         messageRetype : "This field is required"
-      });
+      })
     }
     else if(password !== retypePassword){
       this.setState({
         retypeIsValid : false,
         messageRetype : "Password did not match"
       });
+      return false
     }
-    else if (retypePassword !== '' || password === retypePassword){
+    else if (retypePassword !== '' && password === retypePassword){
       this.setState({
         retypeIsValid: true,
         messageRetype : ''
       })
+      return true
     }
-    if(this.state.usernameIsValid && this.state.firstNameIsValid && this.state.passwordIsValid && this.state.retypeIsValid && this.state.emailIsValid && this.state.lastNameIsValid){
+  }
+
+  handleUserData = (event) =>{
+    event.preventDefault();
+    let username = this.refs.username.value;
+    let email = this.refs.email.value;
+    let password = this.refs.password.value;
+    let retypePassword = this.refs.retypePassword.value;
+    let firstName = this.refs.firstName.value;
+    let lastName = this.refs.lastName.value;
+    let regex = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+
+    if(this.usernameValidation(username) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regex) && this.passwordValidation(password,retypePassword)){
       this.RegisUser(username,email,password,retypePassword,firstName,lastName);
     }
   }
@@ -171,7 +173,7 @@ class RegisterForm extends React.Component{
             <div className = "login-position">
               <h3><b>Hoo Hoo</b></h3>
             </div>
-            <Form.Field className = {this.state.usernameIsValid ? "" : "error"}>
+            <Form.Field className = {this.state.usernameIsValid ? "" : "error"} required>
               <label>Username</label>
               <input
                 placeholder='Username'
@@ -182,7 +184,7 @@ class RegisterForm extends React.Component{
               />
             <div className = "errorMessage">{this.state.messageUsername}</div>
             </Form.Field>
-            <Form.Field className = {this.state.firstNameIsValid ? "" : "error"}>
+            <Form.Field className = {this.state.firstNameIsValid ? "" : "error"} required>
               <label>First Name</label>
               <input
                 placeholder='First Name'
@@ -190,7 +192,7 @@ class RegisterForm extends React.Component{
                 ref = 'firstName' />
               <div className = "errorMessage">{this.state.messageFirstName}</div>
             </Form.Field>
-            <Form.Field className = {this.state.lastNameIsValid ? "" : "error"}>
+            <Form.Field className = {this.state.lastNameIsValid ? "" : "error"} required>
               <label>Last Name</label>
               <input
                 placeholder='Last Name'
@@ -198,7 +200,7 @@ class RegisterForm extends React.Component{
                 ref = 'lastName'/>
               <div className = "errorMessage">{this.state.messageLastName}</div>
             </Form.Field>
-            <Form.Field className = {this.state.emailIsValid ? "" : "error"}>
+            <Form.Field className = {this.state.emailIsValid ? "" : "error"} required>
               <label>Email</label>
               <input
                 placeholder = "Input Email"
@@ -209,7 +211,7 @@ class RegisterForm extends React.Component{
               />
             <div className = "errorMessage">{this.state.messageEmail}</div>
             </Form.Field>
-            <Form.Field className = {this.state.passwordIsValid ? "" : "error"}>
+            <Form.Field className = {this.state.passwordIsValid ? "" : "error"} required>
               <label>Password</label>
               <input
                 placeholder = "Password"
@@ -220,7 +222,7 @@ class RegisterForm extends React.Component{
               />
             <div className = "errorMessage">{this.state.messagePass}</div>
             </Form.Field>
-            <Form.Field className = { this.state.retypeIsValid ? "" : "error"}>
+            <Form.Field className = { this.state.retypeIsValid ? "" : "error"} required>
               <label>Re-type Password</label>
               <input
                 placeholder ="Re-type Password"

@@ -39,7 +39,7 @@ export default class RoomChat extends React.Component{
              isLoading:false
            })
          }
-         console.log("AAAA: ",json);
+         console.log("AAAA: ",json.akun);
        })
 
   }
@@ -104,6 +104,7 @@ export default class RoomChat extends React.Component{
                 history = {this.props.history}
                 isClose = {this.state.isOpen}
                 name = {account.name}
+                email = {account.email}
               />
               <div className = "searchBarContent">
                 <SearchFriend
