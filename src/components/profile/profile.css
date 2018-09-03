@@ -32,42 +32,6 @@
   display: inline-block;
 }
 
-.profileAndName{
-  width: 100px;
-  display: inline-block;
-}
-
-.profileName{
-  float: left;
-  display: inline-block;
-  height: 40px;
-  line-height: 40px;
-  position: absolute;
-}
-
-.formEditProfile{
-  margin:0 auto;
-  width: 85%;
-  align-content: center;
-  text-align: center;
-  padding: 15px;
-}
-
-.containerImageProfile{
-  width: 200px;
-  height: 200px;
-  position: relative;
-}
-
-.containerImageProfile img{
-  width: 100%;
-  height: 100%;
-}
-
-.containerImageProfile input{
-  display: none;
-}
-
 .imageEditProfile {
   display: block;
   opacity: 1;
@@ -80,31 +44,6 @@
 
 .containerImageProfile:hover .textPosition{
   opacity: 1
-}
-
-.textPosition {
-  transition: .5s ease;
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  top: 0;
-  opacity: 0;
-}
-
-.text {
-  background-color: rgba(0,0,0,.54);
-  color: #fff;
-  padding: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 200px;
-  height : 200px;
-  line-height: 200px;
-  border-radius: 50%;
-}
-
-#modalSize{
-  width: 45%;
 }
 
 .setting-icon{

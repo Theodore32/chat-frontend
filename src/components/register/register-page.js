@@ -62,7 +62,7 @@ class RegisterForm extends React.Component{
       })
       return false
     }
-    else if (lastName !== ''){
+    else if (lastName){
       this.setState({
         lastNameIsValid : true,
         messageLastName : ''
@@ -89,23 +89,26 @@ class RegisterForm extends React.Component{
   }
 
   passwordValidation = (password,retypePassword) =>{
-    if(password.length < 6){
+    if (!password && !retypePassword){
+      this.setState({
+        passwordIsValid : false,
+        messagePass : "this field is required",
+        retypeIsValid : false,
+        messageRetype : "This field is required"
+      })
+      return false
+    }
+    else if(password.length < 6){
       this.setState({
         passwordIsValid : false,
         messagePass : "Password must at least 6 characters"
       });
     }
-    else if (password.length >= 6) {
+    else if (password !== "" && password.length >= 6) {
       this.setState({
         passwordIsValid : true,
         messagePass : ''
       });
-    }
-    if (retypePassword === ''){
-      this.setState({
-        retypeIsValid : false,
-        messageRetype : "This field is required"
-      })
     }
     else if(password !== retypePassword){
       this.setState({
@@ -132,7 +135,10 @@ class RegisterForm extends React.Component{
     let firstName = this.refs.firstName.value;
     let lastName = this.refs.lastName.value;
     let regex = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-
+    this.usernameValidation(username)
+    this.nameValidation(firstName,lastName)
+    this.emailValidation(email,regex)
+    this.passwordValidation(password,retypePassword)
     if(this.usernameValidation(username) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regex) && this.passwordValidation(password,retypePassword)){
       this.RegisUser(username,email,password,retypePassword,firstName,lastName);
     }

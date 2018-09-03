@@ -1,9 +1,10 @@
 import React from 'react';
-import './addfriend.css';
-import {Link} from 'react-router-dom'
-import SearchAddFriend from './search-add-friend';
+import './settingprofile.css';
+
+import SearchAddFriend from '../addfriend/search-add-friend';
 import ChangePassword from '../change-password/change-password';
 import addcontact from '../../picture/add-user.png';
+import AddFriend from '../addfriend/add-friend'
 
 import {Modal,Button, Form} from 'semantic-ui-react';
 
@@ -12,7 +13,7 @@ import {
   getFromStorage
 }from '../../token/storage'
 
-export default class AddFriend extends React.Component{
+export default class SettingProfile extends React.Component{
   constructor(props){
     super(props);
 
@@ -278,11 +279,9 @@ export default class AddFriend extends React.Component{
    }
 
    closeModal = () =>{
-     const currentRoute = this.props.url
      this.setState({
        search : ''
      })
-     this.props.history.push(currentRoute)
    }
 
   render(){
@@ -297,29 +296,29 @@ export default class AddFriend extends React.Component{
     );
     console.log("Nmr : ",filteredList);
     return(
-      <Modal trigger={
-            <li onClick = {this.props.click}>
-              Add Friend
-            </li>}
-        centered={false} size = "mini" className = "addfriend-modal" onClose = {this.closeModal}>
-        <Modal.Header><center>Add Friends</center></Modal.Header>
-        <div className = "searchAddFriend">
-          <SearchAddFriend
-            onChange = {this.inputSearch}
-            search = {this.state.value}/>
-        </div>
-        <div className = "addfriend-box">
-            {filteredList.map((friend) =>(
-                  <li key = {friend.id} className = "addfriend-text">{friend.title}
-                    <button className = "addfriend-button-setting" onClick = {() => {this.show('mini',friend.title)}}>
-                      <img src ={addcontact} className = "addfriend-icon" />
-                    </button>
-                  </li>
-                )
-              )
-            }
-        </div>
-      </Modal>
+      <div className = {"popup-container "+ this.props.modal}>
+        <AddFriend
+          click = {this.props.click}
+          history = {this.props.history}
+          url = {this.props.url}/>
+        <ChangePassword
+          onClick = {this.props.click}
+          open = {this.props.open}
+          history = {this.props.history}
+          url = {this.props.url}
+        />
+        <li onClick={this.logout}>Log Out</li>
+          <Modal size={size} open={open} onClose={this.close}>
+            <Modal.Header>Add Friend</Modal.Header>
+            <Modal.Content>
+              <p>Add {this.state.name} as a friend?</p>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button negative onClick = {this.close}>No</Button>
+              <Button positive>Yes</Button>
+            </Modal.Actions>
+          </Modal>
+      </div>
     );
   }
 }

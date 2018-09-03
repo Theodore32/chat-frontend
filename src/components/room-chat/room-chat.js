@@ -5,6 +5,8 @@ import Profile from '../profile/profile';
 import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
 import FriendList from'../friendlist/friend-list';
+import ChangePassword from '../change-password/change-password';
+import AddFriend from '../addfriend/add-friend';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
 import {Route} from 'react-router-dom';
@@ -79,6 +81,7 @@ export default class RoomChat extends React.Component{
         <div>Loading.....</div>
       )
     }
+    console.log(this.props.match.url);
     return (
       <div className = "background-top">
         <div className = "container-page">
@@ -105,6 +108,7 @@ export default class RoomChat extends React.Component{
                 isClose = {this.state.isOpen}
                 name = {account.name}
                 email = {account.email}
+                url = {this.props.match.url}
               />
               <div className = "searchBarContent">
                 <SearchFriend
