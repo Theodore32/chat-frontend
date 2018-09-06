@@ -4,6 +4,12 @@ import Message from '../text-message/text-message';
 import Profile from '../profile/profile';
 import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
+<<<<<<< HEAD
+=======
+import FriendList from'../friendlist/friend-list';
+import ChangePassword from '../change-password/change-password';
+import AddFriend from '../addfriend/add-friend';
+>>>>>>> 9a300d304f94ef1117001c841f93f7e70bfea79a
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
 
@@ -37,7 +43,7 @@ export default class RoomChat extends React.Component{
              isLoading:false
            })
          }
-         console.log("AAAA: ",json);
+         console.log("AAAA: ",json.akun);
        })
 
   }
@@ -77,6 +83,7 @@ export default class RoomChat extends React.Component{
         <div>Loading.....</div>
       )
     }
+    console.log(this.props.match.url);
     return (
       <div className = "background-top">
         <div className = "container-page">
@@ -102,6 +109,8 @@ export default class RoomChat extends React.Component{
                 history = {this.props.history}
                 isClose = {this.state.isOpen}
                 name = {account.name}
+                email = {account.email}
+                url = {this.props.match.url}
               />
               <div className = "searchBarContent">
                 <SearchFriend

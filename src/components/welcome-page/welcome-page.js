@@ -4,6 +4,7 @@ import {Button } from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
 class WelcomePage extends React.Component{
+
   componentDidMount(){
     fetch('/verify',{
       credentials:'include'
@@ -15,13 +16,15 @@ class WelcomePage extends React.Component{
        }
      })
   }
+
   render (){
+    console.log(this.props);
     return (
       <div className = "welcomeButton">
         <Link to = '/LoginForm'>
           <Button
-          outline color = "warning"
-          size ="lg">
+          inverted color = "orange"
+          size ="huge">
             Welcome to chat application website!
             Click me to login :)
           </Button>

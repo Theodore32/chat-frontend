@@ -32,17 +32,18 @@
   display: inline-block;
 }
 
-.profileAndName{
-  width: 100px;
-  display: inline-block;
+.imageEditProfile {
+  display: block;
+  opacity: 1;
+  width: 100%;
+  height: auto;
+  transition: .5s ease;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
-.profileName{
-  float: left;
-  display: inline-block;
-  height: 40px;
-  line-height: 40px;
-  position: absolute;
+.containerImageProfile:hover .textPosition{
+  opacity: 1
 }
 
 .setting-icon{

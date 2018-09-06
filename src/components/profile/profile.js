@@ -1,19 +1,29 @@
-import React from 'react';
-import './profile.css';
-import AddFriend from '../addfriend/add-friend';
+import React from 'react'
+import './profile.css'
 
-import { Image, Modal} from 'semantic-ui-react';
-import profile from '../../picture/muka.jpg';
-import setting from '../../picture/menu.png';
+import SettingProfile from '../settingprofile/setting-profile'
+import EditProfile from '../edit-profile/edit-profile'
+import {Image, Modal, Form, Button} from 'semantic-ui-react'
+import profile from '../../picture/muka.jpg'
+import setting from '../../picture/menu.png'
 
  export default class Profile extends React.Component{
   constructor(props){
     super(props)
       this.state = {
-        isOpen : this.props.isClose,
-        showPopup : 'popup-show'
+        isOpen : false,
+        showPopup : 'popup-show',
+        name : this.props.name,
+        email : this.props.email
       }
    }
+
+  handleChange = (event) =>{
+    const inputUser = event.target.name
+    this.setState({
+      [inputUser] : event.target.value
+    })
+  }
 
   handleOpen = () => {
       this.setState(prevState => (
@@ -25,40 +35,30 @@ import setting from '../../picture/menu.png';
   }
 
    render(){
-     console.log("ini isOpen yang profile: "+this.state.isOpen);
-     console.log("ini showPopup yang profile: "+this.state.showPopup);
+     console.log("Name : "+this.state.name);
+     console.log("isOpen : "+this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">
-            <Modal
-              trigger={
-                <div className = "profileAndName">
-                  <img src={profile} className = "profileImage" alt=""/>
-                  <div className = "profileName">
-                    <b>{this.props.name}</b>
-                  </div>
-                </div>
-              }
-              centered={false}
-            >
-              <Modal.Header>Selena</Modal.Header>
-              <Modal.Content image>
-                <Image wrapped size='medium' src={profile} alt="" />
-                <Modal.Description>
-                  <p>This is selena</p>
-                </Modal.Description>
-              </Modal.Content>
-            </Modal>
+          <EditProfile
+            name = {this.props.name}
+            email = {this.props.email}/>
         </div>
         <div className = "profile-setting-icon-position">
           <img src = {setting} className = "setting-icon" onClick = {this.handleOpen} alt="" />
         </div>
         {this.state.isOpen ?
-        <AddFriend
+        <SettingProfile
           modal = {this.state.showPopup}
           click = {this.handleOpen}
-          history = {this.props.history}/>
-        : <AddFriend/>}
+          open = {this.state.isOpen}
+          url = {this.props.url}
+          history = {this.props.history}
+        />
+      : <SettingProfile
+          open = {this.state.isOpen}
+          url = {this.props.url}
+          history = {this.props.history}/>}
       </div>
      );
    }

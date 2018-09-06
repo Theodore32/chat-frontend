@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 import './friendlist.css';
 import FriendList from './friend-list';
+<<<<<<< HEAD
+=======
+import GroupList from '../chatlist/chat-list';
+>>>>>>> 9a300d304f94ef1117001c841f93f7e70bfea79a
 
 export default class SideNav extends Component {
     constructor(props) {
@@ -63,7 +67,7 @@ export default class SideNav extends Component {
                   <li onClick={() => this.changeTab('Friends')} className = {"li-friends " + Friends.li}>
                       Friends
                   </li>
-                  <li onClick={() => this.changeTab('Chats')} className = {"li-groups " + Chats.li}>
+                  <li onClick={() => this.changeTab('Chats')} className = {"li-chats " + Chats.li}>
                       Chats
                   </li>
                 </div>

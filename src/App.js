@@ -5,10 +5,13 @@ import './App.css';
 class App extends Component {
 
   render() {
+    console.log(this.props);
     return(
       <div className="App">
         <center>
-          <WelcomePage/>
+          <WelcomePage
+            history = {this.props.history}
+          />
         </center>
       </div>
     );
