@@ -1,11 +1,11 @@
 import React from 'react';
 import './addfriend.css';
 import {Link} from 'react-router-dom'
-import SearchAddFriend from './search-add-friend';
 import ChangePassword from '../change-password/change-password';
 import addcontact from '../../picture/add-user.png';
-
+import muka from '../../picture/muka.jpg'
 import {Modal,Button, Form} from 'semantic-ui-react';
+import icon from '../../picture/search.png';
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -14,243 +14,28 @@ export default class AddFriend extends React.Component{
     this.state = {
       open : false,
       search : '',
-      location: [
-        {
-            id: 0,
-            title: 'New York',
-            selected: false,
-            key: 'location'
-        },
-        {
-          id: 1,
-          title: 'Dublin',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 2,
-          title: 'California',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 3,
-          title: 'Istanbul',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 4,
-          title: 'Izmir',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 5,
-          title: 'Oslo',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 6,
-          title: 'Croatia',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 7,
-          title: 'Portugal',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 8,
-          title: 'England',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 9,
-          title: 'America',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 10,
-          title: 'Egypt',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 11,
-          title: 'India',
-          selected: false,
-          key: 'location'
-        },
-        {
-            id: 12,
-            title: 'Arab',
-            selected: false,
-            key: 'location'
-        },
-        {
-          id: 13,
-          title: 'France',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 14,
-          title: 'Germany',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 15,
-          title: 'Elang',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 16,
-          title: 'Burung',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 17,
-          title: 'Jeruk',
-          selected: false,
-          key: 'location'
-        },
-        {
-            id: 18,
-            title: 'Mangga',
-            selected: false,
-            key: 'location'
-        },
-        {
-          id: 19,
-          title: 'Apel',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 20,
-          title: 'Durian',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 21,
-          title: 'Unta',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 22,
-          title: 'Udang',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 23,
-          title: 'Kepiting',
-          selected: false,
-          key: 'location'
-        },
-        {
-            id: 24,
-            title: 'Banteng',
-            selected: false,
-            key: 'location'
-        },
-        {
-          id: 25,
-          title: 'Kerbau',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 26,
-          title: 'Anjing',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 27,
-          title: 'Kucing',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 28,
-          title: 'Ikan',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 29,
-          title: 'Siput',
-          selected: false,
-          key: 'location'
-        },
-        {
-            id: 30,
-            title: 'Cacing Tanah',
-            selected: false,
-            key: 'location'
-        },
-        {
-          id: 31,
-          title: 'Kuda',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 32,
-          title: 'Sapi',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 33,
-          title: 'Kambing',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 34,
-          title: 'Ayem',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 35,
-          title: 'ASD',
-          selected: false,
-          key: 'location'
-        }
-      ]
+      searchResult:{
+        success:false
+      }
     }
 
     this.logout = this.logout.bind(this)
   }
 
   logout(e) {
-    e.preventDefault()
-       // Verify token
-       fetch('/logout',{
-         credentials:'include'
-       })
-         .then(res => res.json())
-         .then(json => {
-           if (json.success) {
-             this.props.history.push('/LoginForm')
-           }
+   e.preventDefault()
+      // Verify token
+      fetch('/logout',{
+        credentials:'include'
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.success) {
+            this.props.history.push('/LoginForm')
           }
-        );
-   }
+         }
+       );
+  }
 
    show = (size,name) => {
      this.setState(
@@ -262,10 +47,6 @@ export default class AddFriend extends React.Component{
      )
    }
 
-   close = () => {
-     this.setState({ open: false })
-   }
-
    inputSearch = (e) =>{
      this.setState ({
        search : e.target.value
@@ -273,46 +54,140 @@ export default class AddFriend extends React.Component{
    }
 
    closeModal = () =>{
-     const currentRoute = this.props.url
      this.setState({
-       search : ''
+       search : '',
+       searchResult:{
+         success:false
+       }
      })
-     this.props.history.push(currentRoute)
    }
+
+   searchData = (event) =>{
+     event.preventDefault()
+     const searchInput = this.state.search
+     fetch('/search',{
+       credentials : 'include',
+       method : 'POST',
+       headers : {
+         'Content-Type' : 'application/json'
+       },
+       body : JSON.stringify({
+         username : searchInput
+       })
+     }).then( res => res.json())
+     .then (res => {
+       this.setState({
+         searchResult : res
+       })
+     })
+   }
+
+   addFriend = (event) =>{
+     event.preventDefault()
+     const username = this.state.search
+     const name = this.state.searchResult.name
+     console.log(username, name);
+     fetch('/Friends',{
+       credentials : 'include',
+       method : 'PUT',
+       headers : {
+         'Content-Type' : 'application/json'
+       },
+       body : JSON.stringify({
+         friendlist : {
+          username : username,
+          name : name
+        }
+       })
+     }).then (res => res.json())
+     .then (res => {
+       console.log(res);
+       if(res.success){
+         console.log(res);
+       }
+     })
+   }
+
+  add = (event) => {
+    event.preventDefault()
+    fetch('/add',{
+      credentials:'include',
+      method:'PUT',
+      headers:{
+        'Content-Type' : 'application/json'
+      },
+      body:JSON.stringify({
+        username:this.state.search,
+        name:this.state.searchResult.name
+      })
+    }).then(res => res.json())
+    .then(res=>{
+      console.log(res);
+    })
+  }
+
+  block = (event) => {
+    event.preventDefault()
+    fetch('/block',{
+      credentials:'include',
+      method:'PUT',
+      headers:{
+        'Content-Type' : 'application/json'
+      },
+      body:JSON.stringify({
+        username:this.state.search,
+        name:this.state.searchResult.name
+      })
+    })
+  }
 
   render(){
     const { open, size } = this.state;
     const list = this.state.location;
-    const filteredList = list.filter(
-      (friend) => {
-        return (
-          friend.title.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
-        );
-      }
-    );
-    console.log("Nmr : ",filteredList);
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
               Add Friend
             </li>}
-        centered={false} size = "mini" className = "addfriend-modal" onClose = {this.closeModal}>
+        centered={false} size = "mini" id = "addfriend-modal" className = "addfriend-modal" onClose = {this.closeModal}>
         <Modal.Header><center>Add Friends</center></Modal.Header>
         <div className = "searchAddFriend">
-          <SearchAddFriend
-            onChange = {this.inputSearch}
-            search = {this.state.value}/>
+          <form onSubmit = {this.searchData}>
+            <input
+              type = "text"
+              className = "searchfriend"
+              placeholder = "Search or start new chat"
+              value = {this.state.search}
+              onChange = {this.inputSearch}
+            />
+            <img src = {icon} alt=""/>
+          </form>
         </div>
         <div className = "addfriend-box">
-            {filteredList.map((friend) =>(
-                  <li key = {friend.id} className = "addfriend-text">{friend.title}
-                    <button className = "addfriend-button-setting" onClick = {() => {this.show('mini',friend.title)}}>
-                      <img src ={addcontact} className = "addfriend-icon" />
-                    </button>
-                  </li>
-                )
-              )
-            }
+          {!this.state.searchResult.success ?
+            <center>
+              {this.state.searchResult.message}
+            </center>
+              :
+            <center>
+              <img src = {muka} className = "addfriend-profile-setting"/><br/>
+              <div className = "addfriend-text">
+                {this.state.searchResult.name}
+              </div><br/>
+              {!this.state.searchResult.message?
+                  !this.state.searchResult.request?
+                    <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
+                    :
+                    <div>
+                      <button onClick = {this.add} className = "addfriend-button-setting">add</button>
+                      <button onClick = {this.block} className = "addfriend-button-setting">Block</button>
+                    </div>
+                :
+                this.state.searchResult.message
+              }
+
+            </center>
+          }
         </div>
       </Modal>
     );

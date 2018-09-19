@@ -3,6 +3,10 @@ import { Button, Checkbox, Form } from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import logo from '../../picture/logo2.png';
 import './login.css';
+import {
+  setInStorage,
+  getFromStorage
+} from '../../token/storage'
 
 class LoginForm extends React.Component{
   constructor(props){

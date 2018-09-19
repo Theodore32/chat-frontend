@@ -94,7 +94,8 @@ export default class EditProfile extends React.Component{
                 value = {this.state.email}
                 type  = "text"
                 name = "email"
-                onChange={this.handleInput}/>
+                onChange={this.handleInput}
+                readOnly/>
             </Form.Field>
             <Button
             className = "buttonForm"
