@@ -7,6 +7,12 @@ import muka from '../../picture/muka.jpg'
 import {Modal,Button, Form} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
 
+
+import {
+  setInStorage,
+  getFromStorage
+}from '../../token/storage'
+
 export default class AddFriend extends React.Component{
   constructor(props){
     super(props);
@@ -14,8 +20,12 @@ export default class AddFriend extends React.Component{
     this.state = {
       open : false,
       search : '',
-      searchResult:{
-        success:false
+      searchResult:
+      {
+          id: 0,
+          Name: 'New York',
+          selected: false,
+          key: 'location'
       }
     }
 
@@ -56,8 +66,8 @@ export default class AddFriend extends React.Component{
    closeModal = () =>{
      this.setState({
        search : '',
-       searchResult:{
-         success:false
+       searchResult : {
+           Name: 'New York',
        }
      })
    }
@@ -76,17 +86,21 @@ export default class AddFriend extends React.Component{
        })
      }).then( res => res.json())
      .then (res => {
-       this.setState({
-         searchResult : res
-       })
+       console.log(res);
+       if(res.success){
+         this.setState({
+           searchResult : {
+             Name : res.namme
+           }
+         })
+       }
      })
    }
 
    addFriend = (event) =>{
      event.preventDefault()
      const username = this.state.search
-     const name = this.state.searchResult.name
-     console.log(username, name);
+     const name = this.state.searchResult.Name
      fetch('/Friends',{
        credentials : 'include',
        method : 'PUT',
@@ -101,45 +115,11 @@ export default class AddFriend extends React.Component{
        })
      }).then (res => res.json())
      .then (res => {
-       console.log(res);
        if(res.success){
          console.log(res);
        }
      })
    }
-
-  add = (event) => {
-    event.preventDefault()
-    fetch('/add',{
-      credentials:'include',
-      method:'PUT',
-      headers:{
-        'Content-Type' : 'application/json'
-      },
-      body:JSON.stringify({
-        username:this.state.search,
-        name:this.state.searchResult.name
-      })
-    }).then(res => res.json())
-    .then(res=>{
-      console.log(res);
-    })
-  }
-
-  block = (event) => {
-    event.preventDefault()
-    fetch('/block',{
-      credentials:'include',
-      method:'PUT',
-      headers:{
-        'Content-Type' : 'application/json'
-      },
-      body:JSON.stringify({
-        username:this.state.search,
-        name:this.state.searchResult.name
-      })
-    })
-  }
 
   render(){
     const { open, size } = this.state;
@@ -164,30 +144,13 @@ export default class AddFriend extends React.Component{
           </form>
         </div>
         <div className = "addfriend-box">
-          {!this.state.searchResult.success ?
-            <center>
-              {this.state.searchResult.message}
-            </center>
-              :
-            <center>
-              <img src = {muka} className = "addfriend-profile-setting"/><br/>
-              <div className = "addfriend-text">
-                {this.state.searchResult.name}
-              </div><br/>
-              {!this.state.searchResult.message?
-                  !this.state.searchResult.request?
-                    <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
-                    :
-                    <div>
-                      <button onClick = {this.add} className = "addfriend-button-setting">add</button>
-                      <button onClick = {this.block} className = "addfriend-button-setting">Block</button>
-                    </div>
-                :
-                this.state.searchResult.message
-              }
-
-            </center>
-          }
+          <center>
+            <img src = {muka} className = "addfriend-profile-setting"/><br/>
+            <div className = "addfriend-text">
+              {this.state.searchResult.Name}
+            </div><br/>
+          <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
+          </center>
         </div>
       </Modal>
     );

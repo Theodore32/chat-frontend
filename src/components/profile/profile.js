@@ -35,12 +35,15 @@ import setting from '../../picture/menu.png'
   }
 
    render(){
+     console.log("Name : "+this.state.name);
+     console.log("isOpen : "+this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">
           <EditProfile
             name = {this.props.name}
-            email = {this.props.email}/>
+            email = {this.props.email}
+            profilePicture = {this.props.profilePicture}/>
         </div>
         <div className = "profile-setting-icon-position">
           <img src = {setting} className = "setting-icon" onClick = {this.handleOpen} alt="" />

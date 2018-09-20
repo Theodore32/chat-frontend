@@ -36,11 +36,13 @@ export default class RoomChat extends React.Component{
            this.props.history.push('/')
          }
          else{
+           console.log(json);
            this.setState({
              account:json.akun,
              isLoading:false
            })
          }
+         console.log("AAAA: ",json.akun);
        })
 
   }
@@ -80,6 +82,7 @@ export default class RoomChat extends React.Component{
         <div>Loading.....</div>
       )
     }
+    console.log(this.props.match.url);
     return (
       <div className = "background-top">
         <div className = "container-page">
@@ -106,6 +109,7 @@ export default class RoomChat extends React.Component{
                 isClose = {this.state.isOpen}
                 name = {account.name}
                 email = {account.email}
+                profilePicture = {account.profilePicture}
                 url = {this.props.match.url}
               />
               <div className = "searchBarContent">

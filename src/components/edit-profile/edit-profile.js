@@ -1,7 +1,7 @@
 import React from 'react'
 import './editprofile.css'
 import {Image, Modal, Form, Button} from 'semantic-ui-react';
-import profile from '../../picture/muka.jpg';
+import profile from '../../picture/boy.png';
 
 export default class EditProfile extends React.Component{
   constructor(props){
@@ -9,7 +9,9 @@ export default class EditProfile extends React.Component{
     this.state = {
       isOpen : false,
       name : this.props.name,
-      email : this.props.email
+      email : this.props.email,
+      currentPhoto : this.props.profilePicture,
+      changePhoto : []
     }
   }
 
@@ -23,20 +25,22 @@ export default class EditProfile extends React.Component{
 
   handleUserInput = () =>{
     const name = this.state.name
+    const photo = this.state.changePhoto
 
-    this.updateProfile(name)
+    this.updateProfile(name,photo)
   }
 
-  updateProfile = (name) =>{
+  updateProfile = (name,photo) =>{
+
+    var formData = new FormData();
+
+    formData.append ('Image', photo)
+    formData.append ('name', name)
+
     fetch('/editprofile',{
       credentials : 'include',
       method : "PUT",
-      headers : {
-        "Content-Type" : "application/json"
-      },
-      body: JSON.stringify({
-        name : name
-      })
+      body: formData
     }).then(res => res.json())
     .then (response => {
       if(response.success){
@@ -51,12 +55,53 @@ export default class EditProfile extends React.Component{
     })
   }
 
+  fileSelectedHandler = (event) => {
+        // Check kalo ada file nya (image)
+
+        if (event.target.files[0] != null){
+            // ini buat get image nya
+            this.setState({
+                changePhoto: event.target.files[0]
+            });
+
+            // manage tampilan view pake javascript
+            if(event.target.files[0]){
+                var reader = new FileReader();
+                // ketika image nya ke load
+                reader.onload = (event) => {
+                    document.getElementById("coverPhoto").setAttribute('src', reader.result)
+                }
+                // iniii let the browser get data nya
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        } else {
+            console.log("No data on the field..");
+        }
+        console.log("photo: ", event.target.files);
+    }
+
+    changePicture = () =>{
+      let imageUrl = '';
+      let imagedisplay
+        if(imageUrl !== ''){
+          return(<img alt=" " src={require(`../../uploads/${imageUrl}`)} />)
+        }
+        else{
+          return(<h2>No Image</h2>)
+        }
+        console.log("ASD: ",imageUrl);
+    }
+
   render(){
     return (
       <Modal
         trigger={
           <div className = "profileAndName">
-            <img src={profile} className = "profileImage" alt=""/>
+            {this.state.changePhoto ?
+              <img src={this.state.currentPhoto} className = "profileImage" alt="" />
+              :
+              <img src={profile} className = "profileImage" alt="" />
+            }
             <div className = "profileName">
               <b>{this.props.name}</b>
             </div>
@@ -71,12 +116,17 @@ export default class EditProfile extends React.Component{
               <center>
                 <div className= "containerImageProfile">
                   <label for = "changePicture">
-                    <img src={profile} alt="" className = "imageEditProfile"/>
+                    {this.state.changePhoto
+                      ?   <Image id = "coverPhoto" src={this.state.currentPhoto} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}>
+                    </Image> :
+                    <Image id = "coverPhoto" src={profile} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}>
+                    </Image>
+                    }
                   <div className = "textPosition">
                     <div className = "text"><b>Change Photo</b></div>
                   </div>
                   </label>
-                  <input id = "changePicture" type = "file"/>
+                  <input id = "changePicture" type = "file" onChange = {this.fileSelectedHandler}/>
                 </div>
               </center>
             </Form.Field>
