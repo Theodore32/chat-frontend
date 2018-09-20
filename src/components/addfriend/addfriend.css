@@ -1,0 +1,81 @@
+.popup-show{
+  display:block;
+}
+
+#addfriend-modal{
+  height: 60%;
+  margin: 10vh auto;
+}
+
+.addfriend-modal{
+  height: 90%;
+  position: relative;
+}
+
+.searchAddFriend input[type = text]{
+  padding-left: 45px;
+  outline: none;
+  box-sizing: border-box;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px solid rgba(34,36,38,.15);
+}
+
+.searchAddFriend input[type = text]:focus{
+  border-color: rgb(217, 143, 46);
+  box-shadow: 0 0 8px 0 rgb(217, 143, 46);
+}
+
+.searchAddFriend img{
+  width: 20px;
+  height: 20px;
+  top: 75px;
+  left : 13px;
+  position: absolute;
+}
+
+.addfriend-button-setting{
+  padding: 0;
+  margin: 0;
+  width: 100px;
+  height: 30px;
+  cursor: pointer;
+  background: rgb(242, 113, 28);
+  border-radius: .28571429rem;
+  box-shadow: 0 0 0 1px transparent inset;
+  text-decoration: none;
+  border: none;
+}
+
+.addfriend-button-setting:hover{
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .2s ease,-webkit-box-shadow .1s ease;
+  background-color: rgba(242, 113, 28, 0.859);
+}
+
+.addfriend-icon{
+  width: 20px;
+  height: 20px;
+}
+
+.addfriend-box{
+  width: 100%;
+  position: absolute;
+  overflow-y: auto;
+  padding-top: 12%;
+}
+
+.addfriend-box li{
+  padding-left: 5px;
+}
+
+.addfriend-profile-setting{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.addfriend-text{
+  padding-top: 3%;
+  font-weight: bold;
+}
