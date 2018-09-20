@@ -35,8 +35,6 @@ import setting from '../../picture/menu.png'
   }
 
    render(){
-     console.log("Name : "+this.state.name);
-     console.log("isOpen : "+this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">

@@ -8,11 +8,6 @@ import AddFriend from '../addfriend/add-friend'
 
 import {Modal,Button, Form} from 'semantic-ui-react';
 
-import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
-
 export default class SettingProfile extends React.Component{
   constructor(props){
     super(props);
@@ -294,7 +289,6 @@ export default class SettingProfile extends React.Component{
         );
       }
     );
-    console.log("Nmr : ",filteredList);
     return(
       <div className = {"popup-container "+ this.props.modal}>
         <AddFriend

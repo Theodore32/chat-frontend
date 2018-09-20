@@ -41,7 +41,6 @@ export default class RoomChat extends React.Component{
              isLoading:false
            })
          }
-         console.log("AAAA: ",json.akun);
        })
 
   }
@@ -81,7 +80,6 @@ export default class RoomChat extends React.Component{
         <div>Loading.....</div>
       )
     }
-    console.log(this.props.match.url);
     return (
       <div className = "background-top">
         <div className = "container-page">
