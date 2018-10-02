@@ -1,9 +1,8 @@
 import React from 'react';
 import './blockedfriends.css';
 
-import addcontact from '../../picture/add-user.png';
 import SearchBlockFriend from './search-block-friend'
-import {Modal,Button, Form} from 'semantic-ui-react';
+import {Modal} from 'semantic-ui-react';
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -270,14 +269,13 @@ export default class AddFriend extends React.Component{
         );
       }
     );
-    console.log("Nmr : ",filteredList);
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
               Blocked Friends
             </li>}
         centered={false} size = "mini" className = "blockfriend-modal" onClose = {this.closeModal}>
-        <Modal.Header><center>Blocked Friends</center></Modal.Header>
+        <Modal.Header><center>Manage blocked users</center></Modal.Header>
         <div className = "searchBlockFriend">
           <SearchBlockFriend
             onChange = {this.inputSearch}

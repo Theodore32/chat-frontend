@@ -10,7 +10,7 @@ export default class BlockFriend extends React.Component{
         <input
           type = "text"
           className = "searchBlockFriend"
-          placeholder = "Search Blocked Friend"
+          placeholder = "Search blocked users"
           value = {this.props.search}
           onChange = {this.props.onChange}/>
         <img src = {icon} alt=""/>

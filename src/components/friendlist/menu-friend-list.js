@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './friendlist.css';
 import FriendList from './friend-list';
-import GroupList from '../chatlist/chat-list';
+import ChatList from '../chatlist/chat-list';
 
 export default class SideNav extends Component {
     constructor(props) {
@@ -72,11 +72,11 @@ export default class SideNav extends Component {
                   <div className = "friend-list-container">
                     <div className="friend-list-box">
                       <div className="friend-list-text">
-                      {filteredList.map((item) => (
+                      {filteredList.map((friend) => (
                         <FriendList
                           changeName = {this.props.changeName}
-                          item = {item}
-                          key = {item._id}
+                          friend = {friend}
+                          key = {friend._id}
                           />
                         )
                       )}
@@ -84,8 +84,13 @@ export default class SideNav extends Component {
                     </div>
                   </div>
                 </div>
-                <div className ={"menu-group-list tab "+Chats.tab}>
-                  This is the about page
+                <div className ={"menu-chat-list tab "+Chats.tab}>
+                  <div>
+                      <ChatList
+                        search = {this.props.searchValue}
+                        changeName = {this.props.changeName}
+                        />
+                  </div>
                 </div>
           </div>
 
