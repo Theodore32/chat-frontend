@@ -36,6 +36,8 @@ export default class EditProfile extends React.Component{
 
     formData.append ('Image', photo)
     formData.append ('name', name)
+    console.log("Nama : ",name);
+    console.log("foto : ",photo);
 
     fetch('/editprofile',{
       credentials : 'include',
@@ -44,8 +46,9 @@ export default class EditProfile extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
-        window.location.reload()
-        this.props.history.push('/ChatRoom')
+        this.props.change()
+        // window.location.reload()
+        // this.props.history.push('/ChatRoom')
       }
       else{
         this.setState({
@@ -89,27 +92,17 @@ export default class EditProfile extends React.Component{
         else{
           return(<h2>No Image</h2>)
         }
-        console.log("ASD: ",imageUrl);
     }
 
   render(){
     return (
-      <Modal
-        trigger={
-          <div className = "profileAndName">
-            {this.state.changePhoto ?
-              <img src={this.state.currentPhoto} className = "profileImage" alt="" />
-              :
-              <img src={profile} className = "profileImage" alt="" />
-            }
-            <div className = "profileName">
-              <b>{this.props.name}</b>
-            </div>
-          </div>
-        }
+      <Modal trigger={
+            <li onClick = {this.props.click}>
+              Edit Profile
+            </li>}
         centered={false}
         id = "modalSize"
-      >
+        className = "addfriend-modal">
         <Modal.Header>Profile</Modal.Header>
           <Form className = "formEditProfile">
             <Form.Field>

@@ -1,11 +1,9 @@
-import React from 'react'
-import './profile.css'
+import React from 'react';
+import './profile.css';
 
-import SettingProfile from '../settingprofile/setting-profile'
-import EditProfile from '../edit-profile/edit-profile'
-import {Image, Modal, Form, Button} from 'semantic-ui-react'
-import profile from '../../picture/muka.jpg'
-import setting from '../../picture/menu.png'
+import SettingProfile from '../settingprofile/setting-profile';
+import ShowProfilePicture from '../showPicture/showProfilePicture/show-profile-picture';
+import setting from '../../picture/menu.png';
 
  export default class Profile extends React.Component{
   constructor(props){
@@ -35,12 +33,10 @@ import setting from '../../picture/menu.png'
   }
 
    render(){
-     console.log("Name : "+this.state.name);
-     console.log("isOpen : "+this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">
-          <EditProfile
+          <ShowProfilePicture
             name = {this.props.name}
             email = {this.props.email}
             profilePicture = {this.props.profilePicture}/>
@@ -53,13 +49,18 @@ import setting from '../../picture/menu.png'
           modal = {this.state.showPopup}
           click = {this.handleOpen}
           open = {this.state.isOpen}
-          url = {this.props.url}
-          history = {this.props.history}
+          name = {this.props.name}
+          email = {this.props.email}
+          profilePicture = {this.props.profilePicture}
+          change = {this.props.change}
         />
       : <SettingProfile
           open = {this.state.isOpen}
-          url = {this.props.url}
-          history = {this.props.history}/>}
+          name = {this.props.name}
+          email = {this.props.email}
+          profilePicture = {this.props.profilePicture}
+          change = {this.props.change}
+          />}
       </div>
      );
    }

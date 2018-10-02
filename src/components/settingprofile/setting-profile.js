@@ -1,17 +1,12 @@
 import React from 'react';
 import './settingprofile.css';
 
-import BlockedFriend from '../blockedfriend/block-friend'
+import BlockedFriend from '../blockedfriend/block-friend';
 import ChangePassword from '../change-password/change-password';
-import addcontact from '../../picture/add-user.png';
-import AddFriend from '../addfriend/add-friend'
+import AddFriend from '../addfriend/add-friend';
+import EditProfile from '../edit-profile/edit-profile';
+import {Modal,Button} from 'semantic-ui-react';
 
-import {Modal,Button, Form} from 'semantic-ui-react';
-
-import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
 
 export default class SettingProfile extends React.Component{
   constructor(props){
@@ -294,9 +289,15 @@ export default class SettingProfile extends React.Component{
         );
       }
     );
-    console.log("Nmr : ",filteredList);
+    console.log(this.props);
     return(
       <div className = {"popup-container "+ this.props.modal}>
+        <EditProfile
+          name = {this.props.name}
+          email = {this.props.email}
+          profilePicture = {this.props.profilePicture}
+          click = {this.props.click}
+          change = {this.props.change}/>
         <AddFriend
           click = {this.props.click}/>
         <BlockedFriend
