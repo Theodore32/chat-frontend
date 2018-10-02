@@ -16,10 +16,10 @@ export default class FriendList extends React.Component{
     this.activeSocket = this.activeSocket.bind(this)
   }
   componentDidMount(){
-      this.activeSocket(this.props.item.username)
+      this.activeSocket(this.props.friend.name)
   }
   componentWillUnmount(){
-    this.activeSocket(this.props.item.username)
+    this.activeSocket(this.props.friend.name)
   }
   activeSocket(port){
     recieveChat(port,(err,recieve)=>{
@@ -31,14 +31,17 @@ export default class FriendList extends React.Component{
   }
 
   render(){
-    const item = this.props.item;
+    const friend = this.props.friend;
     return(
-      <li className = "friend-list-text"
+      <li
         onClick={() =>
-          this.props.changeName(item,this.state.chatlog)
+          this.props.changeName(friend,this.state.chatlog)
         }
       >
-        {item.name}
+      <div className = "friend-list-picture">
+        <img src ={friend.picture}/>
+        {friend.name}
+      </div>
       </li>
     );
   }

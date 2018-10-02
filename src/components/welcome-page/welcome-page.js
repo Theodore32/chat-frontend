@@ -2,10 +2,6 @@ import React from 'react';
 import './welcome-page.css';
 import {Button } from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
-import {
-  setInStorage,
-  getFromStorage
-} from '../../token/storage'
 
 class WelcomePage extends React.Component{
 

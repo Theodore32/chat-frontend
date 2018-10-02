@@ -18,14 +18,28 @@
   cursor: pointer;
   list-style-type: none;
   color: #222;
+  position: relative;
 }
 
 .chat-list-text li{
   padding-left: 5px;
+  height: 55px;
 }
 
 .chat-list-text li:hover{
-  background-color: rgba(231, 159, 74, 0.4)
+  background-color: rgba(231, 159, 74, 0.4);
+}
+
+.friend-name{
+  font-weight: 400;
+  position: absolute;
+}
+
+.lastMessageText{
+  color: rgb(137, 137, 137);
+  font: inherit;
+  position: absolute;
+  top: 25px;
 }
 
 .li-chats{

@@ -162,7 +162,6 @@ export default class ChangePassword extends React.Component{
       confirmPassValid : true,
       confirmPasswordError : "",
     })
-    this.props.history.push(currentRoute)
   }
 
   render(){

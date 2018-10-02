@@ -7,12 +7,14 @@
   margin: 10vh auto;
 }
 
-.addfriend-modal{
+.blockfriend-modal{
   height: 90%;
   position: relative;
 }
 
-.searchAddFriend input[type = text]{
+.searchBlockFriend input[type = text]{
+  height : 55px;
+  width : 100%;
   padding-left: 45px;
   outline: none;
   box-sizing: border-box;
@@ -22,12 +24,12 @@
   border-bottom: 1px solid rgba(34,36,38,.15);
 }
 
-.searchAddFriend input[type = text]:focus{
+.searchBlockFriend input[type = text]:focus{
   border-color: rgb(217, 143, 46);
   box-shadow: 0 0 8px 0 rgb(217, 143, 46);
 }
 
-.searchAddFriend img{
+.searchBlockFriend img{
   width: 20px;
   height: 20px;
   top: 75px;
@@ -35,10 +37,10 @@
   position: absolute;
 }
 
-.addfriend-button-setting{
+.blockfriend-button-setting{
   padding: 0;
   margin: 0;
-  width: 100px;
+  width: 60px;
   height: 30px;
   cursor: pointer;
   background: rgb(242, 113, 28);
@@ -46,52 +48,43 @@
   box-shadow: 0 0 0 1px transparent inset;
   text-decoration: none;
   border: none;
+  float: right;
+  margin-right: 1px;
 }
 
-.addfriend-button-setting:hover{
+.blockfriend-button-setting:hover{
   transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .2s ease,-webkit-box-shadow .1s ease;
   background-color: rgba(242, 113, 28, 0.859);
 }
 
-.addfriend-icon{
-  width: 20px;
-  height: 20px;
+.blockfriend-button-text{
+  font-family: sans-serif;
+  font-size: 13px;
 }
 
-.addfriend-box{
+.blockfriend-box{
   width: 100%;
-  height: 100%;
   position: absolute;
   overflow-y: auto;
-  padding-top: 12%;
+  height: calc(100% - 114px);
 }
 
-.addfriend-box li{
+.blockfriend-box li{
   padding-left: 5px;
+  list-style-type: none;
 }
 
-.loader {
-  margin-top: 55px;
-  border: 2.5px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 3px solid #7a7a7a;
-  width: 30px;
-  height: 30px;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.addfriend-profile-setting{
+.blockfriend-profile-setting{
   width: 100px;
   height: 100px;
   border-radius: 50%;
 }
 
-.addfriend-text{
-  padding-top: 3%;
-  font-weight: bold;
+.blockfriend-text{
+  font-size: 15px;
+  line-height: 30px;
+  list-style-type: none;
+  color: #222;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
