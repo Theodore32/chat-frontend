@@ -4,8 +4,14 @@ import {Link} from 'react-router-dom'
 import ChangePassword from '../change-password/change-password';
 import addcontact from '../../picture/add-user.png';
 import muka from '../../picture/muka.jpg'
-import {Modal,Button, Form} from 'semantic-ui-react';
+import {Modal, Button, Form, Loader} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
+
+
+import {
+  setInStorage,
+  getFromStorage
+}from '../../token/storage'
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -14,9 +20,11 @@ export default class AddFriend extends React.Component{
     this.state = {
       open : false,
       search : '',
-      searchResult:{
+      searchResult:
+      {
         success:false
-      }
+      },
+      loading : false
     }
 
     this.logout = this.logout.bind(this)
@@ -56,14 +64,17 @@ export default class AddFriend extends React.Component{
    closeModal = () =>{
      this.setState({
        search : '',
-       searchResult:{
-         success:false
+       searchResult : {
+          success:false
        }
      })
    }
 
    searchData = (event) =>{
      event.preventDefault()
+     this.setState({
+       loading : true
+     })
      const searchInput = this.state.search
      fetch('/search',{
        credentials : 'include',
@@ -76,8 +87,10 @@ export default class AddFriend extends React.Component{
        })
      }).then( res => res.json())
      .then (res => {
+       console.log("ASD: ",res);
        this.setState({
-         searchResult : res
+         searchResult : res,
+         loading : false
        })
      })
    }
@@ -86,7 +99,7 @@ export default class AddFriend extends React.Component{
      event.preventDefault()
      const username = this.state.search
      const name = this.state.searchResult.name
-     console.log(username, name);
+     const picture = this.state.searchResult.picture
      fetch('/Friends',{
        credentials : 'include',
        method : 'PUT',
@@ -96,20 +109,23 @@ export default class AddFriend extends React.Component{
        body : JSON.stringify({
          friendlist : {
           username : username,
-          name : name
+          name : name,
+          picture : picture
         }
        })
      }).then (res => res.json())
      .then (res => {
-       console.log(res);
-       if(res.success){
-         console.log(res);
-       }
+       this.setState({
+         searchResult : res
+       })
      })
    }
 
-  add = (event) => {
+   add = (event) => {
     event.preventDefault()
+    const username = this.state.search
+    const name = this.state.searchResult.name
+    const picture = this.state.searchResult.picture
     fetch('/add',{
       credentials:'include',
       method:'PUT',
@@ -117,14 +133,26 @@ export default class AddFriend extends React.Component{
         'Content-Type' : 'application/json'
       },
       body:JSON.stringify({
-        username:this.state.search,
-        name:this.state.searchResult.name
+        username : username,
+        name : name,
+        picture : picture
       })
+<<<<<<< HEAD
+=======
+    }).then(res => res.json())
+    .then(res=>{
+      this.setState({
+        searchResult : res
+      })
+>>>>>>> b5ae80a0ddf2b74bb94fc108b2401e1e1fd7e6a9
     })
   }
 
   block = (event) => {
     event.preventDefault()
+    const username = this.state.search
+    const name = this.state.searchResult.name
+    const picture = this.state.searchResult.picture
     fetch('/block',{
       credentials:'include',
       method:'PUT',
@@ -132,15 +160,21 @@ export default class AddFriend extends React.Component{
         'Content-Type' : 'application/json'
       },
       body:JSON.stringify({
-        username:this.state.search,
-        name:this.state.searchResult.name
+        username : username,
+        name : name,
+        picture : picture
+      })
+    }).then(res => res.json())
+    .then(res=>{
+      this.setState({
+        searchResult : res
       })
     })
   }
 
+
   render(){
     const { open, size } = this.state;
-    const list = this.state.location;
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
@@ -153,7 +187,7 @@ export default class AddFriend extends React.Component{
             <input
               type = "text"
               className = "searchfriend"
-              placeholder = "Search or start new chat"
+              placeholder = "Search friend by username"
               value = {this.state.search}
               onChange = {this.inputSearch}
             />
@@ -161,28 +195,36 @@ export default class AddFriend extends React.Component{
           </form>
         </div>
         <div className = "addfriend-box">
-          {!this.state.searchResult.success ?
+          {this.state.loading ?
             <center>
-              {this.state.searchResult.message}
-            </center>
-              :
+              <div className = "loader"></div>
+              <br/>
+              Loading
+            </center> :
             <center>
-              <img src = {muka} className = "addfriend-profile-setting"/><br/>
-              <div className = "addfriend-text">
-                {this.state.searchResult.name}
-              </div><br/>
-              {!this.state.searchResult.message?
-                  !this.state.searchResult.request?
-                    <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
+              {!this.state.searchResult.success ?
+                <center>
+                  {this.state.searchResult.message}
+                </center>
+                  :
+                <center>
+                  <img src = {this.state.searchResult.picture} className = "addfriend-profile-setting"/><br/>
+                  <div className = "addfriend-text">
+                    {this.state.searchResult.name}
+                  </div><br/>
+                  {!this.state.searchResult.message ?
+                      !this.state.searchResult.request ?
+                        <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
+                        :
+                        <div>
+                          <button onClick = {this.add} className = "addfriend-button-setting">Add</button>
+                          <button onClick = {this.block} className = "addfriend-button-setting">Block</button>
+                        </div>
                     :
-                    <div>
-                      <button onClick = {this.add} className = "addfriend-button-setting">add</button>
-                      <button onClick = {this.block} className = "addfriend-button-setting">Block</button>
-                    </div>
-                :
-                this.state.searchResult.message
+                    this.state.searchResult.message
+                  }
+                </center>
               }
-
             </center>
           }
         </div>

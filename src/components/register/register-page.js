@@ -1,6 +1,7 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import './register.css';
-import { Button, Form } from 'semantic-ui-react';
+import { Button, Checkbox, Form , Segment} from 'semantic-ui-react';
 import {Link} from "react-router-dom";
 import logo from '../../picture/logo2.png';
 
@@ -15,6 +16,7 @@ class RegisterForm extends React.Component{
         password:'',
         retypePassword:''
       },
+      success : true,
       usernameIsValid : true,
       firstNameIsValid : true,
       lastNameIsValid : true,
@@ -150,6 +152,9 @@ class RegisterForm extends React.Component{
 
   RegisUser(username,email,password,retypePassword,firstName,lastName){
     let name = firstName +" "+lastName
+    this.setState({
+      success : true
+    })
     fetch('/regisnew',{
       method:'POST',
       headers: {
@@ -168,13 +173,28 @@ class RegisterForm extends React.Component{
           console.log(json);
           this.props.history.push('/LoginForm')
         }
-      })
-    console.log(name);
+        else{
+          this.setState({
+            success : json.success,
+            message : "Username or Email is already taken!",
+            usernameIsValid : false,
+            emailIsValid : false
+          })
+        }
+    })
   }
 
   render(){
+    console.log("ini success beda: "+this.state.success);
     return(
       <div className = "background-top">
+        {!this.state.success ?
+          <center>
+            <div className = "EmailUsernameErrorMessage">
+              <b>{this.state.message}</b>
+            </div>
+          </center> :
+        null}
         <div className ="formRegister">
           <Form className = "formModal">
             <div className = "logo-position" >

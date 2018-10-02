@@ -1,14 +1,10 @@
 import React from 'react';
-import './settingprofile.css';
+import './blockedfriends.css';
 
-import BlockedFriend from '../blockedfriend/block-friend';
-import ChangePassword from '../change-password/change-password';
-import AddFriend from '../addfriend/add-friend';
-import EditProfile from '../edit-profile/edit-profile';
-import {Modal,Button} from 'semantic-ui-react';
+import SearchBlockFriend from './search-block-friend'
+import {Modal} from 'semantic-ui-react';
 
-
-export default class SettingProfile extends React.Component{
+export default class AddFriend extends React.Component{
   constructor(props){
     super(props);
 
@@ -235,22 +231,6 @@ export default class SettingProfile extends React.Component{
       ]
     }
 
-    this.logout = this.logout.bind(this)
-  }
-
-  logout(e) {
-   e.preventDefault()
-      // Verify token
-      fetch('/logout',{
-        credentials:'include'
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.success) {
-            this.props.history.push('/LoginForm')
-          }
-         }
-       );
   }
 
    show = (size,name) => {
@@ -289,35 +269,32 @@ export default class SettingProfile extends React.Component{
         );
       }
     );
-    console.log(this.props);
     return(
-      <div className = {"popup-container "+ this.props.modal}>
-        <EditProfile
-          name = {this.props.name}
-          email = {this.props.email}
-          profilePicture = {this.props.profilePicture}
-          click = {this.props.click}
-          change = {this.props.change}/>
-        <AddFriend
-          click = {this.props.click}/>
-        <BlockedFriend
-          click = {this.props.click}/>
-        <ChangePassword
-          onClick = {this.props.click}
-          open = {this.props.open}
-        />
-        <li onClick={this.logout}>Log Out</li>
-          <Modal size={size} open={open} onClose={this.close}>
-            <Modal.Header>Add Friend</Modal.Header>
-            <Modal.Content>
-              <p>Add {this.state.name} as a friend?</p>
-            </Modal.Content>
-            <Modal.Actions>
-              <Button negative onClick = {this.close}>No</Button>
-              <Button positive>Yes</Button>
-            </Modal.Actions>
-          </Modal>
-      </div>
+      <Modal trigger={
+            <li onClick = {this.props.click}>
+              Blocked Friends
+            </li>}
+        centered={false} size = "mini" className = "blockfriend-modal" onClose = {this.closeModal}>
+        <Modal.Header><center>Manage blocked users</center></Modal.Header>
+        <div className = "searchBlockFriend">
+          <SearchBlockFriend
+            onChange = {this.inputSearch}
+            search = {this.state.value}/>
+        </div>
+        <div className = "blockfriend-box">
+            {filteredList.map((friend) =>(
+                  <li key = {friend.id} className = "blockfriend-text">{friend.title}
+                    <button className = "blockfriend-button-setting" onClick = {() => {this.show('mini',friend.title)}}>
+                      <div className = "blockfriend-button-text">
+                        <b>Unblock</b>
+                      </div>
+                    </button>
+                  </li>
+                )
+              )
+            }
+        </div>
+      </Modal>
     );
   }
 }

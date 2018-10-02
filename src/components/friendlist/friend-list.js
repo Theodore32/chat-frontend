@@ -7,16 +7,22 @@ import {
 
 export default class FriendList extends React.Component{
 
-  asd = () =>{
-    fetch('/addchatroom',{
-      credentials : 'include',
-      method : "PUT",
-      headers : {
-        "Content-Type" : "application/json"
-      },
-      body: JSON.stringify({
-        chatid:'addwdwdwd',
-        user:this.props.item.username
+    this.state = {
+      chatlog:[]
+    }
+
+    this.activeSocket = this.activeSocket.bind(this)
+  }
+  componentDidMount(){
+      this.activeSocket(this.props.friend.name)
+  }
+  componentWillUnmount(){
+    this.activeSocket(this.props.friend.name)
+  }
+  activeSocket(port){
+    recieveChat(port,(err,recieve)=>{
+      this.setState({
+        chatlog:this.state.chatlog.concat({send:recieve.send,message:recieve.message.message,sender:recieve.message.reciever,reciever:recieve.message.sender})
       })
     }).then(res => res.json())
     .then(res=>{
@@ -24,11 +30,17 @@ export default class FriendList extends React.Component{
     })
   }
   render(){
-    const item = this.props.item;
-    console.log(item);
+    const friend = this.props.friend;
     return(
-      <li className = "friend-list-text" onClick = {this.asd}>
-        {item.name}
+      <li
+        onClick={() =>
+          this.props.changeName(friend,this.state.chatlog)
+        }
+      >
+      <div className = "friend-list-picture">
+        <img src ={friend.picture}/>
+        {friend.name}
+      </div>
       </li>
     );
   }
