@@ -120,9 +120,6 @@ export default class AddFriend extends React.Component{
         username:this.state.search,
         name:this.state.searchResult.name
       })
-    }).then(res => res.json())
-    .then(res=>{
-      console.log(res);
     })
   }
 

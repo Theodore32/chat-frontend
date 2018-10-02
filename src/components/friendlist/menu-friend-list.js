@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import './friendlist.css';
 import FriendList from './friend-list';
+import Chatlist from './chat-list';
 import GroupList from '../chatlist/chat-list';
 
 export default class SideNav extends Component {
@@ -85,7 +86,7 @@ export default class SideNav extends Component {
                   </div>
                 </div>
                 <div className ={"menu-group-list tab "+Chats.tab}>
-                  This is the about page
+                  <Chatlist />
                 </div>
           </div>
 
