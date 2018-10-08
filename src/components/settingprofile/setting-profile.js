@@ -289,7 +289,6 @@ export default class SettingProfile extends React.Component{
         );
       }
     );
-    console.log(this.props);
     return(
       <div className = {"popup-container "+ this.props.modal}>
         <EditProfile
@@ -307,16 +306,6 @@ export default class SettingProfile extends React.Component{
           open = {this.props.open}
         />
         <li onClick={this.logout}>Log Out</li>
-          <Modal size={size} open={open} onClose={this.close}>
-            <Modal.Header>Add Friend</Modal.Header>
-            <Modal.Content>
-              <p>Add {this.state.name} as a friend?</p>
-            </Modal.Content>
-            <Modal.Actions>
-              <Button negative onClick = {this.close}>No</Button>
-              <Button positive>Yes</Button>
-            </Modal.Actions>
-          </Modal>
       </div>
     );
   }

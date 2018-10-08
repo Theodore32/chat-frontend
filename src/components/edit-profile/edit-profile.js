@@ -141,7 +141,7 @@ export default class EditProfile extends React.Component{
                 readOnly/>
             </Form.Field>
             <Button
-            className = "buttonForm"
+            id = "updateProfileButton"
             type='submit'
             onClick = {this.handleUserInput}
             >UPDATE PROFILE

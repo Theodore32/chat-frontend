@@ -25,8 +25,7 @@
 }
 
 .searchBlockFriend input[type = text]:focus{
-  border-color: rgb(217, 143, 46);
-  box-shadow: 0 0 8px 0 rgb(217, 143, 46);
+  box-shadow: 0 0 8px 0 rgba(62, 62, 62, 0.41);
 }
 
 .searchBlockFriend img{
@@ -43,7 +42,7 @@
   width: 60px;
   height: 30px;
   cursor: pointer;
-  background: rgb(242, 113, 28);
+  background: #3f3f3f;
   border-radius: .28571429rem;
   box-shadow: 0 0 0 1px transparent inset;
   text-decoration: none;
@@ -54,7 +53,7 @@
 
 .blockfriend-button-setting:hover{
   transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .2s ease,-webkit-box-shadow .1s ease;
-  background-color: rgba(242, 113, 28, 0.859);
+  background-color: rgba(62, 62, 62, 0.76);
 }
 
 .blockfriend-button-text{

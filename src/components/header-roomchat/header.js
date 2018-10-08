@@ -10,13 +10,13 @@ export default class HeaderChat extends React.Component{
     return(
       <div className = "header-container">
         <div className = "header-image-position">
-          <Modal trigger={<img src={this.props.picture} className = "profileImage" alt=""/>} centered={false}>
-            <Modal.Header>Selena</Modal.Header>
-            <Modal.Content image>
-              <Image wrapped size='medium' src={profileImage} />
-              <Modal.Description>
-                <p>This is Mariah</p>
-              </Modal.Description>
+          <Modal
+            trigger={<img src={this.props.picture}
+            className = "profileImage" alt=""/>}
+            centered={false}>
+            <Modal.Header centered>{this.props.name}</Modal.Header>
+            <Modal.Content>
+              <img src = {this.props.picture}/>
             </Modal.Content>
           </Modal>
           <div className = "header-room-name">
@@ -26,9 +26,8 @@ export default class HeaderChat extends React.Component{
         <div className = "header-setting-icon-position">
           <Popup
             trigger={<img src = {setting} className = "setting-icon" alt=""/>}
-            content='Hide the popup on any scroll event'
+            content={<button>ASD</button>}
             on='click'
-            hideOnScroll
             horizontalOffset = {10}
             verticalOffset = {1}
           />

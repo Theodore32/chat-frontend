@@ -56,6 +56,17 @@
 }
 
 #modalSize{
-  width: 45%;
-  height: 80%;
+  width: 600px;
+  height: 500px;
+}
+
+#updateProfileButton{
+  width: 100%;
+  text-align: center;
+  background-color: #3f3f3f ;
+  color: a0a099 ;
+}
+
+#updateProfileButton:hover{
+  background-color: rgba(62, 62, 62, 0.76);
 }
