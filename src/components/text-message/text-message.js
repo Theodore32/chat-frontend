@@ -1,6 +1,7 @@
 import React from 'react';
 import './text-message.css';
 import TextareaAutosize from 'react-autosize-textarea';
+import file from '../../picture/paperclip.png';
 import {
   sendChat
 }from "../../socket/socketconnect"
@@ -55,6 +56,7 @@ onEnterPress = (e) => {
       <div className = "footer-app">
         <div className = "inputBarMessage">
           <form onSubmit = {this.onEnterPress}>
+            <img src = {file} className = "fileSetting"/>
             <TextareaAutosize
               style={{maxHeight : "75px"}}
               className = "message"

@@ -70,10 +70,11 @@ export default class SideNav extends Component {
                 </div>
                 <div className = {"menu-friend-list tab "+Friends.tab}>
                   <div className = "friend-list-container">
-                    <div className="friend-list-box">
+                    <div className="friend-list-box" onClick = {this.props.onClick}>
                       <div className="friend-list-text">
                       {filteredList.map((friend) => (
                         <FriendList
+                          open = {this.props.open}
                           changeName = {this.props.changeName}
                           friend = {friend}
                           key = {friend._id}

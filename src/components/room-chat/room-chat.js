@@ -16,7 +16,8 @@ export default class RoomChat extends React.Component{
       isLoading: true,
       ulang:[],
       account:[],
-      chatlog:[]
+      chatlog:[],
+      open : false
     }
     this.escClicked = this.escClicked.bind(this)
   }
@@ -61,7 +62,7 @@ export default class RoomChat extends React.Component{
       }
     })
   }
-  
+
   openChatRoom = (item,log) => {
     if(item !== null){
       this.setState({
@@ -98,10 +99,9 @@ export default class RoomChat extends React.Component{
         <div>Loading.....</div>
       )
     }
-    console.log(this.props.match.url);
     return (
       <div className = "background-top">
-        <div className = "container-page">
+        <div className = "container-page" onClick = {this.closeSetting}>
           {!this.state.isOpen?
             <div className = "rightColumn">
             </div>
@@ -129,6 +129,7 @@ export default class RoomChat extends React.Component{
                 profilePicture = {account.profilePicture}
                 url = {this.props.match.url}
                 change={this.afterchange}
+                close = {this.state.isOpen}
               />
               <div className = "searchBarContent">
                 <SearchFriend

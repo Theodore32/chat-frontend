@@ -267,7 +267,7 @@ class RegisterForm extends React.Component{
               <p>By clicking Sign Up, you agree to our Terms, Data Policy and Cookie Policy. You may receive SMS notifications from us and can opt out at any time.</p>
             </Form.Field>
             <Button
-            className = "buttonForm"
+            id = "registerButtonForm"
             type='submit'
             onClick = {this.handleUserData}
             >REGISTER

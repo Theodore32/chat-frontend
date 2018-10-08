@@ -34,6 +34,12 @@
   float: right;
   padding-top: 5px;
 }
+#header-setting-icon-position{
+  position: absolute;
+  right: 10px;
+  float: right;
+  padding-top: 5px;
+}
 
 .profileImage{
   height: 40px;

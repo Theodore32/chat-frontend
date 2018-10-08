@@ -131,7 +131,7 @@ class LoginForm extends React.Component{
                 </div>
             }
             <Button
-              className = "buttonForm"
+              id = "loginButtonForm"
               type='submit'
               onClick={this.onLogin}
             >
