@@ -211,14 +211,14 @@ export default class ChangePassword extends React.Component{
             </Form.Field>
             {this.state.loadingButton ?
               <Button
-                className = "buttonForm"
+                id = "changePassButton"
                 type='submit'
                 onClick = {this.handleUserPassword}
                 disabled = {!this.state.oldPass && !this.state.newPass && !this.state.confirmPass}
                 >CHANGE PASSWORD
               </Button> :
               <Button
-                className = "buttonForm"
+                id = "changePassButton"
                 type='submit'
                 >
                 <Loader

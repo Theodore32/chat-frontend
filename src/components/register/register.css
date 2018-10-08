@@ -12,7 +12,7 @@
   animation: fade-in 1s ease-in 1s forwards;
 }
 
-@keyframes fade-in {
+@keyframes fade-out {
   from { opacity: 1; }
   to { opacity: 0; }
 }
@@ -48,9 +48,13 @@
   float: left;
 }
 
-.buttonForm{
+#registerButtonForm{
   width: 100%;
   text-align: center;
-  background-color: rgb(242, 113, 28) !important;
-  color: #222 !important;
+  background-color: #3f3f3f ;
+  color: a0a099 ;
+}
+
+#registerButtonForm:hover{
+  background-color: rgba(62, 62, 62, 0.76);
 }

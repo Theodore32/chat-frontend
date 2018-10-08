@@ -27,12 +27,25 @@
 }
 
 .chat-list-text li:hover{
-  background-color: rgba(231, 159, 74, 0.4);
+  background-color: rgba(62, 62, 62, 0.25);
+}
+
+.chat-list-picture{
+  vertical-align: middle;
+  position: absolute;
+  top : 5px;
+}
+
+.chat-list-picture img{
+  width : 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
 .friend-name{
   font-weight: 400;
   position: absolute;
+  left : 55px;
 }
 
 .lastMessageText{
@@ -40,6 +53,7 @@
   font: inherit;
   position: absolute;
   top: 25px;
+  left : 55px;
 }
 
 .li-chats{
@@ -47,7 +61,8 @@
   float: left;
   text-align: center;
   margin-bottom: -1px;
-  background-color: #f6f4e9;
+  background-color: #3f3f3f;
+  color: #a0a099;
   list-style-type: none;
   height: 30px;
   line-height: 30px;

@@ -1,6 +1,8 @@
 import React from 'react';
 import './chatlist.css';
 
+import gambar from '../../picture/boy.png';
+
 export default class FriendList extends React.Component{
   constructor(props){
     super(props);
@@ -73,6 +75,9 @@ export default class FriendList extends React.Component{
                           this.props.changeName(chat.title)
                         }
                       >
+                      <div className = "chat-list-picture">
+                        <img src = {gambar}/>
+                      </div>
                       <div className = "friend-name">
                         {chat.title}
                       </div>

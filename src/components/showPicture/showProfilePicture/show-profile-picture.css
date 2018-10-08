@@ -11,7 +11,14 @@
   position: absolute;
 }
 
+.showProfileImage{
+  width: 500px;
+  height: 500px;
+}
+
 #modalProfileImage{
   padding : 1.4rem;
   line-height: 0;
+  height: 540px;
+  width : 540px;
 }

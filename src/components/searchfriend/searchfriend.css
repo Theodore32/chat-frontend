@@ -1,6 +1,29 @@
-.searchfriend{
+.searchBarContent{
+  width: 100%;
+  height: 55px;
+  position : relative;
+}
+
+.searchBarContent input[type = text]{
   height: 55px;
   width: 100%;
-  /* border-radius: 0.285714rem;
-  border : 1px solid #222; */
+  padding-left: 45px;
+  outline: none;
+  box-sizing: border-box;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px solid #aaa;
+}
+
+.searchBarContent input[type = text]:focus{
+  border-color: rgba(62, 62, 62, 0.22);
+}
+
+.searchBarContent img{
+  width: 20px;
+  height: 20px;
+  top: 15px;
+  left : 15px;
+  position: absolute;
 }

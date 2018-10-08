@@ -16,6 +16,15 @@ import setting from '../../picture/menu.png';
       }
    }
 
+   componentWillMount() {
+     document.addEventListener('mousedown', this.handleClickOutside);
+
+   }
+
+   componentWillUnmount() {
+     document.removeEventListener('mousedown', this.handleClickOutside);
+   }
+
   handleChange = (event) =>{
     const inputUser = event.target.name
     this.setState({
@@ -32,7 +41,21 @@ import setting from '../../picture/menu.png';
     )
   }
 
+  closeSetting = () =>{
+    this.setState({
+      isOpen : false
+    })
+  }
+
+   handleClickOutside = (event) => {
+    if (this.node && !this.node.contains(event.target)) {
+      this.closeSetting();
+      console.log("ASD:" ,this.node);
+    }
+  }
+
    render(){
+     console.log(this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">
@@ -41,26 +64,32 @@ import setting from '../../picture/menu.png';
             email = {this.props.email}
             profilePicture = {this.props.profilePicture}/>
         </div>
-        <div className = "profile-setting-icon-position">
+        <div className = "profile-setting-icon-position" >
           <img src = {setting} className = "setting-icon" onClick = {this.handleOpen} alt="" />
         </div>
         {this.state.isOpen ?
-        <SettingProfile
-          modal = {this.state.showPopup}
-          click = {this.handleOpen}
-          open = {this.state.isOpen}
-          name = {this.props.name}
-          email = {this.props.email}
-          profilePicture = {this.props.profilePicture}
-          change = {this.props.change}
-        />
-      : <SettingProfile
-          open = {this.state.isOpen}
-          name = {this.props.name}
-          email = {this.props.email}
-          profilePicture = {this.props.profilePicture}
-          change = {this.props.change}
-          />}
+          <div ref={node => this.node = node}>
+            <SettingProfile
+              modal = {this.state.showPopup}
+              click = {this.handleOpen}
+              open = {this.state.isOpen}
+              name = {this.props.name}
+              email = {this.props.email}
+              profilePicture = {this.props.profilePicture}
+              change = {this.props.change}
+            />
+          </div>
+      :
+        <div ref={node => this.node = node}>
+          <SettingProfile
+            open = {this.state.isOpen}
+            name = {this.props.name}
+            email = {this.props.email}
+            profilePicture = {this.props.profilePicture}
+            change = {this.props.change}
+            />
+        </div>
+      }
       </div>
      );
    }

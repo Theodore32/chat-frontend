@@ -20,11 +20,11 @@ class WelcomePage extends React.Component{
   render (){
     console.log(this.props);
     return (
-      <div className = "welcomeButton">
+      <div className = "welcomeButtonPosition">
         <Link to = '/LoginForm'>
           <Button
-          inverted color = "orange"
-          size ="huge">
+            id = "welcomeButton"
+            size ="huge">
             Welcome to chat application website!
             Click me to login :)
           </Button>
