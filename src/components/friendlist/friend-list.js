@@ -6,6 +6,8 @@ import {
 
 
 export default class FriendList extends React.Component{
+  constructor(props){
+    super(props)
 
     this.state = {
       chatlog:[]
@@ -24,9 +26,6 @@ export default class FriendList extends React.Component{
       this.setState({
         chatlog:this.state.chatlog.concat({send:recieve.send,message:recieve.message.message,sender:recieve.message.reciever,reciever:recieve.message.sender})
       })
-    }).then(res => res.json())
-    .then(res=>{
-      console.log(res);
     })
   }
   render(){

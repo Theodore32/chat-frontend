@@ -1,6 +1,5 @@
 import React from 'react';
 import './text-message.css';
-import autosize from 'autosize';
 import TextareaAutosize from 'react-autosize-textarea';
 import {
   sendChat

@@ -137,14 +137,11 @@ export default class AddFriend extends React.Component{
         name : name,
         picture : picture
       })
-<<<<<<< HEAD
-=======
     }).then(res => res.json())
     .then(res=>{
       this.setState({
         searchResult : res
       })
->>>>>>> b5ae80a0ddf2b74bb94fc108b2401e1e1fd7e6a9
     })
   }
 
