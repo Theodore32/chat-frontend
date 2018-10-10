@@ -54,7 +54,11 @@ export default class FriendList extends React.Component{
       ]
     }
   }
-
+  getChatData = () => {
+    fetch('/chat',{
+      credentials:'include'
+    })
+  }
   render(){
     const list = this.state.location;
     const filteredList = list.filter(
