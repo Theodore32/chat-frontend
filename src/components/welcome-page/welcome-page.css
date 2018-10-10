@@ -6,6 +6,7 @@
 #welcomeButton{
   background-color: #3f3f3f;
   font-family:monospace;
+  color: white;
 }
 
 #welcomeButton:hover{

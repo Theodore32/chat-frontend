@@ -43,3 +43,9 @@
 .fileSetting:hover{
   cursor: pointer;
 }
+
+.imgPreview img{
+  border: 1px solid;
+  width : 300px;
+  height: 300px;
+}
