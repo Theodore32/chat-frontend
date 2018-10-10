@@ -6,6 +6,8 @@ import {
 import {Modal, Button} from 'semantic-ui-react';
 import chat from '../../picture/chat.png'
 import block from '../../picture/block.png'
+var crypto = require("crypto");
+
 
 
 export default class FriendList extends React.Component{
@@ -48,6 +50,20 @@ export default class FriendList extends React.Component{
 
   openChatRoom = (friend) =>{
     this.close()
+    fetch('/addchatroom',{
+      credentials:'include',
+      method:'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chatid:crypto.randomBytes(20).toString('hex')+Date.now(),
+        user:friend.username
+      }),
+    }).then(res => res.json())
+    .then(json =>{
+      console.log(json);
+    })
     this.props.changeName(friend,this.state.chatlog)
   }
 
