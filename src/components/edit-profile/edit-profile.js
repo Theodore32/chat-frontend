@@ -26,7 +26,6 @@ export default class EditProfile extends React.Component{
   handleUserInput = () =>{
     const name = this.state.name
     const photo = this.state.changePhoto
-
     this.updateProfile(name,photo)
   }
 

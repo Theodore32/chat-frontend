@@ -35,9 +35,6 @@ export default class Content extends React.Component{
   }
 
   render(){
-    const time = new Date();
-    const timeHours = (time.getHours()<10?'0':'') + time.getHours();
-    const timeMinute = (time.getMinutes()<10?'0':'') + time.getMinutes();
 
     return (
       <div>
@@ -73,18 +70,17 @@ export default class Content extends React.Component{
                           }
                         </div>
                         <div className = "senderMessage">
-                          {console.log("Banyak kata: ",index.message.length)}
                           {index.message.split("\n").length > 1 || index.message.length > 78 ?
                             <div>
                               <p>{index.message}</p>
                               <div className = "timeSenderMessageManyLine">
-                                {timeHours+":"+timeMinute}
+
                               </div>
                             </div>
                             :
                             <p>{index.message}
                               <div className = "timeSenderMessageOneLine">
-                                {timeHours+":"+timeMinute}
+
                               </div>
                             </p>
                           }
@@ -121,13 +117,13 @@ export default class Content extends React.Component{
                            <div>
                              <p>{index.message}</p>
                              <div className = "timeReceiverMessageManyLine">
-                               {timeHours+":"+timeMinute}
+
                              </div>
                            </div>
                            :
                            <p>{index.message}
                              <div className = "timeReceiverMessageOneLine">
-                               {timeHours+":"+timeMinute}
+                               
                              </div>
                            </p>
                          }
