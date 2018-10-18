@@ -35,7 +35,6 @@ export default class Content extends React.Component{
   }
 
   render(){
-
     return (
       <div>
         <div className = "content-container" id = "content-container">
@@ -44,6 +43,7 @@ export default class Content extends React.Component{
                  null
                  :
                  this.props.chatlog.map((index,urutan) =>{
+                   {console.log("ASD: ",index)}
                    if(index.send == 0){
                      return(
                       <div className = "Message">
@@ -72,6 +72,11 @@ export default class Content extends React.Component{
                         <div className = "senderMessage">
                           {index.message.split("\n").length > 1 || index.message.length > 78 ?
                             <div>
+                              {this.props.chatlog.image == null?
+                                console.log('bb')
+                                :
+                                console.log('asda')
+                              }
                               <p>{index.message}</p>
                               <div className = "timeSenderMessageManyLine">
 
@@ -123,7 +128,7 @@ export default class Content extends React.Component{
                            :
                            <p>{index.message}
                              <div className = "timeReceiverMessageOneLine">
-                               
+
                              </div>
                            </p>
                          }
@@ -143,6 +148,7 @@ export default class Content extends React.Component{
           sender = {this.props.sender}
           recieve = {this.props.recieve}
           scroll = {this.scrollBottom}
+          chatId = {this.props.chatId}
         />
       </div>
     );

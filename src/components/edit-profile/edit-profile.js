@@ -11,6 +11,7 @@ export default class EditProfile extends React.Component{
       name : this.props.name,
       email : this.props.email,
       currentPhoto : this.props.profilePicture,
+      status : this.props.status,
       changePhoto : []
     }
   }
@@ -26,17 +27,21 @@ export default class EditProfile extends React.Component{
   handleUserInput = () =>{
     const name = this.state.name
     const photo = this.state.changePhoto
-    this.updateProfile(name,photo)
+    const status = this.state.status
+    this.updateProfile(name,photo,status)
   }
 
-  updateProfile = (name,photo) =>{
+  updateProfile = (name,photo,status) =>{
 
     var formData = new FormData();
 
     formData.append ('Image', photo)
     formData.append ('name', name)
+    formData.append ('description', status)
+
     console.log("Nama : ",name);
     console.log("foto : ",photo);
+    console.log("status : ",status);
 
     fetch('/editprofile',{
       credentials : 'include',
@@ -128,6 +133,14 @@ export default class EditProfile extends React.Component{
                 value= {this.state.name}
                 type ="text"
                 name="name"
+                onChange={this.handleInput}/>
+            </Form.Field>
+            <Form.Field>
+              <label>Status Message</label>
+              <input
+                value = {this.state.status}
+                type  = "text"
+                name = "status"
                 onChange={this.handleInput}/>
             </Form.Field>
             <Form.Field>

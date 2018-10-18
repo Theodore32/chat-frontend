@@ -1,5 +1,5 @@
 .EmailUsernameErrorMessage{
-  background-color: rgba(255, 153, 47, 0.98);
+  background-color: rgba(63, 63, 63, 0.85);
   position: fixed;
   width: 100%;
   text-align: center;
@@ -9,7 +9,7 @@
   line-height: 40px;
   z-index: 1;
   font-family: sans-serif;
-  animation: fade-in 1s ease-in 1s forwards;
+  animation: fade-out 1s ease-in 1s forwards;
 }
 
 @keyframes fade-out {

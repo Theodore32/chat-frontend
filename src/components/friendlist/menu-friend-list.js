@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import './friendlist.css';
 import FriendList from './friend-list';
 import ChatList from '../chatlist/chat-list';
+import {
+  recieveChat
+}from "../../socket/socketconnect";
 
 export default class SideNav extends Component {
     constructor(props) {
@@ -17,6 +20,8 @@ export default class SideNav extends Component {
               li:'',
               tab:''
             },
+            chatlist : this.props.chatlist,
+            friendlist : this.props.friendlist
         }
     }
 
@@ -45,13 +50,42 @@ export default class SideNav extends Component {
         })
       }
     }
+
+    componentDidMount(){
+      this.socketChat('chatlist'+this.props.myUser.username)
+    }
+    componentWillUnmount(){
+      this.socketChat('chatlist'+this.props.myUser.username)
+    }
+
+    socketChat = (port) =>{
+      recieveChat(port,(err,recieve)=>{
+        this.setState({
+          chatlist:this.state.chatlist.concat(recieve)
+        })
+      })
+    }
+
     render() {
         const { Friends, Chats} = this.state
-        const list = this.props.friendlist;
-        if(!list){
+        const friendlist = this.state.friendlist;
+        const chatlist = this.state.chatlist;
+
+        if(!friendlist){
           return null
         }
-        const filteredList = list.filter(
+        const filteredListFriend = friendlist.filter(
+          (item) => {
+            return (
+              item.name.toLowerCase().indexOf(this.props.searchValue.toLowerCase()) !== -1
+            );
+          }
+        );
+
+        if(!chatlist){
+          return null
+        }
+        const filteredListChat = chatlist.filter(
           (item) => {
             return (
               item.name.toLowerCase().indexOf(this.props.searchValue.toLowerCase()) !== -1
@@ -72,12 +106,16 @@ export default class SideNav extends Component {
                   <div className = "friend-list-container">
                     <div className="friend-list-box" onClick = {this.props.onClick}>
                       <div className="friend-list-text">
-                      {filteredList.map((friend) => (
+                      {filteredListFriend.map((friend) => (
                         <FriendList
                           open = {this.props.open}
                           changeName = {this.props.changeName}
                           friend = {friend}
                           key = {friend._id}
+                          myUser = {this.props.myUser}
+                          description = {this.props.description}
+                          chatId = {this.props.chatId}
+                          chatlist = {this.state.chatlist}
                           />
                         )
                       )}
@@ -86,11 +124,20 @@ export default class SideNav extends Component {
                   </div>
                 </div>
                 <div className ={"menu-chat-list tab "+Chats.tab}>
-                  <div>
-                      <ChatList
-                        search = {this.props.searchValue}
-                        changeName = {this.props.changeName}
-                        />
+                    <div className = "chat-list-container">
+                      <div className="chat-list-box">
+                        <div className="chat-list-text">
+                          {filteredListChat.map((chat) => (
+                            <ChatList
+                              search = {this.props.searchValue}
+                              changeName = {this.props.changeName}
+                              chat = {chat}
+                              />
+                            )
+                          )
+                        }
+                      </div>
+                    </div>
                   </div>
                 </div>
           </div>

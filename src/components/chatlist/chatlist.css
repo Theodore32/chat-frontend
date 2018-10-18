@@ -47,12 +47,72 @@
   top: 7px;
 }
 
+.friend-time{
+  font-weight: 400;
+  position: absolute;
+  right : 10px;
+  top: 7px;
+}
+
 .lastMessageText{
   color: rgb(137, 137, 137);
   font: inherit;
   position: absolute;
+  float : left;
   top: 29px;
   left : 55px;
+}
+
+.friend-notif-oneNumber{
+  font-size: 14px;
+  font-family: monospace;
+  position: absolute;
+  top: 29px;
+  right : 10px;
+  width : 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  background-color: rgba(98, 94, 94, 0.52);
+}
+
+.friend-notif-twoNumber{
+  font-size: 14px;
+  font-family: monospace;
+  position: absolute;
+  top: 29px;
+  right : 10px;
+  width : 25px;
+  height: 20px;
+  border-radius: .28571429rem;
+  text-align: center;
+  background-color: rgba(98, 94, 94, 0.52);
+}
+
+.friend-notif-threeNumber{
+  font-size: 14px;
+  font-family: monospace;
+  position: absolute;
+  top: 29px;
+  right : 10px;
+  width : 35px;
+  height: 20px;
+  border-radius: .28571429rem;
+  text-align: center;
+  background-color: rgba(98, 94, 94, 0.52);
+}
+
+.friend-notif-threeNumberPlus{
+  font-size: 14px;
+  font-family: monospace;
+  position: absolute;
+  top: 29px;
+  right : 10px;
+  width : 45px;
+  height: 20px;
+  border-radius: .28571429rem;
+  text-align: center;
+  background-color: rgba(98, 94, 94, 0.52);
 }
 
 .li-chats{

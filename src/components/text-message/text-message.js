@@ -13,8 +13,8 @@ export default class inputMessage extends React.Component{
     this.state = {
       message:'',
       file: [],
-      imagePreviewUrl: '',
-      time : new Date()
+      imagePreviewUrl: null,
+      error: ''
     }
 
     this.messageOnChange =this.messageOnChange.bind(this);
@@ -34,11 +34,11 @@ export default class inputMessage extends React.Component{
     console.log("ATTACH: ",attachment);
     console.log("msg: ",message);
     if(this.state.message){
-
       let send = {
         reciever:this.props.sender,
         sender:this.props.recieve,
-        message:this.state.message
+        message:this.state.message,
+        image:this.state.imagePreviewUrl
       }
       sendChat(send)
       this.handleUserInput(attachment,message,time)
@@ -58,16 +58,25 @@ export default class inputMessage extends React.Component{
     })
   }
 
-  handleUserInput = (file,message,time) =>{
-    this.attachPhoto(file,message,time);
+  handleUserInput = (file,message) =>{
+    this.attachPhoto(file,message);
   }
 
-  attachPhoto = (attachment,message,time) =>{
+  attachPhoto = (attachment,message) =>{
+    const sender = this.props.sender;
+    const today = new Date();
+    const getHours = (today.getHours() < 10 ? '0' : '') + today.getHours();
+    const getMinute = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
+    const time = getHours+":"+getMinute;
+    const date = today.getDate();
+    const chatId = this.props.chatId
     var formData = new FormData();
-
-    formData.append ('attachment', attachment)
-    formData.append ('message', message)
-    formData.append ('time', time)
+    formData.append ('chatId', chatId)
+    formData.append ('sender',sender);
+    formData.append ('attachment', attachment);
+    formData.append ('message', message);
+    formData.append ('time', time);
+    formData.append ('date', date);
 
     fetch('/chat',{
       credentials : 'include',
@@ -76,15 +85,19 @@ export default class inputMessage extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
-        console.log("Message Posted");
         // window.location.reload()
         // this.props.history.push('/ChatRoom')
+        this.setState({
+          error : response.message
+        })
       }
       else{
         this.setState({
-          success: false
+          success: false,
+          error: response.message
         })
       }
+      console.log(this.state.error);
     })
   }
 
@@ -112,7 +125,6 @@ _handleImageChange(e) {
  }
 
   render(){
-    {console.log("image :", this.state.imagePreviewUrl)}
     let {imagePreviewUrl} = this.state;
     let $imagePreview = null;
     if (imagePreviewUrl) {

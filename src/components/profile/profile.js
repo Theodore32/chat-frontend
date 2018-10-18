@@ -50,12 +50,10 @@ import setting from '../../picture/menu.png';
    handleClickOutside = (event) => {
     if (this.node && !this.node.contains(event.target)) {
       this.closeSetting();
-      console.log("ASD:" ,this.node);
     }
   }
 
    render(){
-     console.log(this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">
@@ -75,8 +73,10 @@ import setting from '../../picture/menu.png';
               open = {this.state.isOpen}
               name = {this.props.name}
               email = {this.props.email}
+              status = {this.props.status}
               profilePicture = {this.props.profilePicture}
               change = {this.props.change}
+              history = {this.props.history}
             />
           </div>
       :
@@ -85,8 +85,10 @@ import setting from '../../picture/menu.png';
             open = {this.state.isOpen}
             name = {this.props.name}
             email = {this.props.email}
+            status = {this.props.status}
             profilePicture = {this.props.profilePicture}
             change = {this.props.change}
+            history = {this.props.history}
             />
         </div>
       }
