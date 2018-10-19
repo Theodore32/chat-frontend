@@ -43,24 +43,23 @@ export default class Content extends React.Component{
                  null
                  :
                  this.props.chatlog.map((index,urutan) =>{
-                   {console.log("ASD: ",index)}
-                   if(index.send == 0){
+                   if(index.sender.username == this.props.senderUsername){
                      return(
                       <div className = "Message">
                         <div className = "senderMessageName">
                           {this.props.chatlog.length >= 0 ?
                             urutan == 0 ?
                               this.props.chatlog[urutan-1] === "undefined" ?
-                                index.sender !== this.props.chatlog[urutan-1].sender ?
-                                    <p>{index.sender}</p>
+                                index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                    <p>{index.sender.name}</p>
                                   :
                                   null
                                 :
-                                <p>{index.sender}</p>
+                                <p>{index.sender.name}</p>
                               :
                               this.props.chatlog[urutan-1] !== "undefined" ?
-                                index.sender !== this.props.chatlog[urutan-1].sender ?
-                                    <p>{index.sender}</p>
+                                index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                    <p>{index.sender.name}</p>
                                   :
                                   null
                                 :
@@ -79,13 +78,13 @@ export default class Content extends React.Component{
                               }
                               <p>{index.message}</p>
                               <div className = "timeSenderMessageManyLine">
-
+                                {index.time}
                               </div>
                             </div>
                             :
                             <p>{index.message}
                               <div className = "timeSenderMessageOneLine">
-
+                                {index.time}
                               </div>
                             </p>
                           }
@@ -99,16 +98,16 @@ export default class Content extends React.Component{
                          {this.props.chatlog.length >= 0 ?
                            urutan == 0 ?
                              this.props.chatlog[urutan-1] === "undefined" ?
-                               index.sender !== this.props.chatlog[urutan-1].sender ?
-                                   <p>{index.sender}</p>
+                               index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                   <p>{index.sender.name}</p>
                                  :
                                  null
                                :
-                               <p>{index.sender}</p>
+                               <p>{index.sender.name}</p>
                              :
                              this.props.chatlog[urutan-1] !== "undefined" ?
-                               index.sender !== this.props.chatlog[urutan-1].sender ?
-                                   <p>{index.sender}</p>
+                               index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                   <p>{index.sender.name}</p>
                                  :
                                  null
                                :
@@ -122,13 +121,13 @@ export default class Content extends React.Component{
                            <div>
                              <p>{index.message}</p>
                              <div className = "timeReceiverMessageManyLine">
-
+                               {index.time}
                              </div>
                            </div>
                            :
                            <p>{index.message}
                              <div className = "timeReceiverMessageOneLine">
-
+                               {index.time}
                              </div>
                            </p>
                          }
@@ -145,9 +144,10 @@ export default class Content extends React.Component{
         </div>
         </div>
         <Message
+          senderUsername = {this.props.senderUsername}
           sender = {this.props.sender}
           recieve = {this.props.recieve}
-          scroll = {this.scrollBottom}
+          scroll = {this.scrollToBottom}
           chatId = {this.props.chatId}
         />
       </div>

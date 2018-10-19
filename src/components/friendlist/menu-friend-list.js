@@ -60,6 +60,7 @@ export default class SideNav extends Component {
 
     socketChat = (port) =>{
       recieveChat(port,(err,recieve)=>{
+        console.log("receive: ",recieve);
         this.setState({
           chatlist:this.state.chatlist.concat(recieve)
         })

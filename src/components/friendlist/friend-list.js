@@ -17,7 +17,8 @@ export default class FriendList extends React.Component{
     this.state = {
       chatlog:[],
       open : false,
-      chated : false
+      chated : false,
+      openchat : false
     }
 
     this.activeSocket = this.activeSocket.bind(this)
@@ -31,25 +32,31 @@ export default class FriendList extends React.Component{
           chated:true,
           chatId : this.props.chatlist[chat].chatId
         })
+        this.getChatData(this.props.chatlist[chat].chatId);
         break;
       }
     }
   }
 
   componentWillUnmount(){
-    this.activeSocket(this.props.friend.name)
+    this.activeSocket(this.state.chatId)
   }
   activeSocket(port){
     recieveChat(port,(err,recieve)=>{
       this.setState({
-        chatlog:this.state.chatlog.concat({send:recieve.send,message:recieve.message.message,sender:recieve.message.reciever,reciever:recieve.message.sender})
+        chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,reciever:recieve.message.sender,image:recieve.message.image,time: recieve.message.time})
       })
-      this.props.changeName(null,this.props.chatId,this.state.chatlog)
+      if(this.state.openchat){
+        this.props.changeName(null,this.props.chatId,this.state.chatlog)
+      }
     })
   }
 
   openChatRoom = (friend) =>{
     this.close()
+    // this.setState({
+    //   openchat:true
+    // })
     if(!this.state.chated){
       fetch('/addchatroom',{
         credentials:'include',
@@ -66,7 +73,7 @@ export default class FriendList extends React.Component{
         this.setState({
           chatlog: json.message,
           chatId : json.chatId,
-          chated:true
+          chated:true,
         })
         let socketChatlist = {
           myusername:this.props.myUser.username,
@@ -82,8 +89,27 @@ export default class FriendList extends React.Component{
       console.log(this.state.chatId);
     }
     else{
-      this.props.changeName(friend,this.state.chatId,this.state.chatlog)
+      this.props.changeName(friend,this.state.chatId,this.state.chatlog);
     }
+  }
+
+  getChatData = (chat) => {
+    fetch('/getchat',{
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token : chat
+      }),
+    }).then(res => res.json())
+      .then(json =>{
+        if(json.success){
+          this.setState({
+            chatlog : json.message
+          })
+        }
+    })
   }
 
     open = () =>{

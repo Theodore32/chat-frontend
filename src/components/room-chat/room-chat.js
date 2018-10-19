@@ -5,6 +5,9 @@ import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
+import {
+  sendChat
+}from "../../socket/socketconnect";
 
 export default class RoomChat extends React.Component{
   constructor(props){
@@ -63,18 +66,17 @@ export default class RoomChat extends React.Component{
   }
 
   openChatRoom = (item,chatId,log) => {
-    console.log("log :", log);
-    console.log("item :", item);
-    console.log("id",chatId);
-
     if(item !== null){
+      if(this.state.username !== item.username ){
+        sendChat('closechatroom',this.state.username);
+      }
       this.setState({
       name : item.name,
       isOpen : true,
       username:item.username,
       picture : item.picture,
       chatId : chatId,
-      chatlog:log
+      chatlog : log
       })
     }
     else{
@@ -118,9 +120,11 @@ export default class RoomChat extends React.Component{
               <Content
                 escClicked = {this.escClicked}
                 chatlog = {this.state.chatlog}
+                senderUsername = {account.username}
                 sender={account.name}
                 recieve={this.state.name}
                 chatId = {this.state.chatId}
+                time = {this.state.time}
               />
             </div>
           }
