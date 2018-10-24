@@ -18,6 +18,7 @@ export default class inputMessage extends React.Component{
   }
 
   componentDidMount(){
+    console.log(this.props);
     document.addEventListener("keydown", this.onEnterPress, false);
   }
 
@@ -36,7 +37,7 @@ export default class inputMessage extends React.Component{
         sender:this.props.recieve,
         message:this.state.message
       }
-      sendChat(send)
+      sendChat('sendChat',send)
       this.setState({
         message:''
       })
@@ -45,18 +46,17 @@ export default class inputMessage extends React.Component{
 
 
 onEnterPress = (e) => {
-  if(e.keyCode == 13 && e.shiftKey == false) {
+  if(e.keyCode === 13 && e.shiftKey === false) {
     this.onSend(e);
   }
 }
 
   render(){
-    console.log("Message: ",this.state.message);
     return(
       <div className = "footer-app">
         <div className = "inputBarMessage">
           <form onSubmit = {this.onEnterPress}>
-            <img src = {file} className = "fileSetting"/>
+            <img src = {file} className = "fileSetting" alt=''/>
             <TextareaAutosize
               style={{maxHeight : "75px"}}
               className = "message"

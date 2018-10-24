@@ -1,17 +1,7 @@
 import React from 'react';
 import './addfriend.css';
-import {Link} from 'react-router-dom'
-import ChangePassword from '../change-password/change-password';
-import addcontact from '../../picture/add-user.png';
-import muka from '../../picture/muka.jpg'
-import {Modal, Button, Form, Loader} from 'semantic-ui-react';
+import {Modal} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
-
-
-import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -171,7 +161,6 @@ export default class AddFriend extends React.Component{
 
 
   render(){
-    const { open, size } = this.state;
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
@@ -205,7 +194,7 @@ export default class AddFriend extends React.Component{
                 </center>
                   :
                 <center>
-                  <img src = {this.state.searchResult.picture} className = "addfriend-profile-setting"/><br/>
+                  <img src = {this.state.searchResult.picture} className = "addfriend-profile-setting" alt=''/><br/>
                   <div className = "addfriend-text">
                     {this.state.searchResult.name}
                   </div><br/>

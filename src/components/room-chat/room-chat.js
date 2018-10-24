@@ -32,7 +32,6 @@ export default class RoomChat extends React.Component{
            this.props.history.push('/')
          }
          else{
-           console.log(json);
            this.setState({
              account:json.akun,
              isLoading:false
@@ -63,10 +62,11 @@ export default class RoomChat extends React.Component{
     })
   }
 
-  openChatRoom = (item,log) => {
+  openChatRoom = (item,chatId,log) => {
     if(item !== null){
       this.setState({
       name : item.name,
+      chatid:chatId,
       isOpen : true,
       username:item.username,
       picture : item.picture,
@@ -141,6 +141,8 @@ export default class RoomChat extends React.Component{
                 changeName={this.openChatRoom}
                 searchValue = {this.state.search}
                 friendlist = {account.friends}
+                chatlist = {account.chatList}
+                myUser = {{username:account.username,name:account.name}}
               />
           </div>
         </div>

@@ -2,56 +2,17 @@ import React from 'react';
 import './chatlist.css';
 
 import gambar from '../../picture/boy.png';
+import {
+  recieveChat
+}from "../../socket/socketconnect";
 
 export default class FriendList extends React.Component{
   constructor(props){
     super(props);
 
     this.state = {
-      location: [
-        {
-            id: 0,
-            title: 'New York',
-            selected: false,
-            key: 'location',
-            message : 'asd'
-        },
-        {
-          id: 1,
-          title: 'Dublin',
-          selected: false,
-          key: 'location',
-          message : 'asd'
-        },
-        {
-          id: 2,
-          title: 'California',
-          selected: false,
-          key: 'location',
-          message : 'asd'
-        },
-        {
-          id: 3,
-          title: 'Istanbul',
-          selected: false,
-          key: 'location',
-          message : 'asd'
-        },
-        {
-          id: 4,
-          title: 'Izmir',
-          selected: false,
-          key: 'location',
-          message : 'asd'
-        },
-        {
-          id: 5,
-          title: 'Oslo',
-          selected: false,
-          key: 'location',
-          message : 'asd'
-        }
-      ]
+      chatlog:[],
+      lastMessage:''
     }
   }
   getChatData = () => {
@@ -59,42 +20,40 @@ export default class FriendList extends React.Component{
       credentials:'include'
     })
   }
+  componentDidMount(){
+    this.activeSocket(this.props.chat.chatId)
+  }
+  componentWillUnmount(){
+    this.activeSocket(this.props.chat.chatId)
+  }
+  activeSocket = (port) =>{
+    recieveChat(port,(err,recieve)=>{
+      console.log(recieve);
+      this.setState({
+        chatlog:this.state.chatlog.concat({send:recieve.send,message:recieve.message.message,sender:recieve.message.reciever,reciever:recieve.message.sender}),
+        lastMessage:recieve.message.message
+      })
+      this.props.changeName(null,port,this.state.chatlog)
+    })
+  }
   render(){
-    const list = this.state.location;
-    const filteredList = list.filter(
-      (item) => {
-        return (
-          item.title.toLowerCase().indexOf(this.props.search.toLowerCase()) !== -1
-        );
-      }
-    );
-
+    const chat = this.props.chat
     return(
-        <div className = "chat-list-container">
-          <div className="chat-list-box">
-            <div className="chat-list-text">
-              {filteredList.map((chat) => (
-                      <li className = "chat-list-text" key={chat.id}
-                        onClick={() =>
-                          this.props.changeName(chat.title)
-                        }
-                      >
-                      <div className = "chat-list-picture">
-                        <img src = {gambar}/>
-                      </div>
-                      <div className = "friend-name">
-                        {chat.title}
-                      </div>
-                      <div className = "lastMessageText">
-                        {chat.message}
-                      </div>
-                      </li>
-                  )
-                )
-              }
-            </div>
-          </div>
-        </div>
+      <li className = "chat-list-text"
+        onClick={() =>
+        this.props.changeName(chat,this.props.chat.chatId,this.state.chatlog)
+        }
+      >
+      <div className = "chat-list-picture">
+      <img src = {gambar} alt=''/>
+      </div>
+      <div className = "friend-name">
+      {chat.name}
+      </div>
+      <div className = "lastMessageText">
+        {this.state.lastMessage}
+      </div>
+      </li>
     );
   }
 }

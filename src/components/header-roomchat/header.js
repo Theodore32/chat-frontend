@@ -1,9 +1,7 @@
 import React from 'react';
 import './header.css';
-
-import profileImage from '../../picture/muka.jpg';
 import setting from '../../picture/menu.png';
-import {Popup , Modal, Image} from 'semantic-ui-react';
+import {Popup , Modal} from 'semantic-ui-react';
 
 export default class HeaderChat extends React.Component{
   render(){
@@ -16,7 +14,7 @@ export default class HeaderChat extends React.Component{
             centered={false}>
             <Modal.Header centered>{this.props.name}</Modal.Header>
             <Modal.Content>
-              <img src = {this.props.picture}/>
+              <img src = {this.props.picture} alt=''/>
             </Modal.Content>
           </Modal>
           <div className = "header-room-name">

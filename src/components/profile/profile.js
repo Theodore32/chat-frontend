@@ -50,12 +50,10 @@ import setting from '../../picture/menu.png';
    handleClickOutside = (event) => {
     if (this.node && !this.node.contains(event.target)) {
       this.closeSetting();
-      console.log("ASD:" ,this.node);
     }
   }
 
    render(){
-     console.log(this.state.isOpen);
      return(
       <div className = "profile-container" >
         <div className = "profileImageClick">

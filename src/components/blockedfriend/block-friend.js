@@ -230,7 +230,6 @@ export default class AddFriend extends React.Component{
         }
       ]
     }
-
   }
 
    show = (size,name) => {
@@ -260,7 +259,6 @@ export default class AddFriend extends React.Component{
    }
 
   render(){
-    const { open, size } = this.state;
     const list = this.state.location;
     const filteredList = list.filter(
       (friend) => {

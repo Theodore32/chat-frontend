@@ -1,9 +1,6 @@
 import React from 'react'
 import './changepassword.css'
-import {Modal,Button, Form, Dimmer,Loader} from 'semantic-ui-react';
-
-import {Route,Link} from 'react-router-dom';
-
+import {Modal,Button, Form,Loader} from 'semantic-ui-react';
 
 export default class ChangePassword extends React.Component{
   constructor(props){
@@ -118,7 +115,7 @@ export default class ChangePassword extends React.Component{
   }
 
   confirmPasswordValidation = (confirmPass,newPass) =>{
-    if(confirmPass == ""){
+    if(confirmPass === ""){
       this.setState({
         confirmPassValid : false,
         confirmPasswordError : "This field is required"
@@ -149,7 +146,6 @@ export default class ChangePassword extends React.Component{
   }
 
   closeModal = () =>{
-    const currentRoute = this.props.url
     this.setState ({
       open : false,
       oldPass : '',
