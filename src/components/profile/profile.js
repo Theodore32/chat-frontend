@@ -68,6 +68,7 @@ import setting from '../../picture/menu.png';
         {this.state.isOpen ?
           <div ref={node => this.node = node}>
             <SettingProfile
+              username = {this.props.username}
               modal = {this.state.showPopup}
               click = {this.handleOpen}
               open = {this.state.isOpen}
@@ -82,6 +83,7 @@ import setting from '../../picture/menu.png';
       :
         <div ref={node => this.node = node}>
           <SettingProfile
+            username = {this.props.username}
             open = {this.state.isOpen}
             name = {this.props.name}
             email = {this.props.email}

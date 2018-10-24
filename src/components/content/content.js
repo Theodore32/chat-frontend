@@ -34,6 +34,13 @@ export default class Content extends React.Component{
     this.scrollToBottom();
   }
 
+  getTimefromLog(timestamp){
+    let time  = new Date(timestamp)
+    const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
+    const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
+    return (getHours+':'+getMinute)
+  }
+
   render(){
     return (
       <div>
@@ -78,13 +85,13 @@ export default class Content extends React.Component{
                               }
                               <p>{index.message}</p>
                               <div className = "timeSenderMessageManyLine">
-                                {index.time}
+                                {this.getTimefromLog(index.time)}
                               </div>
                             </div>
                             :
                             <p>{index.message}
                               <div className = "timeSenderMessageOneLine">
-                                {index.time}
+                                {this.getTimefromLog(index.time)}
                               </div>
                             </p>
                           }

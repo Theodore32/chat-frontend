@@ -25,6 +25,8 @@ export default class FriendList extends React.Component{
   }
 
   componentDidMount(){
+    this.socketcloseChatroom()
+    this.socketFriend(this.props.friend.username)
     for(var chat in this.props.chatlist){
       if(this.props.chatlist[chat].username === this.props.friend.username){
         this.activeSocket(this.props.chatlist[chat].chatId)
@@ -36,10 +38,28 @@ export default class FriendList extends React.Component{
         break;
       }
     }
+
   }
 
   componentWillUnmount(){
+    this.socketcloseChatroom()
+    this.socketopenChatroom()
+    this.socketFriend(this.props.friend.username)
     this.activeSocket(this.state.chatId)
+  }
+  socketcloseChatroom=()=>{
+    recieveChat('closechatroom'+this.props.friend.username,(err,recieve)=>{
+        this.setState({
+          openchat:false
+        })
+    })
+  }
+  socketopenChatroom=() =>{
+    recieveChat('openchatroom'+this.props.friend.username,(err,recieve)=>{
+        this.setState({
+          openchat:true
+        })
+    })
   }
   activeSocket(port){
     recieveChat(port,(err,recieve)=>{
@@ -52,11 +72,18 @@ export default class FriendList extends React.Component{
     })
   }
 
+  socketFriend = (port) => {
+    recieveChat('edit'+port, (err,recieve) => {
+      this.props.editfriendSocket(recieve.message)
+    })
+  }
+
   openChatRoom = (friend) =>{
     this.close()
-    // this.setState({
-    //   openchat:true
-    // })
+    this.setState({
+      openchat:true
+    })
+    sendChat('openchatroom',this.props.friend.username)
     if(!this.state.chated){
       fetch('/addchatroom',{
         credentials:'include',
@@ -71,22 +98,22 @@ export default class FriendList extends React.Component{
       }).then(res => res.json())
       .then(json =>{
         this.setState({
-          chatlog: json.message,
           chatId : json.chatId,
           chated:true,
         })
         let socketChatlist = {
           myusername:this.props.myUser.username,
           myname:this.props.myUser.name,
+          mypicture : this.props.myUser.picture,
           otherusername:friend.username,
           othername:friend.name,
+          otherpicture : friend.picture,
           chatId:json.chatId
         }
         sendChat('newchatlist',socketChatlist)
         this.activeSocket(json.chatid)
-        this.props.changeName(friend,this.state.chatId,this.state.chatlog)
+        this.props.changeName(friend,json.chatId,this.state.chatlog)
       })
-      console.log(this.state.chatId);
     }
     else{
       this.props.changeName(friend,this.state.chatId,this.state.chatlog);

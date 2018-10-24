@@ -292,6 +292,7 @@ export default class SettingProfile extends React.Component{
     return(
       <div className = {"popup-container "+ this.props.modal}>
         <EditProfile
+          username = {this.props.username}
           name = {this.props.name}
           email = {this.props.email}
           status = {this.props.status}
