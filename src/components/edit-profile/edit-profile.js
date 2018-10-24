@@ -2,6 +2,9 @@ import React from 'react'
 import './editprofile.css'
 import {Image, Modal, Form, Button} from 'semantic-ui-react';
 import profile from '../../picture/boy.png';
+import {
+  sendChat
+}from "../../socket/socketconnect";
 
 export default class EditProfile extends React.Component{
   constructor(props){
@@ -50,7 +53,27 @@ export default class EditProfile extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
+        console.log(response.photo);
+        let data;
+        if(response.photo){
+          data = {
+            photo : response.photo,
+            username : this.props.username,
+            description : status,
+            name : name
+          }
+        }
+        else {
+          data = {
+            photo : this.props.profilePicture,
+            username : this.props.username,
+            description : status,
+            name : name
+          }
+        }
+        sendChat("editprofile",data)
         this.props.change()
+
         // window.location.reload()
         // this.props.history.push('/ChatRoom')
       }

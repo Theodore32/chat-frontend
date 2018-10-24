@@ -30,8 +30,10 @@ export default class inputMessage extends React.Component{
     const today = new Date();
     const getHours = (today.getHours() < 10 ? '0' : '') + today.getHours();
     const getMinute = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
-    const time = getHours+":"+getMinute;
-    const date = today.getDate();
+    const dd = (today.getDate() < 10 ? '0' : '')+today.getDate();
+    const mm = ((today.getMonth()+1) < 10 ? '0' : '')+(today.getMonth()+1); //January is 0!
+    const yyyy = today.getFullYear();
+    const date = dd+'-'+mm+'-'+yyyy;
     const message = this.state.message;
     const attachment = this.state.file;
     // console.log("ATTACH: ",attachment);
@@ -46,10 +48,10 @@ export default class inputMessage extends React.Component{
         chatId:this.props.chatId,
         message:this.state.message,
         image:this.state.imagePreviewUrl,
-        time : time
+        time : today
       }
       sendChat('sendChat',send)
-      this.handleUserInput(attachment,message,time,date)
+      this.attachPhoto(attachment,message,today)
       this.setState({
         message:'',
         imagePreviewUrl :'',
@@ -66,22 +68,20 @@ export default class inputMessage extends React.Component{
     })
   }
 
-  handleUserInput = (file,message,time,date) =>{
-    this.attachPhoto(file,message,time,date);
-  }
-
-  attachPhoto = (attachment,message,time,date) =>{
+  attachPhoto = (attachment,message,time) =>{
     const senderUsername = this.props.senderUsername;
     const sender = this.props.sender;
-    const chatId = this.props.chatId
+    const chatId = this.props.chatId;
+    const receive = this.props.recieve;
+
     var formData = new FormData();
     formData.append ('chatId', chatId);
     formData.append ('senderUsername', senderUsername);
     formData.append ('sender',sender);
     formData.append ('attachment', attachment);
     formData.append ('message', message);
-    formData.append ('time', time);
-    formData.append ('date', date);
+    formData.append ('timeStamp', time);
+    formData.append ('recieve',receive);
 
     fetch('/chat',{
       credentials : 'include',

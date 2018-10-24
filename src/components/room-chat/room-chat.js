@@ -56,7 +56,6 @@ export default class RoomChat extends React.Component{
         this.props.history.push('/')
       }
       else{
-        console.log(json);
         this.setState({
           account:json.akun,
           isLoading:false
@@ -117,12 +116,13 @@ export default class RoomChat extends React.Component{
                 name = {this.state.name}
                 picture = {this.state.picture}
               />
+              
               <Content
                 escClicked = {this.escClicked}
                 chatlog = {this.state.chatlog}
                 senderUsername = {account.username}
                 sender={account.name}
-                recieve={this.state.name}
+                recieve={this.state.username}
                 chatId = {this.state.chatId}
                 time = {this.state.time}
               />
@@ -133,6 +133,7 @@ export default class RoomChat extends React.Component{
                 togglePopup = {this.togglePopup}
                 history = {this.props.history}
                 isClose = {this.state.isOpen}
+                username = {account.username}
                 name = {account.name}
                 email = {account.email}
                 status = {account.description}
@@ -154,7 +155,7 @@ export default class RoomChat extends React.Component{
                 chatlist = {account.chatList}
                 description = {account.description}
                 chatId = {this.state.chatId}
-                myUser = {{username:account.username,name:account.name}}
+                myUser = {{username:account.username,name:account.name,picture : account.picture}}
               />
           </div>
         </div>
