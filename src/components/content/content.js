@@ -34,12 +34,6 @@ export default class Content extends React.Component{
     this.scrollToBottom();
   }
 
-<<<<<<< HEAD
-  render(){
-    const time = new Date();
-    const timeHours = (time.getHours()<10?'0':'') + time.getHours();
-    const timeMinute = (time.getMinutes()<10?'0':'') + time.getMinutes();
-=======
   getTimefromLog(timestamp){
     let time  = new Date(timestamp)
     const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
@@ -48,7 +42,6 @@ export default class Content extends React.Component{
   }
 
   render(){
->>>>>>> ce0295e22ab5c4ee9b3006a9870b05113501ed6f
     return (
       <div>
         <div className = "content-container" id = "content-container">
@@ -57,11 +50,7 @@ export default class Content extends React.Component{
                  null
                  :
                  this.props.chatlog.map((index,urutan) =>{
-<<<<<<< HEAD
-                   if(index.send === 0){
-=======
                    if(index.sender.username == this.props.senderUsername){
->>>>>>> ce0295e22ab5c4ee9b3006a9870b05113501ed6f
                      return(
                       <div className = "Message">
                         <div className = "senderMessageName">

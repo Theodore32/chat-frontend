@@ -3,12 +3,8 @@ import './chatlist.css';
 
 import gambar from '../../picture/boy.png';
 import {
-<<<<<<< HEAD
-  recieveChat
-=======
   recieveChat,
   sendChat
->>>>>>> ce0295e22ab5c4ee9b3006a9870b05113501ed6f
 }from "../../socket/socketconnect";
 
 export default class FriendList extends React.Component{
@@ -17,13 +13,9 @@ export default class FriendList extends React.Component{
 
     this.state = {
       chatlog:[],
-<<<<<<< HEAD
-      lastMessage:''
-=======
       openchat:false,
       lastMessage : '',
       notif : 0
->>>>>>> ce0295e22ab5c4ee9b3006a9870b05113501ed6f
     }
   }
 
@@ -47,42 +39,6 @@ export default class FriendList extends React.Component{
         })
     })
   }
-<<<<<<< HEAD
-  componentDidMount(){
-    this.activeSocket(this.props.chat.chatId)
-  }
-  componentWillUnmount(){
-    this.activeSocket(this.props.chat.chatId)
-  }
-  activeSocket = (port) =>{
-    recieveChat(port,(err,recieve)=>{
-      console.log(recieve);
-      this.setState({
-        chatlog:this.state.chatlog.concat({send:recieve.send,message:recieve.message.message,sender:recieve.message.reciever,reciever:recieve.message.sender}),
-        lastMessage:recieve.message.message
-      })
-      this.props.changeName(null,port,this.state.chatlog)
-    })
-  }
-  render(){
-    const chat = this.props.chat
-    return(
-      <li className = "chat-list-text"
-        onClick={() =>
-        this.props.changeName(chat,this.props.chat.chatId,this.state.chatlog)
-        }
-      >
-      <div className = "chat-list-picture">
-      <img src = {gambar} alt=''/>
-      </div>
-      <div className = "friend-name">
-      {chat.name}
-      </div>
-      <div className = "lastMessageText">
-        {this.state.lastMessage}
-      </div>
-      </li>
-=======
   socketopenChatroom=() =>{
     recieveChat('openchatroom'+this.props.chat.username,(err,recieve)=>{
         this.setState({
@@ -245,7 +201,6 @@ export default class FriendList extends React.Component{
           </div>
           </li>
         </div>
->>>>>>> ce0295e22ab5c4ee9b3006a9870b05113501ed6f
     );
   }
 }
