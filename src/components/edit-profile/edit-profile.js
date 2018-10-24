@@ -2,6 +2,9 @@ import React from 'react'
 import './editprofile.css'
 import {Image, Modal, Form, Button} from 'semantic-ui-react';
 import profile from '../../picture/boy.png';
+import {
+  sendChat
+}from "../../socket/socketconnect";
 
 export default class EditProfile extends React.Component{
   constructor(props){
@@ -11,6 +14,7 @@ export default class EditProfile extends React.Component{
       name : this.props.name,
       email : this.props.email,
       currentPhoto : this.props.profilePicture,
+      status : this.props.status,
       changePhoto : []
     }
   }
@@ -26,18 +30,21 @@ export default class EditProfile extends React.Component{
   handleUserInput = () =>{
     const name = this.state.name
     const photo = this.state.changePhoto
-
-    this.updateProfile(name,photo)
+    const status = this.state.status
+    this.updateProfile(name,photo,status)
   }
 
-  updateProfile = (name,photo) =>{
+  updateProfile = (name,photo,status) =>{
 
     var formData = new FormData();
 
     formData.append ('Image', photo)
     formData.append ('name', name)
+    formData.append ('description', status)
+
     console.log("Nama : ",name);
     console.log("foto : ",photo);
+    console.log("status : ",status);
 
     fetch('/editprofile',{
       credentials : 'include',
@@ -46,7 +53,27 @@ export default class EditProfile extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
+        console.log(response.photo);
+        let data;
+        if(response.photo){
+          data = {
+            photo : response.photo,
+            username : this.props.username,
+            description : status,
+            name : name
+          }
+        }
+        else {
+          data = {
+            photo : this.props.profilePicture,
+            username : this.props.username,
+            description : status,
+            name : name
+          }
+        }
+        sendChat("editprofile",data)
         this.props.change()
+
         // window.location.reload()
         // this.props.history.push('/ChatRoom')
       }
@@ -128,6 +155,14 @@ export default class EditProfile extends React.Component{
                 value= {this.state.name}
                 type ="text"
                 name="name"
+                onChange={this.handleInput}/>
+            </Form.Field>
+            <Form.Field>
+              <label>Status Message</label>
+              <input
+                value = {this.state.status}
+                type  = "text"
+                name = "status"
                 onChange={this.handleInput}/>
             </Form.Field>
             <Form.Field>

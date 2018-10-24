@@ -25,11 +25,18 @@ class RegisterForm extends React.Component{
     }
   }
 
-  usernameValidation = (username) => {
+  usernameValidation = (username,regex) => {
     if(username.length < 5){
       this.setState({
         usernameIsValid : false,
         messageUsername : "Username must at least 5 characters"
+      });
+      return false
+    }
+    else if (username.match(regex)){
+      this.setState({
+        usernameIsValid : false,
+        messageUsername : "Username can not contain space character"
       });
       return false
     }
@@ -137,14 +144,15 @@ class RegisterForm extends React.Component{
     let retypePassword = this.refs.retypePassword.value;
     let firstName = this.refs.firstName.value;
     let lastName = this.refs.lastName.value;
-    let regex = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+    let regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+    let regexUsername = /\s/g;
 
-    this.usernameValidation(username)
+    this.usernameValidation(username,regexUsername)
     this.nameValidation(firstName,lastName)
-    this.emailValidation(email,regex)
+    this.emailValidation(email,regexEmail)
     this.passwordValidation(password,retypePassword)
 
-    if(this.usernameValidation(username) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regex) && this.passwordValidation(password,retypePassword)){
+    if(this.usernameValidation(username,regexUsername) && this.nameValidation(firstName,lastName) && this.emailValidation(email,regexEmail) && this.passwordValidation(password,retypePassword)){
       this.RegisUser(username,email,password,retypePassword,firstName,lastName);
     }
   }

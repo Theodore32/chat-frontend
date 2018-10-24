@@ -68,23 +68,29 @@ import setting from '../../picture/menu.png';
         {this.state.isOpen ?
           <div ref={node => this.node = node}>
             <SettingProfile
+              username = {this.props.username}
               modal = {this.state.showPopup}
               click = {this.handleOpen}
               open = {this.state.isOpen}
               name = {this.props.name}
               email = {this.props.email}
+              status = {this.props.status}
               profilePicture = {this.props.profilePicture}
               change = {this.props.change}
+              history = {this.props.history}
             />
           </div>
       :
         <div ref={node => this.node = node}>
           <SettingProfile
+            username = {this.props.username}
             open = {this.state.isOpen}
             name = {this.props.name}
             email = {this.props.email}
+            status = {this.props.status}
             profilePicture = {this.props.profilePicture}
             change = {this.props.change}
+            history = {this.props.history}
             />
         </div>
       }

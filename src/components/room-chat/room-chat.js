@@ -5,6 +5,9 @@ import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
+import {
+  sendChat
+}from "../../socket/socketconnect";
 
 export default class RoomChat extends React.Component{
   constructor(props){
@@ -53,7 +56,6 @@ export default class RoomChat extends React.Component{
         this.props.history.push('/')
       }
       else{
-        console.log(json);
         this.setState({
           account:json.akun,
           isLoading:false
@@ -64,13 +66,16 @@ export default class RoomChat extends React.Component{
 
   openChatRoom = (item,chatId,log) => {
     if(item !== null){
+      if(this.state.username !== item.username ){
+        sendChat('closechatroom',this.state.username);
+      }
       this.setState({
       name : item.name,
-      chatid:chatId,
       isOpen : true,
       username:item.username,
       picture : item.picture,
-      chatlog:log
+      chatId : chatId,
+      chatlog : log
       })
     }
     else{
@@ -111,11 +116,15 @@ export default class RoomChat extends React.Component{
                 name = {this.state.name}
                 picture = {this.state.picture}
               />
+              
               <Content
                 escClicked = {this.escClicked}
                 chatlog = {this.state.chatlog}
+                senderUsername = {account.username}
                 sender={account.name}
-                recieve={this.state.name}
+                recieve={this.state.username}
+                chatId = {this.state.chatId}
+                time = {this.state.time}
               />
             </div>
           }
@@ -124,8 +133,10 @@ export default class RoomChat extends React.Component{
                 togglePopup = {this.togglePopup}
                 history = {this.props.history}
                 isClose = {this.state.isOpen}
+                username = {account.username}
                 name = {account.name}
                 email = {account.email}
+                status = {account.description}
                 profilePicture = {account.profilePicture}
                 url = {this.props.match.url}
                 change={this.afterchange}
@@ -142,7 +153,9 @@ export default class RoomChat extends React.Component{
                 searchValue = {this.state.search}
                 friendlist = {account.friends}
                 chatlist = {account.chatList}
-                myUser = {{username:account.username,name:account.name}}
+                description = {account.description}
+                chatId = {this.state.chatId}
+                myUser = {{username:account.username,name:account.name,picture : account.picture}}
               />
           </div>
         </div>

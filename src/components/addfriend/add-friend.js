@@ -77,7 +77,6 @@ export default class AddFriend extends React.Component{
        })
      }).then( res => res.json())
      .then (res => {
-       console.log("ASD: ",res);
        this.setState({
          searchResult : res,
          loading : false
@@ -90,6 +89,7 @@ export default class AddFriend extends React.Component{
      const username = this.state.search
      const name = this.state.searchResult.name
      const picture = this.state.searchResult.picture
+     const description = this.state.searchResult.description
      fetch('/Friends',{
        credentials : 'include',
        method : 'PUT',
@@ -100,7 +100,8 @@ export default class AddFriend extends React.Component{
          friendlist : {
           username : username,
           name : name,
-          picture : picture
+          picture : picture,
+          description : description
         }
        })
      }).then (res => res.json())
@@ -116,6 +117,7 @@ export default class AddFriend extends React.Component{
     const username = this.state.search
     const name = this.state.searchResult.name
     const picture = this.state.searchResult.picture
+    const description = this.state.searchResult.description
     fetch('/add',{
       credentials:'include',
       method:'PUT',
@@ -125,7 +127,8 @@ export default class AddFriend extends React.Component{
       body:JSON.stringify({
         username : username,
         name : name,
-        picture : picture
+        picture : picture,
+        description : description
       })
     }).then(res => res.json())
     .then(res=>{
@@ -140,6 +143,7 @@ export default class AddFriend extends React.Component{
     const username = this.state.search
     const name = this.state.searchResult.name
     const picture = this.state.searchResult.picture
+    const description = this.state.searchResult.description
     fetch('/block',{
       credentials:'include',
       method:'PUT',
@@ -149,7 +153,8 @@ export default class AddFriend extends React.Component{
       body:JSON.stringify({
         username : username,
         name : name,
-        picture : picture
+        picture : picture,
+        description : description
       })
     }).then(res => res.json())
     .then(res=>{
