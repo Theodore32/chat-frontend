@@ -40,32 +40,33 @@
   border-radius: 50%;
 }
 
-.friend-name{
-  font-weight: 400;
+.chat-name{
   position: absolute;
   left : 55px;
   top: 7px;
+  font-family: HelveticaNeue;
 }
 
-.friend-time{
-  font-weight: 400;
+.chat-time{
   position: absolute;
   right : 10px;
   top: 7px;
+  font-family: HelveticaNeue;
+  color : rgb(137, 137, 137);
+  font-size: 14px;
 }
 
-.lastMessageText{
+.chat-lastMessageText{
   color: rgb(137, 137, 137);
-  font: inherit;
   position: absolute;
   float : left;
   top: 29px;
   left : 55px;
+  font-family: HelveticaNeueLight;
 }
 
 .friend-notif-oneNumber{
   font-size: 14px;
-  font-family: monospace;
   position: absolute;
   top: 29px;
   right : 10px;
@@ -74,11 +75,11 @@
   border-radius: 50%;
   text-align: center;
   background-color: rgba(98, 94, 94, 0.52);
+  font-family: HelveticaNeue;
 }
 
 .friend-notif-twoNumber{
   font-size: 14px;
-  font-family: monospace;
   position: absolute;
   top: 29px;
   right : 10px;
@@ -87,11 +88,11 @@
   border-radius: .28571429rem;
   text-align: center;
   background-color: rgba(98, 94, 94, 0.52);
+  font-family: HelveticaNeue;
 }
 
 .friend-notif-threeNumber{
   font-size: 14px;
-  font-family: monospace;
   position: absolute;
   top: 29px;
   right : 10px;
@@ -100,11 +101,11 @@
   border-radius: .28571429rem;
   text-align: center;
   background-color: rgba(98, 94, 94, 0.52);
+  font-family: HelveticaNeue;
 }
 
 .friend-notif-threeNumberPlus{
   font-size: 14px;
-  font-family: monospace;
   position: absolute;
   top: 29px;
   right : 10px;
@@ -113,6 +114,7 @@
   border-radius: .28571429rem;
   text-align: center;
   background-color: rgba(98, 94, 94, 0.52);
+  font-family: HelveticaNeue;
 }
 
 .li-chats{
@@ -127,4 +129,10 @@
   line-height: 30px;
   border-bottom: 1px solid #aaa;
   cursor: default;
+  position: relative;
+  font-family: HelveticaNeue;
+}
+
+.li-chats p{
+  line-height: 30px;
 }

@@ -6,12 +6,9 @@ import addcontact from '../../picture/add-user.png';
 import muka from '../../picture/muka.jpg'
 import {Modal, Button, Form, Loader} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
-
-
 import {
-  setInStorage,
-  getFromStorage
-}from '../../token/storage'
+  sendSocket
+}from "../../socket/socketconnect"
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -26,23 +23,19 @@ export default class AddFriend extends React.Component{
       },
       loading : false
     }
-
-    this.logout = this.logout.bind(this)
   }
 
-  logout(e) {
-   e.preventDefault()
-      // Verify token
-      fetch('/logout',{
-        credentials:'include'
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.success) {
-            this.props.history.push('/LoginForm')
-          }
-         }
-       );
+  componentDidMount(){
+    document.addEventListener("keydown", this.onEnterPress, false);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.onEnterPress, false);
+  }
+  onEnterPress=(e)=>{
+    if(e.keyCode == 13) {
+      this.searchData(e);
+    }
   }
 
    show = (size,name) => {
@@ -94,6 +87,18 @@ export default class AddFriend extends React.Component{
      })
    }
 
+   newFriend = (username,name,picture,description) =>{
+    let message = {
+      myUsername : this.props.username,
+      username : username,
+      name : name,
+      picture : picture,
+      description : description
+    }
+    console.log(message);
+    sendSocket('newfriend',message);
+   }
+
    addFriend = (event) =>{
      event.preventDefault()
      const username = this.state.search
@@ -117,8 +122,9 @@ export default class AddFriend extends React.Component{
      }).then (res => res.json())
      .then (res => {
        this.setState({
-         searchResult : res
+         searchResult : res,
        })
+       this.newFriend(username,name,picture,description)
      })
    }
 

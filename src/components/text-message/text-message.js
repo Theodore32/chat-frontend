@@ -3,7 +3,7 @@ import './text-message.css';
 import TextareaAutosize from 'react-autosize-textarea';
 import file from '../../picture/paperclip.png';
 import {
-  sendChat
+  sendSocket
 }from "../../socket/socketconnect"
 
 export default class inputMessage extends React.Component{
@@ -23,6 +23,9 @@ export default class inputMessage extends React.Component{
 
   componentDidMount(){
     document.addEventListener("keydown", this.onEnterPress, false);
+  }
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.onEnterPress, false);
   }
 
   onSend(e){
@@ -48,10 +51,11 @@ export default class inputMessage extends React.Component{
         chatId:this.props.chatId,
         message:this.state.message,
         image:this.state.imagePreviewUrl,
-        time : today
+        time : today,
+        date : date
       }
-      sendChat('sendChat',send)
-      this.attachPhoto(attachment,message,today)
+      sendSocket('sendChat',send)
+      this.attachPhoto(attachment,message,today,date)
       this.setState({
         message:'',
         imagePreviewUrl :'',
@@ -68,7 +72,7 @@ export default class inputMessage extends React.Component{
     })
   }
 
-  attachPhoto = (attachment,message,time) =>{
+  attachPhoto = (attachment,message,time,date) =>{
     const senderUsername = this.props.senderUsername;
     const sender = this.props.sender;
     const chatId = this.props.chatId;
@@ -81,6 +85,7 @@ export default class inputMessage extends React.Component{
     formData.append ('attachment', attachment);
     formData.append ('message', message);
     formData.append ('timeStamp', time);
+    formData.append ('date', date);
     formData.append ('recieve',receive);
 
     fetch('/chat',{

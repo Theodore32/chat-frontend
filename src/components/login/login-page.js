@@ -124,7 +124,7 @@ class LoginForm extends React.Component{
             {!signInError ?
                 null
               :
-                <div>
+                <div className = "login-error">
                   <p>
                     {signInError}
                   </p>

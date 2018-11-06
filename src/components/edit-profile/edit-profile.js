@@ -3,7 +3,7 @@ import './editprofile.css'
 import {Image, Modal, Form, Button} from 'semantic-ui-react';
 import profile from '../../picture/boy.png';
 import {
-  sendChat
+  sendSocket
 }from "../../socket/socketconnect";
 
 export default class EditProfile extends React.Component{
@@ -71,7 +71,7 @@ export default class EditProfile extends React.Component{
             name : name
           }
         }
-        sendChat("editprofile",data)
+        sendSocket("editprofile",data)
         this.props.change()
 
         // window.location.reload()

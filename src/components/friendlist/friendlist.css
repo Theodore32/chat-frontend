@@ -116,22 +116,15 @@
   line-height: 30px;
   border-bottom: 1px solid #aaa;
   cursor: default;
-}
-
-.li-chats {
-  position: relative;
-}
-
-.li-chats p{
-  line-height: 30px;
+  font-family: HelveticaNeue;
 }
 
 .chat-notif-oneNumber{
   font-size: 14px;
-  font-family: monospace;
+  font-family: HelveticaNeue;
   position: absolute;
-  right: 51px;
-  top : 4px;
+  right: 40px;
+  top : 5px;
   width : 20px;
   height: 20px;
   line-height: 20px;
@@ -142,10 +135,10 @@
 
 .chat-notif-twoNumber{
   font-size: 14px;
-  font-family: monospace;
+  font-family: HelveticaNeue;
   position: absolute;
-  right: 49px;
-  top : 4px;
+  right: 33px;
+  top : 5px;
   width : 25px;
   height: 20px;
   line-height: 20px;
@@ -156,10 +149,10 @@
 
 .chat-notif-threeNumber{
   font-size: 14px;
-  font-family: monospace;
+  font-family: HelveticaNeue;
   position: absolute;
-  right: 36px;
-  top : 4px;
+  right: 23px;
+  top : 5px;
   width : 35px;
   height: 20px;
   line-height: 20px;
@@ -170,10 +163,10 @@
 
 .chat-notif-threeNumberPlus{
   font-size: 14px;
-  font-family: monospace;
+  font-family: HelveticaNeue;
   position: absolute;
-  right: 28px;
-  top : 4px;
+  right: 14px;
+  top : 5px;
   width : 45px;
   height: 20px;
   line-height: 20px;

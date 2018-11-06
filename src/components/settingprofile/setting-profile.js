@@ -300,8 +300,11 @@ export default class SettingProfile extends React.Component{
           click = {this.props.click}
           change = {this.props.change}/>
         <AddFriend
-          click = {this.props.click}/>
+          click = {this.props.click}
+          username = {this.props.username}/>
         <BlockedFriend
+          blocklist = {this.props.blocklist}
+          username = {this.props.username}
           click = {this.props.click}/>
         <ChangePassword
           onClick = {this.props.click}
