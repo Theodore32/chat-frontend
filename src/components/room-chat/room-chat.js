@@ -81,7 +81,6 @@ export default class RoomChat extends React.Component{
   }
 
   checkReadChat = (readStatus) =>{
-    console.log(readStatus);
     this.setState({
       readStatus : readStatus
     })
@@ -91,6 +90,7 @@ export default class RoomChat extends React.Component{
     if(item !== null){
       if(this.state.username !== item.username){
         sendSocket('closechatroom',this.state.username);
+        sendSocket('changechatroom');
       }
       this.setState({
       name : item.name,
@@ -141,7 +141,7 @@ export default class RoomChat extends React.Component{
                 picture = {this.state.picture}
               />
               <RequestFriend
-                request = {this.state.showRequest}
+                request = {this.state.checkrequest}
                 otherUser = {
                   {
                     username : this.state.username,

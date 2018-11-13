@@ -1,17 +1,21 @@
 import React from 'react';
 import './content.css';
 import Message from '../text-message/text-message';
+import doc from '../../picture/doc.png';
+import ReactDOM from 'react-dom';
 
 
 export default class Content extends React.Component {
   constructor(props){
     super(props)
 
-    this.escOnClick= this.escOnClick.bind(this)
+    this.escOnClick= this.escOnClick.bind(this);
+    this.scrollUpDown= this.scrollUpDown.bind(this);
   }
 
   componentDidMount() {
     document.addEventListener("keydown", this.escOnClick, false);
+    document.addEventListener("scroll", this.scrollUpDown,false);
     this.scrollToBottom();
   }
 
@@ -28,6 +32,11 @@ export default class Content extends React.Component {
       //Do whatever when esc is pressed
       this.props.escClicked()
     }
+  }
+
+  scrollUpDown(e){
+    var target = document.getElementById("content-container");
+    console.log(window.pageYOffset);
   }
 
   scrollToBottom = () => {
@@ -71,10 +80,24 @@ export default class Content extends React.Component {
     }
   }
 
+  downloadFile = (name) => {
+    window.open('http://localhost:3000/'+name, '_top');
+  }
+
+  fileName = (fileName) =>{
+    let name;
+    if(fileName.length > 45){
+      name = fileName.substring(0,45) +'. . .'
+    } else {
+      name = fileName
+    }
+    return name;
+  }
 
   render(){
+
     return (
-      <div>
+      <div >
         <div className = {"content-container-"+this.props.checkrequest} id = "content-container">
           <div className = "content-chat">
               {this.props.chatlog.length < 1 ?
@@ -107,32 +130,96 @@ export default class Content extends React.Component {
                             null
                           }
                         </div>
-                        <div className = "Message">
+                        <div className = "MessageSender">
                           {this.props.chatlog[urutan].receiver[0].read == true ?
                             <div className = "readChat">
                               Read
                             </div> :
                             null
                           }
-                          <div className = "senderMessage">
+                          <div>
                             {index.message.split("\n").length > 1 || index.message.length > 78 ?
                               <div>
-                                {this.props.chatlog.image == null?
-                                  console.log('bb')
+                                {!index.attachment ?
+                                  <div className = "senderMessage">
+                                    <p>{index.message}
+                                      <div className = "timeSenderMessageManyLine">
+                                        {this.getTimefromLog(index.time)}
+                                      </div>
+                                    </p>
+                                  </div>
                                   :
-                                  console.log('asda')
+                                  <div className = "senderMessageWithPic">
+                                    <div>
+                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                        <div className = "attachmentFileName">
+                                          <p>{this.fileName(index.attachment.name)}</p>
+                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                        </div>
+                                        :
+                                        <div className = "attachment-picture">
+                                          <img src = {index.attachment.name}/>
+                                        </div>
+                                      }
+                                    </div>
+                                    <p>{index.message}
+                                      <div className = "timeSenderMessageManyLine">
+                                        {this.getTimefromLog(index.time)}
+                                      </div>
+                                    </p>
+                                  </div>
                                 }
-                                <p>{index.message}</p>
-                                <div className = "timeSenderMessageManyLine">
-                                  {this.getTimefromLog(index.time)}
-                                </div>
                               </div>
                               :
-                              <p>{index.message}
-                                <div className = "timeSenderMessageOneLine">
-                                  {this.getTimefromLog(index.time)}
-                                </div>
-                              </p>
+                              <div>
+                                {!index.attachment ?
+                                  <div className = "senderMessage">
+                                    <p>{index.message}
+                                      <div className = "timeSenderMessageOneLine">
+                                        {this.getTimefromLog(index.time)}
+                                      </div>
+                                    </p>
+                                  </div>
+                                  : index.attachment && !index.message ?
+                                  <div className = "senderMessagePicOnly">
+                                    <div>
+                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                        <div className = "attachmentFileName">
+                                          <p>{this.fileName(index.attachment.name)}</p>
+                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                        </div>
+                                        :
+                                        <div className = "attachment-picture">
+                                          <img src = {index.attachment.name}/>
+                                        </div>
+                                      }
+                                    </div>
+                                    <div className = "timeSenderMessageOneLine">
+                                      {this.getTimefromLog(index.time)}
+                                    </div>
+                                  </div>
+                                  :
+                                  <div className = "senderMessageWithPic">
+                                    <div>
+                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                        <div className = "attachmentFileName">
+                                          <p>{this.fileName(index.attachment.name)}</p>
+                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                        </div>
+                                        :
+                                        <div className = "attachment-picture">
+                                          <img src = {index.attachment.name}/>
+                                        </div>
+                                      }
+                                    </div>
+                                    <p>{index.message}
+                                      <div className = "timeSenderMessageOneLine">
+                                        {this.getTimefromLog(index.time)}
+                                      </div>
+                                    </p>
+                                  </div>
+                                }
+                              </div>
                             }
                           </div>
                         </div>
@@ -164,20 +251,89 @@ export default class Content extends React.Component {
                            null
                          }
                        </div>
-                       <div className = "receiverMessage">
+                       <div className = "MessageReceiver">
                          {index.message.split("\n").length > 1 || index.message.length > 78 ?
                            <div>
-                             <p>{index.message}</p>
-                             <div className = "timeReceiverMessageManyLine">
-                               {this.getTimefromLog(index.time)}
-                             </div>
+                             {!index.attachment ?
+                               <div className = "receiverMessage">
+                                 <p>{index.message}
+                                   <div className = "timeReceiverMessageManyLine">
+                                     {this.getTimefromLog(index.time)}
+                                   </div>
+                                 </p>
+                               </div>
+                               :
+                               <div className = "receiverMessageWithPic">
+                                 <div>
+                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                     <div className = "attachmentFileName">
+                                       <p>{this.fileName(index.attachment.name)}</p>
+                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                     </div>
+                                     :
+                                     <div className = "attachment-picture">
+                                       <img src = {index.attachment.name}/>
+                                     </div>
+                                   }
+                                 </div>
+                                 <p>{index.message}
+                                   <div className = "timeReceiverMessageManyLine">
+                                     {this.getTimefromLog(index.time)}
+                                   </div>
+                                 </p>
+                               </div>
+                             }
                            </div>
                            :
-                           <p>{index.message}
-                             <div className = "timeReceiverMessageOneLine">
-                               {this.getTimefromLog(index.time)}
-                             </div>
-                           </p>
+                           <div>
+                             {!index.attachment ?
+                               <div className = "receiverMessage">
+                                 <p>{index.message}
+                                   <div className = "timeReceiverMessageOneLine">
+                                     {this.getTimefromLog(index.time)}
+                                   </div>
+                                 </p>
+                               </div>
+                               : index.attachment && !index.message ?
+                               <div className = "receiverMessagePicOnly">
+                                 <div>
+                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                     <div className = "attachmentFileName">
+                                       <p>{this.fileName(index.attachment.name)}</p>
+                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                     </div>
+                                     :
+                                     <div className = "attachment-picture">
+                                       <img src = {index.attachment.name}/>
+                                     </div>
+                                   }
+                                 </div>
+                                 <div className = "timeReceiverMessageOneLine">
+                                   {this.getTimefromLog(index.time)}
+                                 </div>
+                               </div>
+                               :
+                               <div className = "receiverMessageWithPic">
+                                 <div>
+                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                     <div className = "attachmentFileName">
+                                       <p>{this.fileName(index.attachment.name)}</p>
+                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                     </div>
+                                     :
+                                     <div className = "attachment-picture">
+                                       <img src = {index.attachment.name}/>
+                                     </div>
+                                   }
+                                 </div>
+                                 <p>{index.message}
+                                   <div className = "timeReceiverMessageOneLine">
+                                     {this.getTimefromLog(index.time)}
+                                   </div>
+                                 </p>
+                               </div>
+                             }
+                           </div>
                          }
                        </div>
                      </div>

@@ -31,7 +31,6 @@ export default class FriendList extends React.Component{
     this.socketcloseChatroom();
     this.socketEditFriend(this.props.friend.username);
     this.socketblacklistChat();
-    this.readChatSocket(this.state.chatId);
     for(var block in this.props.blacklist){
       if(this.props.blacklist[block].username === this.props.friend.username){
         this.setState({
@@ -48,6 +47,7 @@ export default class FriendList extends React.Component{
           chated:true,
           chatId : this.props.chatlist[chat].chatId
         })
+        this.readChatSocket(this.state.chatId);
         this.getChatData(this.props.chatlist[chat].chatId);
         break;
       }
@@ -87,11 +87,16 @@ export default class FriendList extends React.Component{
 
   activeSocket(port){
     recieveSocket(port,(err,recieve)=>{
-      this.setState({
-        chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],image:recieve.message.image,time: recieve.message.time,date : recieve.message.date})
-      })
+      if(recieve.message.attachment){
+        this.setState({
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date})
+        })
+      } else {
+        this.setState({
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date})
+        })
+      }
       if(this.state.openchat){
-        this.readChatSocket(this.state.chatId);
         this.props.changeName(null,this.props.chatId,this.state.chatlog);
       }
     })
@@ -109,7 +114,6 @@ export default class FriendList extends React.Component{
       openchat:true
     })
     sendSocket('openchatroom',this.props.friend.username);
-    sendSocket('readchat',this.state.chatId);
     if(!this.state.chated){
       fetch('/addchatroom',{
         credentials:'include',
@@ -142,11 +146,12 @@ export default class FriendList extends React.Component{
         this.activeSocket(json.chatid);
         this.props.changeName(friend,json.chatId,this.state.chatlog);
         sendSocket('openchatroom',this.props.friend.username);
+        sendSocket('readchat',this.state.chatId);
       })
     }
     else{
-      this.readChatSocket(this.state.chatId);
       this.props.changeName(friend,this.state.chatId,this.state.chatlog);
+      sendSocket('readchat',this.state.chatId);
     }
   }
 
@@ -161,6 +166,7 @@ export default class FriendList extends React.Component{
                 { chatId: port,
                   date : chatlog[index].date,
                   message : chatlog[index].message,
+                  attachment : chatlog[index].attachment,
                   receiver:[{username :chatlog[index].receiver[0].username, read : true}],
                   sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
                   time : chatlog[index].time

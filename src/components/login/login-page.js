@@ -94,7 +94,6 @@ class LoginForm extends React.Component{
       isLoading,
       signInError
     } = this.state;
-    console.log("Loading :"+ isLoading);
     if(isLoading){
       return(
         <div><p>Loading</p></div>

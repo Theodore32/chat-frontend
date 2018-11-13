@@ -2,7 +2,8 @@ import React from 'react';
 import './requestFriend.css';
 
 import {
-  sendSocket
+  sendSocket,
+  recieveSocket
 }from "../../socket/socketconnect";
 
 export default class RequestFriend extends React.Component{
@@ -14,7 +15,17 @@ export default class RequestFriend extends React.Component{
   }
 
   componentDidMount(){
-    this.checkRequest(this.props.otherUser.username)
+    this.checkRequest(this.props.otherUser.username);
+    this.changeChatroomSocket();
+  }
+
+  changeChatroomSocket(){
+    recieveSocket ('changechatroom',(err,recieve) =>{
+      this.setState({
+        showRequest : false
+      })
+      this.checkRequest(this.props.otherUser.username);
+    })
   }
 
   checkRequest = (username) => {
@@ -33,6 +44,11 @@ export default class RequestFriend extends React.Component{
           showRequest : response.requested
         })
         this.props.checkrequestfriend(1)
+      }else{
+        this.setState({
+          showRequest : response.requested
+        })
+        this.props.checkrequestfriend(0)
       }
     })
   }

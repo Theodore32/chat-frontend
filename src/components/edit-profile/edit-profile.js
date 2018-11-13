@@ -73,14 +73,13 @@ export default class EditProfile extends React.Component{
         }
         sendSocket("editprofile",data)
         this.props.change()
-
-        // window.location.reload()
-        // this.props.history.push('/ChatRoom')
       }
       else{
         this.setState({
-          success: false
+          success: false,
+          currentPhoto : this.state.currentPhoto
         })
+        console.log(response.message);
       }
     })
   }

@@ -32,8 +32,9 @@ export default class AddFriend extends React.Component{
   componentWillUnmount(){
     document.removeEventListener("keydown", this.onEnterPress, false);
   }
+
   onEnterPress=(e)=>{
-    if(e.keyCode == 13) {
+    if(e.keyCode == 13 && this.state.search) {
       this.searchData(e);
     }
   }

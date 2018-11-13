@@ -86,31 +86,59 @@ export default class FriendList extends React.Component{
       }
       // this.props.updateSort(recieve.message.time,this.props.chat)
       if(this.state.openchat){
-        this.openChatRoom(this.props.chat,this.state.chatlog)
-        this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
-            receiver:[{username :recieve.message.sender,read : false}],image:recieve.message.image,time: recieve.message.time ,date: recieve.message.date}),
-          lastMessage:{
-            chatId: recieve.message.chatId,
-            message:lastMessageText,
-            sender:recieve.message.sender.username
-          },
-          timeStamp :timeStamp
-        })
+        sendSocket('readchat',recieve.message.chatId);
+        if(recieve.message.attachment){
+          this.setState({
+            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+              receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time ,date: recieve.message.date}),
+            lastMessage:{
+              chatId: recieve.message.chatId,
+              message:lastMessageText,
+              sender:recieve.message.sender.username
+            },
+            timeStamp :timeStamp
+          })
+        }else {
+          this.setState({
+            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+              receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time ,date: recieve.message.date}),
+            lastMessage:{
+              chatId: recieve.message.chatId,
+              message:lastMessageText,
+              sender:recieve.message.sender.username
+            },
+            timeStamp :timeStamp
+          })
+        }
         this.props.changeName(null,this.props.chatId,this.state.chatlog);
+        this.readChat(this.props.chat,this.props.myUser.username);
       }
       else{
-        this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
-            receiver:[{username :recieve.message.sender,read : false}],image:recieve.message.image,time: recieve.message.time,date : recieve.message.date}),
-          lastMessage:{
-            chatId: recieve.message.chatId,
-            message:lastMessageText,
-            sender:recieve.message.sender.username
-          },
-          timeStamp :timeStamp,
-          notif:this.state.notif+1
-        })
+        if(recieve.message.attachment){
+          this.setState({
+            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+              receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date}),
+            lastMessage:{
+              chatId: recieve.message.chatId,
+              message:lastMessageText,
+              sender:recieve.message.sender.username
+            },
+            timeStamp :timeStamp,
+            notif:this.state.notif+1
+          })
+        } else{
+          this.setState({
+            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+              receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date}),
+            lastMessage:{
+              chatId: recieve.message.chatId,
+              message:lastMessageText,
+              sender:recieve.message.sender.username
+            },
+            timeStamp :timeStamp,
+            notif:this.state.notif+1
+          })
+        }
         this.props.notifTotal(1);
       }
     })
@@ -137,6 +165,7 @@ export default class FriendList extends React.Component{
       }),
     }).then(res => res.json())
       .then(json =>{
+        console.log(json.message);
         if(json.success){
           let notif = 0
           for(var read in json.message){
@@ -170,12 +199,12 @@ export default class FriendList extends React.Component{
     })
   }
 
+
   openChatRoom = (item,log) => {
     this.setState({
       openchat:true,
       notif:0
     })
-    this.readChatSocket(item.chatId);
     sendSocket('openchatroom',this.props.chat.username);
     this.props.changeName(item,item.chatId,log);
     if(this.state.lastMessage.sender != this.props.myUser.username){
@@ -195,6 +224,7 @@ export default class FriendList extends React.Component{
                 { chatId: port,
                   date : chatlog[index].date,
                   message : chatlog[index].message,
+                  attachment : chatlog[index].attachment,
                   receiver:[{username :chatlog[index].receiver[0].username, read : true}],
                   sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
                   time : chatlog[index].time
