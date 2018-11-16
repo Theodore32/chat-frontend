@@ -5,8 +5,9 @@ import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
+import RequestFriend from '../requestFriend/requestFriend';
 import {
-  sendChat
+  sendSocket
 }from "../../socket/socketconnect";
 
 export default class RoomChat extends React.Component{
@@ -20,7 +21,9 @@ export default class RoomChat extends React.Component{
       ulang:[],
       account:[],
       chatlog:[],
-      open : false
+      open : false,
+      checkrequest:false,
+      readStatus : false
     }
     this.escClicked = this.escClicked.bind(this)
   }
@@ -64,16 +67,37 @@ export default class RoomChat extends React.Component{
     })
   }
 
+  checkrequestfriend = (flag) =>{
+    if(flag === 1 ){
+      this.setState({
+        checkrequest:true
+      })
+    }
+    else{
+      this.setState({
+        checkrequest:false
+      })
+    }
+  }
+
+  checkReadChat = (readStatus) =>{
+    this.setState({
+      readStatus : readStatus
+    })
+  }
+
   openChatRoom = (item,chatId,log) => {
     if(item !== null){
-      if(this.state.username !== item.username ){
-        sendChat('closechatroom',this.state.username);
+      if(this.state.username !== item.username){
+        sendSocket('closechatroom',this.state.username);
+        sendSocket('changechatroom');
       }
       this.setState({
       name : item.name,
       isOpen : true,
       username:item.username,
       picture : item.picture,
+      description : item.description,
       chatId : chatId,
       chatlog : log
       })
@@ -98,7 +122,7 @@ export default class RoomChat extends React.Component{
   }
 
   render(){
-    const {account,isLoading} = this.state
+    const {account,isLoading,chatlist} = this.state
     if(isLoading){
       return(
         <div>Loading.....</div>
@@ -116,7 +140,23 @@ export default class RoomChat extends React.Component{
                 name = {this.state.name}
                 picture = {this.state.picture}
               />
-              
+              <RequestFriend
+                request = {this.state.checkrequest}
+                otherUser = {
+                  {
+                    username : this.state.username,
+                    name : this.state.name,
+                    picture : this.state.picture,
+                    description : this.state.description
+                  }
+                }
+                myUser = {
+                  {
+                    username : account.username
+                  }
+                }
+                checkrequestfriend = {this.checkrequestfriend}
+              />
               <Content
                 escClicked = {this.escClicked}
                 chatlog = {this.state.chatlog}
@@ -125,6 +165,8 @@ export default class RoomChat extends React.Component{
                 recieve={this.state.username}
                 chatId = {this.state.chatId}
                 time = {this.state.time}
+                checkrequest = {this.state.checkrequest}
+                readStatus = {this.state.readStatus}
               />
             </div>
           }
@@ -141,6 +183,7 @@ export default class RoomChat extends React.Component{
                 url = {this.props.match.url}
                 change={this.afterchange}
                 close = {this.state.isOpen}
+                blocklist = {account.blacklist}
               />
               <div className = "searchBarContent">
                 <SearchFriend
@@ -155,7 +198,17 @@ export default class RoomChat extends React.Component{
                 chatlist = {account.chatList}
                 description = {account.description}
                 chatId = {this.state.chatId}
-                myUser = {{username:account.username,name:account.name,picture : account.picture}}
+                blocklist = {account.blacklist}
+                myUser = {
+                  {
+                    username:account.username,
+                    name:account.name,
+                    picture : account.profilePicture,
+                    friend : account.friends,
+                    description : account.description
+                  }
+                }
+                checkReadChat = {this.checkReadChat}
               />
           </div>
         </div>

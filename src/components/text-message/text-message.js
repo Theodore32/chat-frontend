@@ -2,9 +2,11 @@ import React from 'react';
 import './text-message.css';
 import TextareaAutosize from 'react-autosize-textarea';
 import file from '../../picture/paperclip.png';
+import cancel from '../../picture/cancel.png';
+import doc from '../../picture/doc.png';
 import {
-  sendChat
-}from "../../socket/socketconnect"
+  sendSocket
+}from "../../socket/socketconnect";
 
 export default class inputMessage extends React.Component{
   constructor(props){
@@ -12,9 +14,10 @@ export default class inputMessage extends React.Component{
 
     this.state = {
       message:'',
-      file: [],
-      imagePreviewUrl: null,
-      error: ''
+      file: '',
+      imagePreviewUrl: '',
+      error: '',
+      filePreviewUrl : ''
     }
 
     this.messageOnChange =this.messageOnChange.bind(this);
@@ -23,6 +26,9 @@ export default class inputMessage extends React.Component{
 
   componentDidMount(){
     document.addEventListener("keydown", this.onEnterPress, false);
+  }
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.onEnterPress, false);
   }
 
   onSend(e){
@@ -36,27 +42,10 @@ export default class inputMessage extends React.Component{
     const date = dd+'-'+mm+'-'+yyyy;
     const message = this.state.message;
     const attachment = this.state.file;
-    // console.log("ATTACH: ",attachment);
-    // console.log("msg: ",message);
-    if(this.state.message){
-      let send = {
-        reciever:this.props.sender,
-        sender:{
-          username: this.props.senderUsername,
-          name:this.props.sender
-        },
-        chatId:this.props.chatId,
-        message:this.state.message,
-        image:this.state.imagePreviewUrl,
-        time : today
-      }
-      sendChat('sendChat',send)
-      this.attachPhoto(attachment,message,today)
-      this.setState({
-        message:'',
-        imagePreviewUrl :'',
-        file : ''
-      })
+    const attachmentName = this.state.file.name;
+    const attachmentType = this.state.file.type;
+    if(message || attachment){
+      this.attachPhoto(attachment,attachmentName,attachmentType,message,today,date);
     }
   }
 
@@ -69,7 +58,10 @@ export default class inputMessage extends React.Component{
     })
   }
 
-  attachPhoto = (attachment,message,time) =>{
+  attachPhoto = (attachment,attachmentName,attachmentType,message,today,date) =>{
+    this.setState({
+      error: ''
+    })
     const senderUsername = this.props.senderUsername;
     const sender = this.props.sender;
     const chatId = this.props.chatId;
@@ -79,9 +71,12 @@ export default class inputMessage extends React.Component{
     formData.append ('chatId', chatId);
     formData.append ('senderUsername', senderUsername);
     formData.append ('sender',sender);
-    formData.append ('attachment', attachment);
+    formData.append ('Attachment' , attachment)
+    formData.append ('AttachmentName', attachmentName);
+    formData.append ('AttachmentType', attachmentType);
     formData.append ('message', message);
-    formData.append ('timeStamp', time);
+    formData.append ('timeStamp', today);
+    formData.append ('date', date);
     formData.append ('recieve',receive);
 
     fetch('/chat',{
@@ -91,11 +86,42 @@ export default class inputMessage extends React.Component{
     }).then(res => res.json())
     .then (response => {
       if(response.success){
-        // window.location.reload()
-        // this.props.history.push('/ChatRoom')
+        if(response.filename){
+          let send = {
+            reciever:this.props.sender,
+            sender:{
+              username: this.props.senderUsername,
+              name:this.props.sender
+            },
+            chatId:this.props.chatId,
+            message:this.state.message,
+            attachment: {
+              name : response.filename,
+              type : attachmentType
+            },
+            time : today,
+            date : date
+          }
+          sendSocket('sendChat',send);
+        } else {
+          let send = {
+            reciever:this.props.sender,
+            sender:{
+              username: this.props.senderUsername,
+              name:this.props.sender
+            },
+            chatId:this.props.chatId,
+            message:this.state.message,
+            time : today,
+            date : date
+          }
+          sendSocket('sendChat',send);
+        }
         this.setState({
-          error : response.message,
-          time : response.time
+          time : response.time,
+          message:'',
+          imagePreviewUrl :'',
+          file : ''
         })
       }
       else{
@@ -105,6 +131,7 @@ export default class inputMessage extends React.Component{
         })
       }
     })
+
   }
 
 onEnterPress = (e) => {
@@ -118,11 +145,11 @@ _handleImageChange(e) {
 
    let reader = new FileReader();
    let file = e.target.files[0];
-
    reader.onloadend = () => {
      this.setState({
        file: file,
-       imagePreviewUrl: reader.result
+       imagePreviewUrl: reader.result,
+       filePreviewUrl : reader.result
      });
    }
    if(file){
@@ -130,11 +157,23 @@ _handleImageChange(e) {
    }
  }
 
+ cancelImage = () =>{
+   this.setState({
+     imagePreviewUrl : '',
+     filePreviewUrl : '',
+     file : '',
+     error : ''
+   })
+ }
+
   render(){
-    let {imagePreviewUrl} = this.state;
-    let $imagePreview = null;
+    let {imagePreviewUrl,filePreviewUrl} = this.state;
+    let $imagePreview,$filePreview = null;
     if (imagePreviewUrl) {
       $imagePreview = (<img src={imagePreviewUrl} />);
+    }
+    if (filePreviewUrl){
+      $filePreview = (<iframe src = {filePreviewUrl}/>);
     }
     return(
       <div className = "footer-app">
@@ -151,9 +190,39 @@ _handleImageChange(e) {
                 onChange = {(e) => this._handleImageChange(e)}
                 />
             </div>
-            <div className = "imgPreview">
-              {$imagePreview}
-            </div>
+            {this.state.error ?
+              <div className = "errorImageType">
+                {this.state.error}
+              </div>
+              :
+              null
+            }
+            {$imagePreview ?
+              this.state.file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                <div className = "imgPreview">
+                  <div className = "cancelImage">
+                    <img src = {cancel} onClick = {this.cancelImage}/>
+                  </div>
+                  <img src = {doc}/>
+                </div> :
+              this.state.file.type == "image/jpeg" || this.state.file.type == "image/jpg" || this.state.file.type == "image/gif" || this.state.file.type == "image/png" ?
+                <div className = "imgPreview">
+                  <div className = "cancelImage">
+                    <img src = {cancel} onClick = {this.cancelImage}/>
+                  </div>
+                  {$imagePreview}
+                </div>
+                :
+                <div className = "noSupportPreview">
+                  <div className = "cancelNoSupport">
+                    <img src = {cancel} onClick = {this.cancelImage}/>
+                  </div>
+                  <p>
+                    File Not Supported
+                  </p>
+                </div>
+              : null
+            }
             <TextareaAutosize
               style={{maxHeight : "75px"}}
               className = "message"

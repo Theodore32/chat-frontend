@@ -90,7 +90,6 @@ class LoginForm extends React.Component{
       isLoading,
       signInError
     } = this.state;
-    console.log("Loading :"+ isLoading);
     if(isLoading){
       return(
         <div><p>Loading</p></div>
@@ -120,7 +119,7 @@ class LoginForm extends React.Component{
             {!signInError ?
                 null
               :
-                <div>
+                <div className = "login-error">
                   <p>
                     {signInError}
                   </p>

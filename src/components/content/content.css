@@ -1,8 +1,25 @@
-.content-container{
+@font-face { font-family: Mousse; src: url('../../Mousse-Regular.otf'); }
+@font-face { font-family: HelveticaNeue;  src: url('../../HelveticaNeueMedium.ttf'); }
+@font-face { font-family: HelveticaNeueLight;  src: url('../../HelveticaNeueLight.ttf'); }
+
+
+
+
+.content-container-false{
   top: 60px;
   right: 0;
   position: absolute;
   height: calc(100% - 110px);
+  width: 100%;
+  overflow-y: auto;
+  background-color: #f7f9fa;
+}
+
+.content-container-true{
+  top: 100px;
+  right: 0;
+  position: absolute;
+  height: calc(100% - 150px);
   width: 100%;
   overflow-y: auto;
   background-color: #f7f9fa;
@@ -16,17 +33,46 @@
   width: 100%;
 }
 
-.senderMessageName {
+.timeFixed{
+  background: #f5b335;
+  height: 40px;
+  position: fixed;
+  top: 0;
+  color : black;
+  width: 100%;
+}
+
+.MessageSender{
   clear: both;
+  float: right;
+  position: relative;
+  overflow: hidden;
+  padding-left: 43px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.readChat{
+  color : black;
+  position: absolute;
+  font-size: 12px;
+  bottom: 11px;
+  left: 16px;
+  font-family: Mousse;
+  color: rgba(95, 94, 96, 0.47);
+}
+
+.senderMessageName {
   color: black;
   float: right;
+  clear: both;
   padding-right: 5px;
+  font-family: HelveticaNeue;
 }
 
 .senderMessage {
   clear: both;
-  float: right;
-  padding: 6px 10px 5px;
+  padding: 6px 10px 11px;
   border-radius: 10px 10px 0 10px;
   background: rgba(62, 62, 62, 0.68);
   margin-top: 0px;
@@ -36,9 +82,8 @@
   position: relative;
   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
   text-align: left;
+  font-family: HelveticaNeue;
   color: black;
-  word-wrap: break-word;
-  max-width: 70%;
 }
 
 .senderMessage p {
@@ -54,15 +99,110 @@
   border-left: 7px solid transparent;
 }
 
+.senderMessagePicOnly {
+  clear: both;
+  padding: 6px 10px 29px;
+  border-radius: 10px 10px 0 10px;
+  background: rgba(62, 62, 62, 0.68);
+  margin-top: 0px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  margin-right: 5px;
+  position: relative;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  text-align: left;
+  font-family: HelveticaNeue;
+  color: black;
+}
+
+.senderMessagePicOnly:before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  border-top: 6px solid rgba(62, 62, 62, 0.68);
+  right: 0;
+  border-left: 7px solid transparent;
+}
+
+.senderMessageWithPic {
+  clear: both;
+  padding: 6px 10px 11px;
+  border-radius: 10px 10px 0 10px;
+  background: rgba(62, 62, 62, 0.68);
+  margin-top: 0px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  margin-right: 5px;
+  position: relative;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  text-align: left;
+  font-family: HelveticaNeue;
+  color: black;
+}
+
+.senderMessageWithPic p {
+  padding-top: 6px;
+  white-space: pre-wrap;
+}
+
+.senderMessageWithPic:before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  border-top: 6px solid rgba(62, 62, 62, 0.68);
+  right: 0;
+  border-left: 7px solid transparent;
+}
+
+.attachment-picture{
+  width : 300px;
+  height: 300px;
+  position: relative;
+}
+
+.attachment-picture img{
+  width : 300px;
+  height: 300px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.attachmentFileName{
+  cursor: pointer;
+  width: 220px;
+  position: relative;
+  background-color: rgba(4, 4, 4, 0.54);
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: HelveticaNeue;
+  display: inline-block;
+}
+
+.attachmentFileName p{
+  position: absolute;
+  color : white;
+  width: 200px;
+  right: 0;
+  text-align: center;
+}
+
+.attachmentFileName img{
+  margin-top: 0px;
+  width : 30px;
+  height: 30px;
+  vertical-align: middle;
+  margin: 5px 0px 5px 3px;
+}
+
 .timeSenderMessageManyLine{
-  color : black;
+  color : rgb(59, 58, 55);
   float: right;
   font-size: 12px;
-  margin-top: -18px;
+  margin-top: 7px;
 }
 
 .timeSenderMessageOneLine{
-  color : black;
+  color : rgb(59, 58, 55);
   float: right;
   font-size: 12px;
   margin-top : 5px;
@@ -74,16 +214,25 @@
   color: black;
   float: left;
   padding-left: 5px;
+  font-family: HelveticaNeue;
 }
 
 .receiverMessageName:before {
   padding-top : 0px;
 }
 
-.receiverMessage{
+.MessageReceiver{
   clear: both;
   float: left;
-  padding: 6px 10px 7px;
+  position: relative;
+  overflow: hidden;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.receiverMessage{
+  clear: both;
+  padding: 6px 10px 11px;
   border-radius: 10px 10px 10px 0;
   background: rgba(0, 0, 0,0.2);
   margin-top: 0px;
@@ -94,8 +243,7 @@
   text-align: left;
   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
   color: black;
-  word-wrap: break-word;
-  max-width: 70%;
+  font-family: HelveticaNeue;
 }
 
 .receiverMessage p {
@@ -111,11 +259,68 @@
   border-right: 7px solid transparent;
 }
 
+.receiverMessagePicOnly {
+  clear: both;
+  cursor: pointer;
+  padding: 6px 10px 29px;
+  border-radius: 10px 10px 10px 0;
+  background: rgba(0, 0, 0,0.2);
+  margin-top: 0px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  margin-left: 5px;
+  position: relative;
+  text-align: left;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  color: black;
+  font-family: HelveticaNeue;
+}
+
+.receiverMessagePicOnly:before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  border-top: 6px solid rgba(0, 0, 0,0.2);
+  left: 0;
+  border-right: 7px solid transparent;
+}
+
+.receiverMessageWithPic {
+  clear: both;
+  cursor: pointer;
+  padding: 6px 10px 7px;
+  border-radius: 10px 10px 10px 0;
+  background: rgba(0, 0, 0,0.2);
+  margin-top: 0px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  margin-left: 5px;
+  position: relative;
+  text-align: left;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  color: black;
+  font-family: HelveticaNeue;
+}
+
+.receiverMessageWithPic p {
+  padding-top: 6px;
+  white-space: pre-wrap;
+}
+
+.receiverMessageWithPic:before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  border-top: 6px solid rgba(0, 0, 0,0.2);
+  left: 0;
+  border-right: 7px solid transparent;
+}
+
 .timeReceiverMessageManyLine{
   color : #545350;
   float: right;
   font-size: 12px;
-  margin-top: -18px;
+  margin-top: 5px;
 }
 
 .timeReceiverMessageOneLine{
@@ -124,4 +329,26 @@
   font-size: 12px;
   margin-top : 5px;
   margin-left : 6px;
+}
+
+.timeSeparator-container{
+  width : 100%;
+  height : 40px;
+  clear: both;
+  text-align: center;
+  padding : 5px 0px 10px 0px;
+}
+
+.timeSeparator{
+  display: inline-block;
+  width : 100px;
+  line-height:23px;
+  font-size: 14px;
+  height: 23px;
+  border: transparent;
+  border-radius: 50px;
+  text-align: center;
+  font-family: Mousse;
+  color : white;
+  background-color: rgba(162, 160, 154, 1);
 }

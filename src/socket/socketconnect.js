@@ -1,10 +1,13 @@
 import openSocket from 'socket.io-client';
-const  socket = openSocket('http://10.183.28.151:8000');
-function sendChat(port,msg) {
+const  socket = openSocket('http://localhost:8000');
+function sendSocket(port,msg) {
   socket.emit(port, msg);
 }
 
-function recieveChat(user,toFront){
+function recieveSocket(user,toFront){
   socket.on(user, message => toFront(null,message));
 }
-export { sendChat ,recieveChat};
+function closeSocket(){
+  socket.close();
+}
+export { sendSocket ,recieveSocket,closeSocket};

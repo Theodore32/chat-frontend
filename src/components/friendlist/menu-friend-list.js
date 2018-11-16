@@ -4,7 +4,7 @@ import './friendlist.css';
 import FriendList from './friend-list';
 import ChatList from '../chatlist/chat-list';
 import {
-  recieveChat
+  recieveSocket
 }from "../../socket/socketconnect";
 
 export default class SideNav extends Component {
@@ -13,15 +13,16 @@ export default class SideNav extends Component {
 
         this.state = {
             Friends:{
-              li:'',
-              tab:''
-            },
-            Chats:{
               li:'selected-tab',
               tab:'show'
             },
+            Chats:{
+              li:'',
+              tab:''
+            },
             chatlist : this.props.chatlist,
             friendlist : this.props.friendlist,
+            blocklist : this.props.blocklist,
             notif : 0
         }
     }
@@ -54,11 +55,13 @@ export default class SideNav extends Component {
     }
 
     componentDidMount(){
-      this.socketChat('chatlist'+this.props.myUser.username)
+      this.socketNewFriend('newfriend'+this.props.myUser.username)
+      this.socketChatList('chatlist'+this.props.myUser.username)
     }
 
     componentWillUnmount(){
-      this.socketChat('chatlist'+this.props.myUser.username)
+      this.socketNewFriend('newfriend'+this.props.myUser.username)
+      this.socketChatList('chatlist'+this.props.myUser.username)
     }
 
     notifTotal = (total) =>{
@@ -94,29 +97,35 @@ export default class SideNav extends Component {
       }
     }
 
-    socketChat = (port) =>{
-      recieveChat(port,(err,recieve)=>{
+    socketChatList = (port) =>{
+      recieveSocket(port,(err,recieve)=>{
         this.setState({
           chatlist:this.state.chatlist.concat(recieve)
         })
       })
     }
 
-    updateSort = (time,chatId) =>{
+    socketNewFriend = (port) =>{
+      recieveSocket(port, (err,recieve)=>{
+        this.setState({
+          friendlist : this.state.friendlist.concat(recieve)
+        })
+      })
+    }
+
+    updateSort = (time,chat) =>{
       for(var index in this.state.chatlist){
-        if(this.state.chatlist[index].chatId === chatId){
-          console.log(this.state.chatlist[index].username);
+        if(this.state.chatlist[index].username === chat.username){
           var chatList = this.state.chatlist
           chatList.splice(index,1,{
-            username:this.state.chatlist[index].username,
-            name : this.state.chatlist[index].name,
-            picture :this.state.chatlist[index].picture,
-            chatId:chatId,
+            username:chat.username,
+            name : chat.name,
+            picture :chat.picture,
+            chatId:chat.chatId,
             createdDate:time});
           this.setState({
             chatlist:chatList
           })
-          this.sortChatList(this.state.chatlist)
           break;
         }
       }
@@ -130,25 +139,10 @@ export default class SideNav extends Component {
       })
     }
 
-    sortChatList = (array) =>{
-      let getget = array
-      getget = getget.sort((a,b) => {
-        var x = new Date(a.createdDate).getTime(),
-            y = new Date(b.createdDate).getTime()
-
-        console.log(a.username,x);
-        console.log(b.username,y);
-        return x < y
-      })
-      console.log(getget);
-      this.setState({
-        chatlist:getget
-      })
-    }
-
     render() {
         const { Friends, Chats} = this.state
         const friendlist = this.sortFriend(this.state.friendlist);
+        const blocklist = this.state.blocklist;
         const chatlist = this.state.chatlist;
         if(!friendlist){
           return null
@@ -176,10 +170,10 @@ export default class SideNav extends Component {
           <div className = "menu-friend-container">
                 <div className = "menu-friend-box">
                   <li onClick={() => this.changeTab('Friends')} className = {"li-friends " + Friends.li}>
-                      Friends
+                      FRIENDS
                   </li>
                   <li onClick={() => this.changeTab('Chats')} className = {"li-chats " + Chats.li}>
-                      <p>Chats</p>
+                      <p>CHATS</p>
                       <div>
                         {this.state.notif == 0 ?
                           null
@@ -217,6 +211,7 @@ export default class SideNav extends Component {
                           description = {this.props.description}
                           chatId = {this.props.chatId}
                           chatlist = {this.state.chatlist}
+                          blocklist = {blocklist}
                           notifTotal = {this.notifTotal}
                           editfriendSocket = {this.editFriendChatSocket}
                           />
@@ -230,11 +225,7 @@ export default class SideNav extends Component {
                     <div className = "chat-list-container">
                       <div className="chat-list-box">
                         <div className="chat-list-text">
-                          {filteredListChat.sort((a,b)=>{
-                            var x = new Date(a.createdDate).getTime()
-                            var y = new Date(b.createdDate).getTime()
-                            return x-y
-                          }).map((chat) => (
+                          {filteredListChat.map((chat) => (
                             <ChatList
                               search = {this.props.searchValue}
                               changeName = {this.props.changeName}
@@ -243,6 +234,8 @@ export default class SideNav extends Component {
                               notifTotal = {this.notifTotal}
                               notifMinus = {this.notifMinus}
                               updateSort = {this.updateSort}
+                              blocklist = {blocklist}
+                              checkReadChat = {this.props.checkReadChat}
                               />
                             )
                           )

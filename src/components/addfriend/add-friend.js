@@ -1,7 +1,14 @@
 import React from 'react';
 import './addfriend.css';
-import {Modal} from 'semantic-ui-react';
+import {Link} from 'react-router-dom'
+import ChangePassword from '../change-password/change-password';
+import addcontact from '../../picture/add-user.png';
+import muka from '../../picture/muka.jpg'
+import {Modal, Button, Form, Loader} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
+import {
+  sendSocket
+}from "../../socket/socketconnect"
 
 export default class AddFriend extends React.Component{
   constructor(props){
@@ -16,23 +23,20 @@ export default class AddFriend extends React.Component{
       },
       loading : false
     }
-
-    this.logout = this.logout.bind(this)
   }
 
-  logout(e) {
-   e.preventDefault()
-      // Verify token
-      fetch('/logout',{
-        credentials:'include'
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.success) {
-            this.props.history.push('/LoginForm')
-          }
-         }
-       );
+  componentDidMount(){
+    document.addEventListener("keydown", this.onEnterPress, false);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.onEnterPress, false);
+  }
+
+  onEnterPress=(e)=>{
+    if(e.keyCode == 13 && this.state.search) {
+      this.searchData(e);
+    }
   }
 
    show = (size,name) => {
@@ -84,6 +88,18 @@ export default class AddFriend extends React.Component{
      })
    }
 
+   newFriend = (username,name,picture,description) =>{
+    let message = {
+      myUsername : this.props.username,
+      username : username,
+      name : name,
+      picture : picture,
+      description : description
+    }
+    console.log(message);
+    sendSocket('newfriend',message);
+   }
+
    addFriend = (event) =>{
      event.preventDefault()
      const username = this.state.search
@@ -107,8 +123,9 @@ export default class AddFriend extends React.Component{
      }).then (res => res.json())
      .then (res => {
        this.setState({
-         searchResult : res
+         searchResult : res,
        })
+       this.newFriend(username,name,picture,description)
      })
    }
 
@@ -166,6 +183,7 @@ export default class AddFriend extends React.Component{
 
 
   render(){
+    const { open, size } = this.state;
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
@@ -199,7 +217,7 @@ export default class AddFriend extends React.Component{
                 </center>
                   :
                 <center>
-                  <img src = {this.state.searchResult.picture} className = "addfriend-profile-setting" alt=''/><br/>
+                  <img src = {this.state.searchResult.picture} className = "addfriend-profile-setting"/><br/>
                   <div className = "addfriend-text">
                     {this.state.searchResult.name}
                   </div><br/>
