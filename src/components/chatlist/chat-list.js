@@ -48,14 +48,15 @@ export default class FriendList extends React.Component{
   }
   activeSocket(port){
     recieveChat(port,(err,recieve)=>{
+      console.log(recieve);
       let time = new Date(recieve.message.time);
       const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
       const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
       const timeStamp = getHours + ':' + getMinute;
-      this.props.updateSort(recieve.message.time,this.props.chat)
+      this.props.updateSort(recieve.message.time,recieve.message.chatId)
       if(this.state.openchat){
         this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,reciever:recieve.message.sender,image:recieve.message.image,time: recieve.message.time}),
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,image:recieve.message.image,time: recieve.message.time}),
           lastMessage:{
             chatId: recieve.message.chatId,
             message:recieve.message.message,
@@ -67,7 +68,7 @@ export default class FriendList extends React.Component{
       }
       else{
         this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,reciever:recieve.message.sender,image:recieve.message.image,time: recieve.message.time}),
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,image:recieve.message.image,time: recieve.message.time}),
           lastMessage:{
             chatId: recieve.message.chatId,
             message:recieve.message.message,
@@ -112,7 +113,7 @@ export default class FriendList extends React.Component{
           const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
           const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
           const timeStamp = getHours + ':' + getMinute;
-          this.props.updateSort(json.message.slice(-1).pop().time,this.props.chat)
+          this.props.updateSort(json.message.slice(-1).pop().time,json.message.slice(-1).pop().chatId)
           this.setState({
             chatlog : json.message,
             lastMessage:{
@@ -156,6 +157,7 @@ export default class FriendList extends React.Component{
   }
 
   render(){
+    console.log(this.state.chatlog);
     const chat = this.props.chat;
     return(
         <div>

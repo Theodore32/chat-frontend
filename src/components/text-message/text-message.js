@@ -61,6 +61,7 @@ export default class inputMessage extends React.Component{
   }
 
   messageOnChange = (event) =>{
+    console.log(this.props);
     const name = event.target.name
 
     this.setState({
