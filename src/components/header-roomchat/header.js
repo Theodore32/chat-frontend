@@ -1,9 +1,7 @@
 import React from 'react';
 import './header.css';
-
-import profileImage from '../../picture/muka.jpg';
 import setting from '../../picture/menu.png';
-import {Popup , Modal, Image} from 'semantic-ui-react';
+import {Popup , Modal} from 'semantic-ui-react';
 
 export default class HeaderChat extends React.Component{
   render(){

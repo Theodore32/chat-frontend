@@ -1,9 +1,11 @@
 import React from 'react';
 import './friendlist.css';
 import {
-  recieveChat,sendChat
+  recieveSocket,
+  sendSocket,
+  closeSocket
 }from "../../socket/socketconnect";
-import {Modal, Button} from 'semantic-ui-react';
+import {Modal} from 'semantic-ui-react';
 import chat from '../../picture/chat.png'
 import block from '../../picture/block.png'
 var crypto = require("crypto");
@@ -18,72 +20,100 @@ export default class FriendList extends React.Component{
       chatlog:[],
       open : false,
       chated : false,
+      blocked : false,
       openchat : false
     }
 
-    this.activeSocket = this.activeSocket.bind(this)
+    this.activeSocket = this.activeSocket.bind(this);
   }
 
   componentDidMount(){
-    this.socketcloseChatroom()
-    this.socketFriend(this.props.friend.username)
+    this.socketcloseChatroom();
+    this.socketEditFriend(this.props.friend.username);
+    this.socketblacklistChat();
+    for(var block in this.props.blacklist){
+      if(this.props.blacklist[block].username === this.props.friend.username){
+        this.setState({
+          blocked: true
+        })
+        break;
+      }
+    }
+
     for(var chat in this.props.chatlist){
-      if(this.props.chatlist[chat].username === this.props.friend.username){
+      if(this.props.chatlist[chat].username === this.props.friend.username && !this.state.blocked){
         this.activeSocket(this.props.chatlist[chat].chatId)
         this.setState({
           chated:true,
           chatId : this.props.chatlist[chat].chatId
         })
+        this.readChatSocket(this.state.chatId);
         this.getChatData(this.props.chatlist[chat].chatId);
         break;
       }
     }
-
   }
 
   componentWillUnmount(){
-    this.socketcloseChatroom()
-    this.socketopenChatroom()
-    this.socketFriend(this.props.friend.username)
-    this.activeSocket(this.state.chatId)
+    this.socketcloseChatroom();
+    this.socketopenChatroom();
+    this.socketEditFriend(this.props.friend.username);
+    this.activeSocket(this.state.chatId);
+    this.socketblacklistChat();
+    this.readChatSocket(this.state.chatId);
   }
+
   socketcloseChatroom=()=>{
-    recieveChat('closechatroom'+this.props.friend.username,(err,recieve)=>{
+    recieveSocket('closechatroom'+this.props.friend.username,(err,recieve)=>{
         this.setState({
           openchat:false
         })
     })
   }
-  socketopenChatroom=() =>{
-    recieveChat('openchatroom'+this.props.friend.username,(err,recieve)=>{
+
+  socketopenChatroom =() =>{
+    recieveSocket('openchatroom'+this.props.friend.username,(err,recieve)=>{
         this.setState({
           openchat:true
         })
     })
   }
+
+  socketblacklistChat = () =>{
+    recieveSocket('blockchat'+this.props.friend.username,(err,recieve)=>{
+      closeSocket()
+    })
+  }
+
   activeSocket(port){
-    recieveChat(port,(err,recieve)=>{
-      this.setState({
-        chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,reciever:recieve.message.sender,image:recieve.message.image,time: recieve.message.time})
-      })
+    recieveSocket(port,(err,recieve)=>{
+      if(recieve.message.attachment){
+        this.setState({
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date})
+        })
+      } else {
+        this.setState({
+          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date})
+        })
+      }
       if(this.state.openchat){
-        this.props.changeName(null,this.props.chatId,this.state.chatlog)
+        this.props.changeName(null,this.props.chatId,this.state.chatlog);
       }
     })
   }
 
-  socketFriend = (port) => {
-    recieveChat('edit'+port, (err,recieve) => {
+  socketEditFriend = (port) => {
+    recieveSocket('edit'+port, (err,recieve) => {
       this.props.editfriendSocket(recieve.message)
     })
   }
 
   openChatRoom = (friend) =>{
-    this.close()
+    this.close();
     this.setState({
       openchat:true
     })
-    sendChat('openchatroom',this.props.friend.username)
+    sendSocket('openchatroom',this.props.friend.username);
     if(!this.state.chated){
       fetch('/addchatroom',{
         credentials:'include',
@@ -105,19 +135,56 @@ export default class FriendList extends React.Component{
           myusername:this.props.myUser.username,
           myname:this.props.myUser.name,
           mypicture : this.props.myUser.picture,
+          mydescription : this.props.myUser.description,
           otherusername:friend.username,
           othername:friend.name,
           otherpicture : friend.picture,
+          otherdescription : friend.description,
           chatId:json.chatId
         }
-        sendChat('newchatlist',socketChatlist)
-        this.activeSocket(json.chatid)
-        this.props.changeName(friend,json.chatId,this.state.chatlog)
+        sendSocket('newchatlist',socketChatlist);
+        this.activeSocket(json.chatid);
+        this.props.changeName(friend,json.chatId,this.state.chatlog);
+        sendSocket('openchatroom',this.props.friend.username);
+        sendSocket('readchat',this.state.chatId);
       })
     }
     else{
       this.props.changeName(friend,this.state.chatId,this.state.chatlog);
+      sendSocket('readchat',this.state.chatId);
     }
+  }
+
+  readChatSocket (port) {
+    recieveSocket ('readchat'+port, (err,recieve) =>{
+      if(this.state.chatlog.length !== 0){
+        let chatlog = this.state.chatlog;
+        for(var index = chatlog.length-1 ; index !== 0 ; index--){
+          if(chatlog.length !== 0){
+            if(chatlog[index].receiver[0].read === false){
+              chatlog.splice(index,1,
+                { chatId: port,
+                  date : chatlog[index].date,
+                  message : chatlog[index].message,
+                  attachment : chatlog[index].attachment,
+                  receiver:[{username :chatlog[index].receiver[0].username, read : true}],
+                  sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
+                  time : chatlog[index].time
+                });
+                this.setState({
+                  chatlog : chatlog
+                })
+            } else {
+              this.setState({
+                chatlog : chatlog
+              })
+              this.props.changeName(null,null,this.state.chatlog);
+              break;
+            }
+          }
+        }
+      }
+    })
   }
 
   getChatData = (chat) => {
@@ -152,7 +219,6 @@ export default class FriendList extends React.Component{
     }
 
   render(){
-    const chatList = this.props.chatList;
     const friend = this.props.friend;
     return(
       <Modal

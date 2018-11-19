@@ -1,0 +1,36 @@
+.deleteModal{
+  text-align: center;
+}
+
+.yesButton{
+  display: inline-block;
+  background-color: #3f3f3f;
+  padding : 10px;
+  margin: 10px;
+  color : #8aa099;
+  border: transparent;
+  border-radius: 5px;
+  font-family: HelveticaNeue;
+}
+
+.yesButton:hover{
+  background-color: rgba(62, 62, 62, 0.76);
+  cursor: pointer;
+}
+
+.noButton{
+  display: inline-block;
+  background-color: rgb(115, 28, 31);
+  color : #8aa099;
+  padding : 10px;
+  margin: 10px;
+  border: transparent;
+  border-radius: 5px;
+  font-family: HelveticaNeue;
+
+}
+
+.noButton:hover{
+  background-color: rgba(115, 28, 31, 0.79);
+  cursor: pointer;
+}

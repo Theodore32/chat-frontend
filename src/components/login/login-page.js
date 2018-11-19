@@ -3,10 +3,6 @@ import { Button, Checkbox, Form } from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import logo from '../../picture/logo2.png';
 import './login.css';
-import {
-  setInStorage,
-  getFromStorage
-} from '../../token/storage'
 
 class LoginForm extends React.Component{
   constructor(props){
@@ -94,7 +90,6 @@ class LoginForm extends React.Component{
       isLoading,
       signInError
     } = this.state;
-    console.log("Loading :"+ isLoading);
     if(isLoading){
       return(
         <div><p>Loading</p></div>
@@ -124,7 +119,7 @@ class LoginForm extends React.Component{
             {!signInError ?
                 null
               :
-                <div>
+                <div className = "login-error">
                   <p>
                     {signInError}
                   </p>

@@ -44,8 +44,59 @@
   cursor: pointer;
 }
 
+.errorImageType{
+  position: fixed;
+  top : 15px;
+  right: 15px;
+  width : 400px;
+  height: 60px;
+  line-height: 60px;
+  background-color: rgba(93, 16, 16, 0.97);
+  font-family: HelveticaNeue;
+  animation: fade-out 2s ease-in 1s forwards;
+  border-radius: 5px;
+}
+
+.imgPreview{
+  padding-top : 10px;
+  vertical-align: middle;
+  position : relative;
+}
+
 .imgPreview img{
-  border: 1px solid;
-  width : 300px;
-  height: 300px;
+  width : 200px;
+  height: 200px;
+  padding : 10px;
+}
+
+.cancelImage img{
+  cursor: pointer;
+  width : 40px;
+  height: 40px;
+  position: absolute;
+  left: 488px;
+  top: -3px;
+  border : 1px transparent;
+}
+
+.noSupportPreview{
+  padding-top : 8px;
+  position : relative;
+}
+
+.noSupportPreview p{
+  line-height: 8px;
+  padding : 6px 0px 6px 0px;
+  position : relative;
+}
+
+.cancelNoSupport img{
+  cursor: pointer;
+  width : 20px;
+  height: 20px;
+  position: absolute;
+  left: 476px;
+  top: 6.5px;
+  z-index: 1;
+  border : 1px transparent;
 }
