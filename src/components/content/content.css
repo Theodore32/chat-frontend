@@ -3,7 +3,12 @@
 @font-face { font-family: HelveticaNeueLight;  src: url('../../HelveticaNeueLight.ttf'); }
 
 
-
+.contextMenu{
+  position: fixed;
+  background: black;
+  box-shadow: 0px 2px 10px #999999;
+  z-index: 1;
+}
 
 .content-container-false{
   top: 60px;
@@ -40,6 +45,19 @@
   top: 0;
   color : black;
   width: 100%;
+  z-index: 2;
+  display: none;
+}
+
+.timeFixed-hide{
+  display: block;
+  background: #f5b335;
+  height: 40px;
+  position: fixed;
+  top: 0;
+  color : black;
+  width: 100%;
+  z-index: 2;
 }
 
 .MessageSender{
@@ -124,6 +142,14 @@
   border-left: 7px solid transparent;
 }
 
+.hoverPic{
+  width : 100px;
+  height: 100px;
+  color : black;
+  z-index: 2;
+  background-color: rgb(65, 6, 209);
+}
+
 .senderMessageWithPic {
   clear: both;
   padding: 6px 10px 11px;
@@ -180,8 +206,9 @@
 
 .attachmentFileName p{
   position: absolute;
-  color : white;
+  color : rgb(218, 218, 215);
   width: 200px;
+  padding-top : 2px;
   right: 0;
   text-align: center;
 }
@@ -341,14 +368,14 @@
 
 .timeSeparator{
   display: inline-block;
-  width : 100px;
-  line-height:23px;
-  font-size: 14px;
+  width : 108px;
+  line-height:24px;
+  font-size: 12px;
   height: 23px;
   border: transparent;
-  border-radius: 50px;
+  border-radius: 5px;
   text-align: center;
-  font-family: Mousse;
-  color : white;
-  background-color: rgba(162, 160, 154, 1);
+  font-family: HelveticaNeue;
+  color : rgb(218, 218, 215);
+  background-color: rgb(58, 58, 58);
 }

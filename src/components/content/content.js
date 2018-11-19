@@ -2,30 +2,135 @@ import React from 'react';
 import './content.css';
 import Message from '../text-message/text-message';
 import doc from '../../picture/doc.png';
-import ReactDOM from 'react-dom';
-
+import {
+  recieveSocket
+}from "../../socket/socketconnect";
 
 export default class Content extends React.Component {
   constructor(props){
     super(props)
 
+    this.state = {
+      timeFixed : false,
+      showTime : false,
+      visible : false,
+      isHovering: false,
+      length:0
+    }
     this.escOnClick= this.escOnClick.bind(this);
-    this.scrollUpDown= this.scrollUpDown.bind(this);
+    this.handleMouseHover = this.handleMouseHover.bind(this);
   }
 
   componentDidMount() {
+
     document.addEventListener("keydown", this.escOnClick, false);
-    document.addEventListener("scroll", this.scrollUpDown,false);
+    // this.picture.addEventListener("contextmenu", this.rightClick, false);
+    // this.contextContainer.addEventListener('click', this._handleClick,false);
+    // this.contextContainer.addEventListener('scroll', this._handleScroll,false);
+    // document.getElementById("content-container").addEventListener("scroll", this.Scrolling,false);
+    this.contextContainer.addEventListener('scroll',this.handleScroll,false);
     this.scrollToBottom();
+    this.changeChatroomSocket();
   }
 
-  componentDidUpdate() {
-    this.scrollToBottom();
+  componentDidUpdate(){
   }
 
   componentWillUnmount(){
     document.removeEventListener("keydown", this.escOnClick, false);
+    this.contextContainer.removeEventListener('scroll',this.handleScroll,false);
+    // this.picture.removeEventListener("contextmenu", this.rightClick,false);
+    // this.contextContainer.removeEventListener('click', this._handleClick,false);
+    // this.contextContainer.removeEventListener('scroll', this._handleScroll,false);
+    // document.getElementById("content-container").removeEventListener("scroll", this.Scrolling,false);
   }
+
+  handleScroll = (event) =>{
+    console.log(this.contextContainer.scrollTop);
+    console.log("Height:",this.contextContainer.scrollHeight);
+  }
+  // rightClick(event){
+  //   if (event.type === 'click') {
+  //     console.log('Left click');
+  //   } else if (event.type === 'contextmenu') {
+  //     event.preventDefault();
+  //     this.setState({
+  //       visible: true
+  //     });
+  //
+  //       const clickX = event.clientX;
+  //       const clickY = event.clientY;
+  //       const screenW = this.picture.offsetWidth;
+  //       const screenH = this.picture.offsetHeight;
+  //       const rootW = this.context.clientWidth;
+  //       const rootH = this.context.clientHeight;
+  //       const right = (screenW - clickX) > rootW;
+  //       const left = !right;
+  //       const top = (screenH - clickY) > rootH;
+  //       const bottom = !top;
+  //       console.log(right);
+  //       console.log(left);
+  //       console.log(top);
+  //       console.log(bottom);
+  //       console.log(this);
+  //       console.log(clickX);
+  //       console.log(clickY);
+  //       console.log(screenW);
+  //       console.log(screenH);
+  //       console.log(rootW);
+  //       console.log(rootH);
+  //       if (right) {
+  //           this.context.style.left = `${clickX + 5}px`;
+  //       }
+  //
+  //       if (left) {
+  //           this.context.style.left = `${clickX - rootW - 5}px`;
+  //       }
+  //
+  //       if (top) {
+  //           this.context.style.top = `${clickY + 5}px`;
+  //       }
+  //
+  //       if (bottom) {
+  //           this.context.style.top = `${clickY - rootH - 5}px`;
+  //       }
+  //   }
+  // }
+  //
+  // _handleClick = (event) => {
+  //       const { visible } = this.state;
+  //       const wasOutside = !(event.target.contains === this.context);
+  //
+  //       if (wasOutside && visible) this.setState({ visible: false });
+  //   };
+  //
+  // _handleScroll = () => {
+  //   const { visible } = this.state;
+  //   if (visible) this.setState({ visible: false });
+  // };
+
+  // Scrolling = (event) => {
+  //   var doc = document.getElementById("content-container")
+  //   var x = doc.scrollTop;
+  //   var y = event.timeStamp;
+  //
+  //   const { timeFixed } = this.state
+  //
+  //   if(y > this.prev) {
+  //     !timeFixed && this.setState({ timeFixed: true })
+  //   }
+  //   if(x !== 0){
+  //     !timeFixed && this.setState({ timeFixed: true })
+  //   }
+  //   else{
+  //     this.setState({ timeFixed: false })
+  //   }
+  //   this.prev = y
+  //
+  //   console.log("ini y ",y);
+  //   console.log("ini x ",x);
+  //   console.log("ini prev: ",this.prev);
+  // }
 
   escOnClick(event){
     if(event.keyCode === 27) {
@@ -34,13 +139,8 @@ export default class Content extends React.Component {
     }
   }
 
-  scrollUpDown(e){
-    var target = document.getElementById("content-container");
-    console.log(window.pageYOffset);
-  }
-
   scrollToBottom = () => {
-  this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
+    this.messagesEnd.scrollIntoView({behavior : "auto", block : "end"});
   }
 
   getTimefromLog(timestamp){
@@ -56,8 +156,8 @@ export default class Content extends React.Component {
     const day = time.toLocaleDateString('en-US' , options);
     const dayName = day.substring(0,3);
     let currentDate
-    if(index != 0){
-      if(chat[index].date == chat[index-1].date){
+    if(index !== 0){
+      if(chat[index].date === chat[index-1].date){
         currentDate = 1
       }
       else {
@@ -66,7 +166,7 @@ export default class Content extends React.Component {
     } else {
       currentDate = 2
     }
-    if( currentDate == 1){
+    if( currentDate === 1){
       return null
     }
     else {
@@ -94,23 +194,48 @@ export default class Content extends React.Component {
     return name;
   }
 
-  render(){
 
+  // timeFloatFixed = () =>{
+  //   let classHide = this.state.timeFixed ? "hide" : ""
+  //   return(
+  //     <div className = {"timeFixed-"+classHide}>
+  //       ASD
+  //     </div>
+  //   )
+  // }
+  handleMouseHover() {
+    this.setState(this.toggleHoverState);
+  }
+
+  toggleHoverState(state) {
+    return {
+      isHovering: !state.isHovering,
+    };
+  }
+
+  changeChatroomSocket(){
+    recieveSocket ('changechatroom',(err,recieve) =>{
+      this.scrollToBottom()
+    })
+  }
+
+  render(){
+    const { visible } = this.state;
     return (
-      <div >
-        <div className = {"content-container-"+this.props.checkrequest} id = "content-container">
-          <div className = "content-chat">
+      <div>
+        <div className = {"content-container-"+this.props.checkrequest} id = "content-container" ref={ref => {this.contextContainer = ref}}>
+          <div className = "content-chat" id = "content-chat">
               {this.props.chatlog.length < 1 ?
                  null
                  :
                  this.props.chatlog.map((index,urutan) =>{
-                   if(index.sender.username == this.props.senderUsername){
+                   if(index.sender.username === this.props.senderUsername){
                      return(
                       <div className = "MessageHeader">
                         {this.getDateandTime(index.time,this.props.chatlog,urutan)}
                         <div className = "senderMessageName">
                           {this.props.chatlog.length >= 0 ?
-                            urutan == 0 ?
+                            urutan === 0 ?
                               this.props.chatlog[urutan-1] === "undefined" ?
                                 index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
                                     <p>{index.sender.name}</p>
@@ -131,14 +256,14 @@ export default class Content extends React.Component {
                           }
                         </div>
                         <div className = "MessageSender">
-                          {this.props.chatlog[urutan].receiver[0].read == true ?
+                          {this.props.chatlog[urutan].receiver[0].read === true ?
                             <div className = "readChat">
                               Read
                             </div> :
                             null
                           }
                           <div>
-                            {index.message.split("\n").length > 1 || index.message.length > 78 ?
+                            {index.message.split("\n") > 1 || index.message.length > 78 ?
                               <div>
                                 {!index.attachment ?
                                   <div className = "senderMessage">
@@ -151,7 +276,7 @@ export default class Content extends React.Component {
                                   :
                                   <div className = "senderMessageWithPic">
                                     <div>
-                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
                                           <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
@@ -173,7 +298,7 @@ export default class Content extends React.Component {
                               :
                               <div>
                                 {!index.attachment ?
-                                  <div className = "senderMessage">
+                                  <div className = "senderMessage"  >
                                     <p>{index.message}
                                       <div className = "timeSenderMessageOneLine">
                                         {this.getTimefromLog(index.time)}
@@ -181,7 +306,13 @@ export default class Content extends React.Component {
                                     </p>
                                   </div>
                                   : index.attachment && !index.message ?
-                                  <div className = "senderMessagePicOnly">
+                                  <div className = "senderMessagePicOnly" onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseHover}>
+                                    {
+                                      this.state.isHovering &&
+                                      <div className = "hoverPic">
+                                        Hovering right meow!
+                                      </div>
+                                    }
                                     <div>
                                       {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
@@ -199,9 +330,9 @@ export default class Content extends React.Component {
                                     </div>
                                   </div>
                                   :
-                                  <div className = "senderMessageWithPic">
+                                  <div className = "senderMessageWithPic"  >
                                     <div>
-                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
                                           <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
@@ -231,7 +362,7 @@ export default class Content extends React.Component {
                         {this.getDateandTime(index.time,this.props.chatlog,urutan)}
                        <div className = "receiverMessageName">
                          {this.props.chatlog.length >= 0 ?
-                           urutan == 0 ?
+                           urutan === 0 ?
                              this.props.chatlog[urutan-1] === "undefined" ?
                                index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
                                    <p>{index.sender.name}</p>
@@ -252,7 +383,7 @@ export default class Content extends React.Component {
                          }
                        </div>
                        <div className = "MessageReceiver">
-                         {index.message.split("\n").length > 1 || index.message.length > 78 ?
+                         {index.message.split("\n") > 1 || index.message.length > 78 ?
                            <div>
                              {!index.attachment ?
                                <div className = "receiverMessage">
@@ -265,7 +396,7 @@ export default class Content extends React.Component {
                                :
                                <div className = "receiverMessageWithPic">
                                  <div>
-                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
                                        <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
@@ -297,7 +428,7 @@ export default class Content extends React.Component {
                                : index.attachment && !index.message ?
                                <div className = "receiverMessagePicOnly">
                                  <div>
-                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
                                        <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
@@ -315,7 +446,7 @@ export default class Content extends React.Component {
                                :
                                <div className = "receiverMessageWithPic">
                                  <div>
-                                   {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
                                        <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>

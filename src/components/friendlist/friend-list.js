@@ -5,7 +5,7 @@ import {
   sendSocket,
   closeSocket
 }from "../../socket/socketconnect";
-import {Modal, Button} from 'semantic-ui-react';
+import {Modal} from 'semantic-ui-react';
 import chat from '../../picture/chat.png'
 import block from '../../picture/block.png'
 var crypto = require("crypto");
@@ -157,11 +157,11 @@ export default class FriendList extends React.Component{
 
   readChatSocket (port) {
     recieveSocket ('readchat'+port, (err,recieve) =>{
-      if(this.state.chatlog.length != 0){
+      if(this.state.chatlog.length !== 0){
         let chatlog = this.state.chatlog;
-        for(var index = chatlog.length-1 ; index != 0 ; index--){
-          if(chatlog.length != 0){
-            if(chatlog[index].receiver[0].read == false){
+        for(var index = chatlog.length-1 ; index !== 0 ; index--){
+          if(chatlog.length !== 0){
+            if(chatlog[index].receiver[0].read === false){
               chatlog.splice(index,1,
                 { chatId: port,
                   date : chatlog[index].date,
@@ -219,7 +219,6 @@ export default class FriendList extends React.Component{
     }
 
   render(){
-    const chatList = this.props.chatList;
     const friend = this.props.friend;
     return(
       <Modal

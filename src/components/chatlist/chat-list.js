@@ -1,7 +1,6 @@
 import React from 'react';
 import './chatlist.css';
 
-import gambar from '../../picture/boy.png';
 import {
   recieveSocket,
   sendSocket,
@@ -31,6 +30,7 @@ export default class FriendList extends React.Component{
     this.getChatData(this.props.chat);
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
+    this.socketEditFriend(this.props.chat.username);
     for(var block in this.props.blacklist){
       if(this.props.blacklist[block].username === this.props.chat.username){
         this.setState({
@@ -48,6 +48,7 @@ export default class FriendList extends React.Component{
     this.socketcloseChatroom();
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
+    this.socketEditFriend(this.props.chat.username);
   }
 
   socketcloseChatroom=()=>{
@@ -69,6 +70,12 @@ export default class FriendList extends React.Component{
   socketblacklistChat = () =>{
     recieveSocket('blockchat'+this.props.chat.username,(err,recieve)=>{
       closeSocket()
+    })
+  }
+
+  socketEditFriend = (port) => {
+    recieveSocket('edit'+port, (err,recieve) => {
+      this.props.editfriendSocket(recieve.message)
     })
   }
 
@@ -112,6 +119,9 @@ export default class FriendList extends React.Component{
         }
         this.props.changeName(null,this.props.chatId,this.state.chatlog);
         this.readChat(this.props.chat,this.props.myUser.username);
+        if(recieve.message.sender.username === this.props.myUser.username){
+          sendSocket('changechatroom');
+        }
       }
       else{
         if(recieve.message.attachment){
@@ -165,11 +175,10 @@ export default class FriendList extends React.Component{
       }),
     }).then(res => res.json())
       .then(json =>{
-        console.log(json.message);
         if(json.success){
           let notif = 0
           for(var read in json.message){
-            if(json.message[read].sender.username != this.props.myUser.username && !json.message[read].receiver[0].read){
+            if(json.message[read].sender.username !== this.props.myUser.username && !json.message[read].receiver[0].read){
               notif++
             }
           }
@@ -207,7 +216,7 @@ export default class FriendList extends React.Component{
     })
     sendSocket('openchatroom',this.props.chat.username);
     this.props.changeName(item,item.chatId,log);
-    if(this.state.lastMessage.sender != this.props.myUser.username){
+    if(this.state.lastMessage.sender !== this.props.myUser.username){
       this.props.notifMinus(this.state.notif);
       this.readChat(item,this.props.myUser.username);
       sendSocket('readchat',item.chatId);
@@ -216,10 +225,10 @@ export default class FriendList extends React.Component{
 
   readChatSocket (port) {
     recieveSocket ('readchat'+port, (err,recieve) =>{
-      if(this.state.chatlog.length != 0){
+      if(this.state.chatlog.length !== 0){
         let chatlog = this.state.chatlog;
         for(var index = chatlog.length-1 ; index >= 0 ; index--){
-            if(chatlog[index].receiver[0].read == false){
+            if(chatlog[index].receiver[0].read === false){
               chatlog.splice(index,1,
                 { chatId: port,
                   date : chatlog[index].date,
@@ -282,7 +291,7 @@ export default class FriendList extends React.Component{
             <div className = "chat-lastMessageText">
               {this.state.lastMessage.message}
             </div>
-            {this.state.notif == 0 ?
+            {this.state.notif === 0 ?
               null
               :this.state.notif <= 9 ?
               <div className = "friend-notif-oneNumber">

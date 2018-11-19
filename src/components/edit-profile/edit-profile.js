@@ -111,7 +111,6 @@ export default class EditProfile extends React.Component{
 
     changePicture = () =>{
       let imageUrl = '';
-      let imagedisplay
         if(imageUrl !== ''){
           return(<img alt=" " src={require(`../../uploads/${imageUrl}`)} />)
         }
