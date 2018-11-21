@@ -16,8 +16,7 @@ export default class inputMessage extends React.Component{
       message:'',
       file: '',
       imagePreviewUrl: '',
-      error: '',
-      filePreviewUrl : ''
+      error: ''
     }
 
     this.messageOnChange =this.messageOnChange.bind(this);
@@ -34,8 +33,6 @@ export default class inputMessage extends React.Component{
   onSend(e){
     e.preventDefault();
     const today = new Date();
-    const getHours = (today.getHours() < 10 ? '0' : '') + today.getHours();
-    const getMinute = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
     const dd = (today.getDate() < 10 ? '0' : '')+today.getDate();
     const mm = ((today.getMonth()+1) < 10 ? '0' : '')+(today.getMonth()+1); //January is 0!
     const yyyy = today.getFullYear();
@@ -135,45 +132,41 @@ export default class inputMessage extends React.Component{
   }
 
 onEnterPress = (e) => {
-  if(e.keyCode == 13 && e.shiftKey == false) {
+  if(e.keyCode === 13 && e.shiftKey === false) {
     this.onSend(e);
   }
 }
 
-_handleImageChange(e) {
-   e.preventDefault();
-
+_handleImageChange(event) {
+   event.preventDefault();
+   console.log(event);
    let reader = new FileReader();
-   let file = e.target.files[0];
+   let file = event.target.files[0];
    reader.onloadend = () => {
      this.setState({
        file: file,
-       imagePreviewUrl: reader.result,
-       filePreviewUrl : reader.result
-     });
+       imagePreviewUrl: reader.result
+     })
    }
    if(file){
      reader.readAsDataURL(file);
    }
+   event.target.value = '';
  }
 
  cancelImage = () =>{
    this.setState({
      imagePreviewUrl : '',
-     filePreviewUrl : '',
      file : '',
      error : ''
    })
  }
 
   render(){
-    let {imagePreviewUrl,filePreviewUrl} = this.state;
-    let $imagePreview,$filePreview = null;
+    let {imagePreviewUrl} = this.state;
+    let $imagePreview = null;
     if (imagePreviewUrl) {
       $imagePreview = (<img src={imagePreviewUrl} />);
-    }
-    if (filePreviewUrl){
-      $filePreview = (<iframe src = {filePreviewUrl}/>);
     }
     return(
       <div className = "footer-app">
@@ -187,7 +180,7 @@ _handleImageChange(e) {
                 id = "attachment"
                 type = "file"
                 style = {{display : "none"}}
-                onChange = {(e) => this._handleImageChange(e)}
+                onChange = {(event) => this._handleImageChange(event)}
                 />
             </div>
             {this.state.error ?
@@ -198,14 +191,15 @@ _handleImageChange(e) {
               null
             }
             {$imagePreview ?
-              this.state.file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+              this.state.file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                 <div className = "imgPreview">
                   <div className = "cancelImage">
                     <img src = {cancel} onClick = {this.cancelImage}/>
                   </div>
                   <img src = {doc}/>
+                  <p>{this.state.file.name}</p>
                 </div> :
-              this.state.file.type == "image/jpeg" || this.state.file.type == "image/jpg" || this.state.file.type == "image/gif" || this.state.file.type == "image/png" ?
+              this.state.file.type === "image/jpeg" || this.state.file.type === "image/jpg" || this.state.file.type === "image/gif" || this.state.file.type === "image/png" ?
                 <div className = "imgPreview">
                   <div className = "cancelImage">
                     <img src = {cancel} onClick = {this.cancelImage}/>

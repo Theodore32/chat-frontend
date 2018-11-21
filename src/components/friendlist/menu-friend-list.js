@@ -77,7 +77,7 @@ export default class SideNav extends Component {
     }
 
     editFriendChatSocket=(data)=>{
-      for(var index in this.state.friendlist){
+      for(let index in this.state.friendlist){
         if(this.state.friendlist[index].username === data.username){
           var friend = this.state.friendlist
           friend.splice(index,1,{username: data.username, name : data.name, picture : data.photo, description : data.description});
@@ -86,7 +86,7 @@ export default class SideNav extends Component {
           })
         }
       }
-      for(var index in this.state.chatlist){
+      for(let index in this.state.chatlist){
         if(this.state.chatlist[index].username === data.username){
           var chatList = this.state.chatlist
           chatList.splice(index,1,{username: data.username, name : data.name, picture : data.photo,chatId:this.state.chatlist[index].chatId});
@@ -175,7 +175,7 @@ export default class SideNav extends Component {
                   <li onClick={() => this.changeTab('Chats')} className = {"li-chats " + Chats.li}>
                       <p>CHATS</p>
                       <div>
-                        {this.state.notif == 0 ?
+                        {this.state.notif === 0 ?
                           null
                           :this.state.notif <= 9 ?
                           <div className = {"chat-notif-oneNumber "+Chats.notif}>
@@ -236,6 +236,7 @@ export default class SideNav extends Component {
                               updateSort = {this.updateSort}
                               blocklist = {blocklist}
                               checkReadChat = {this.props.checkReadChat}
+                              editfriendSocket = {this.editFriendChatSocket}
                               />
                             )
                           )

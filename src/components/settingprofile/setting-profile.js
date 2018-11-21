@@ -5,6 +5,8 @@ import BlockedFriend from '../blockedfriend/block-friend';
 import ChangePassword from '../change-password/change-password';
 import AddFriend from '../addfriend/add-friend';
 import EditProfile from '../edit-profile/edit-profile';
+import DeleteAccount from '../delete-account/delete-account';
+
 
 export default class SettingProfile extends React.Component{
   constructor(props){
@@ -12,7 +14,7 @@ export default class SettingProfile extends React.Component{
 
     this.state = {
       open : false,
-      search : '',
+      search : ''
     }
 
     this.logout = this.logout.bind(this)
@@ -80,6 +82,10 @@ export default class SettingProfile extends React.Component{
         <ChangePassword
           onClick = {this.props.click}
           open = {this.props.open}
+        />
+        <DeleteAccount
+          onClick = {this.props.click}
+          history = {this.props.history}
         />
         <li onClick={this.logout}>Log Out</li>
       </div>

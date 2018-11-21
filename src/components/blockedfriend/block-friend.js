@@ -61,7 +61,6 @@ export default class AddFriend extends React.Component{
    }
 
   render(){
-    const { open, size } = this.state;
     const blockfriend = this.state.blocklist;
     const filteredBlockList = blockfriend.filter(
       (block) => {

@@ -1,10 +1,6 @@
 import React from 'react';
 import './addfriend.css';
-import {Link} from 'react-router-dom'
-import ChangePassword from '../change-password/change-password';
-import addcontact from '../../picture/add-user.png';
-import muka from '../../picture/muka.jpg'
-import {Modal, Button, Form, Loader} from 'semantic-ui-react';
+import {Modal} from 'semantic-ui-react';
 import icon from '../../picture/search.png';
 import {
   sendSocket
@@ -34,7 +30,7 @@ export default class AddFriend extends React.Component{
   }
 
   onEnterPress=(e)=>{
-    if(e.keyCode == 13 && this.state.search) {
+    if(e.keyCode === 13 && this.state.search) {
       this.searchData(e);
     }
   }
@@ -131,10 +127,12 @@ export default class AddFriend extends React.Component{
 
    add = (event) => {
     event.preventDefault()
-    const username = this.state.search
-    const name = this.state.searchResult.name
-    const picture = this.state.searchResult.picture
-    const description = this.state.searchResult.description
+    const data = {
+      username : this.state.search,
+      name : this.state.searchResult.name,
+      picture : this.state.searchResult.picture,
+      description : this.state.searchResult.description
+    }
     fetch('/add',{
       credentials:'include',
       method:'PUT',
@@ -142,10 +140,7 @@ export default class AddFriend extends React.Component{
         'Content-Type' : 'application/json'
       },
       body:JSON.stringify({
-        username : username,
-        name : name,
-        picture : picture,
-        description : description
+        data : data
       })
     }).then(res => res.json())
     .then(res=>{
@@ -157,10 +152,12 @@ export default class AddFriend extends React.Component{
 
   block = (event) => {
     event.preventDefault()
-    const username = this.state.search
-    const name = this.state.searchResult.name
-    const picture = this.state.searchResult.picture
-    const description = this.state.searchResult.description
+    const data = {
+      username : this.state.search,
+      name : this.state.searchResult.name,
+      picture : this.state.searchResult.picture,
+      description : this.state.searchResult.description
+    }
     fetch('/block',{
       credentials:'include',
       method:'PUT',
@@ -168,10 +165,7 @@ export default class AddFriend extends React.Component{
         'Content-Type' : 'application/json'
       },
       body:JSON.stringify({
-        username : username,
-        name : name,
-        picture : picture,
-        description : description
+        data : data
       })
     }).then(res => res.json())
     .then(res=>{
@@ -183,7 +177,6 @@ export default class AddFriend extends React.Component{
 
 
   render(){
-    const { open, size } = this.state;
     return(
       <Modal trigger={
             <li onClick = {this.props.click}>
