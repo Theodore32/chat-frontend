@@ -31,6 +31,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
+    this.unsendMessageSocket(this.props.chat.chatId);
     for(var block in this.props.blacklist){
       if(this.props.blacklist[block].username === this.props.chat.username){
         this.setState({
@@ -49,6 +50,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
+    this.unsendMessageSocket(this.props.chat.chatId);
   }
 
   socketcloseChatroom=()=>{
@@ -93,10 +95,9 @@ export default class FriendList extends React.Component{
       }
       // this.props.updateSort(recieve.message.time,this.props.chat)
       if(this.state.openchat){
-        sendSocket('readchat',recieve.message.chatId);
         if(recieve.message.attachment){
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -107,7 +108,7 @@ export default class FriendList extends React.Component{
           })
         }else {
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -117,10 +118,14 @@ export default class FriendList extends React.Component{
             timeStamp :timeStamp
           })
         }
+        if(recieve.message.sender.username !== this.props.myUser.username){
+          this.readChat(this.props.chat,this.props.myUser.username);
+          sendSocket('readchat',recieve.message.chatId);
+        }
         this.props.changeName(null,this.props.chatId,this.state.chatlog);
-        this.readChat(this.props.chat,this.props.myUser.username);
         if(recieve.message.sender.username === this.props.myUser.username){
-          sendSocket('changechatroom');
+          sendSocket('scrollMyChatroom');
+          sendSocket('scrollOtherChatroom');
         }
       }
       else{
@@ -136,10 +141,10 @@ export default class FriendList extends React.Component{
             timeStamp :timeStamp,
             notif:this.state.notif+1
           })
-        } else{
+        } else {
           this.setState({
             chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
-              receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date}),
+              receiver:[{username :recieve.message.sender.username,read : false}],time: recieve.message.time,date : recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
               message:lastMessageText,
@@ -151,6 +156,7 @@ export default class FriendList extends React.Component{
         }
         this.props.notifTotal(1);
       }
+
     })
   }
 
@@ -251,6 +257,36 @@ export default class FriendList extends React.Component{
 
         }
       }
+    })
+  }
+
+  unsendMessageSocket (port) {
+    recieveSocket ('unsendMessage'+port, (err,recieve) =>{
+        let chatlog = this.state.chatlog;
+        for(var index in chatlog){
+          if(new Date(chatlog[index].time).getTime() === new Date(recieve).getTime()){
+            if(chatlog[index].sender.username === this.props.myUser.username ){
+              chatlog.splice(index,1);
+            }
+            else{
+              let notif = this.state.notif
+              if(chatlog[index].receiver[0].read === false){
+                chatlog.splice(index,1);
+                this.setState({
+                  notif : notif-1
+                })
+                this.props.notifTotal(-1)
+              }
+              else{
+                chatlog.splice(index,1);
+              }
+            }
+          }
+          this.setState({
+            chatlog : chatlog
+          })
+        }
+        this.props.changeName(null,this.props.chatId,this.state.chatlog);
     })
   }
 

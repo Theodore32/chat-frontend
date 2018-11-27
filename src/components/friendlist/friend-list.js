@@ -89,11 +89,11 @@ export default class FriendList extends React.Component{
     recieveSocket(port,(err,recieve)=>{
       if(recieve.message.attachment){
         this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date})
+          chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date})
         })
       } else {
         this.setState({
-          chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date})
+          chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date})
         })
       }
       if(this.state.openchat){

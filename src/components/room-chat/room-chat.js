@@ -88,6 +88,7 @@ export default class RoomChat extends React.Component{
 
   openChatRoom = (item,chatId,log) => {
     if(item !== null){
+      console.log(this.state.username);
       if(this.state.username !== item.username){
         sendSocket('closechatroom',this.state.username);
         sendSocket('changechatroom');

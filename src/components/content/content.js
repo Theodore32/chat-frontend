@@ -3,7 +3,9 @@ import './content.css';
 import Message from '../text-message/text-message';
 import doc from '../../picture/doc.png';
 import {
-  recieveSocket
+  recieveSocket,
+  sendSocket,
+  closeSocket
 }from "../../socket/socketconnect";
 
 export default class Content extends React.Component {
@@ -15,6 +17,7 @@ export default class Content extends React.Component {
       showTime : false,
       visible : false,
       isHovering: false,
+      openMenu: false,
       length:0
     }
     this.escOnClick= this.escOnClick.bind(this);
@@ -22,7 +25,6 @@ export default class Content extends React.Component {
   }
 
   componentDidMount() {
-
     document.addEventListener("keydown", this.escOnClick, false);
     // this.picture.addEventListener("contextmenu", this.rightClick, false);
     // this.contextContainer.addEventListener('click', this._handleClick,false);
@@ -30,10 +32,7 @@ export default class Content extends React.Component {
     // document.getElementById("content-container").addEventListener("scroll", this.Scrolling,false);
     this.contextContainer.addEventListener('scroll',this.handleScroll,false);
     this.scrollToBottom();
-    this.changeChatroomSocket();
-  }
-
-  componentDidUpdate(){
+    this.scrollMyChatroomSocket();
   }
 
   componentWillUnmount(){
@@ -46,9 +45,36 @@ export default class Content extends React.Component {
   }
 
   handleScroll = (event) =>{
-    console.log(this.contextContainer.scrollTop);
-    console.log("Height:",this.contextContainer.scrollHeight);
+
+      let scrollTop = Math.round(this.contextContainer.scrollTop);
+      let scrollHeight = this.contextContainer.scrollHeight;
+      let offsetHeight = this.contextContainer.offsetHeight;
+      let clientHeight = this.contextContainer.clientHeight;
+      let oneLastMessage =  Math.round(scrollHeight - scrollTop);
+      //scrollHeight - scrollTop = offsetHeight
+      console.log(scrollTop);
+      console.log(scrollHeight);
+      console.log(offsetHeight);
+      console.log(clientHeight);
+      console.log(oneLastMessage);
+      recieveSocket ('scrollOtherChatroom',(err,recieve) =>{
+        if((scrollTop + offsetHeight) === scrollHeight) {
+          this.scrollToBottom()
+        }
+
+    })
   }
+
+  scrollMyChatroomSocket(){
+    recieveSocket ('scrollMyChatroom',(err,recieve) =>{
+      this.scrollToBottom()
+    })
+  }
+
+  scrollOtherChatroomSocket(){
+
+  }
+
   // rightClick(event){
   //   if (event.type === 'click') {
   //     console.log('Left click');
@@ -194,7 +220,6 @@ export default class Content extends React.Component {
     return name;
   }
 
-
   // timeFloatFixed = () =>{
   //   let classHide = this.state.timeFixed ? "hide" : ""
   //   return(
@@ -203,20 +228,53 @@ export default class Content extends React.Component {
   //     </div>
   //   )
   // }
-  handleMouseHover() {
-    this.setState(this.toggleHoverState);
+
+  handleMouseHover(flag,time) {
+    if(flag === 0){
+      this.setState(this.toggleHoverState(true,time));
+    }
+    else{
+      this.setState(this.toggleHoverState(false,time));
+    }
   }
 
-  toggleHoverState(state) {
+  toggleHoverState(state,time) {
     return {
-      isHovering: !state.isHovering,
+      isHovering: state,
+      openMenu : false,
+      timeDiv : time
     };
   }
 
-  changeChatroomSocket(){
-    recieveSocket ('changechatroom',(err,recieve) =>{
-      this.scrollToBottom()
+  unsendMessage = (chatId,timeStamp) =>{
+    console.log(timeStamp);
+    fetch('/unsendMessage',{
+      credentials : 'include',
+      method:'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chatId : chatId,
+        timeStamp:timeStamp
+      })
+    }).then(res => res.json())
+      .then(response =>{
+        if(response.success){
+          this.handleMouseHover;
+          sendSocket('unsendMessage',{chatId,timeStamp});
+        }
     })
+  }
+
+  MenuMessage = () =>{
+    this.setState(this.toggleMenuMessage)
+  }
+
+  toggleMenuMessage(state){
+    return{
+      openMenu : !state.openMenu
+    }
   }
 
   render(){
@@ -263,10 +321,27 @@ export default class Content extends React.Component {
                             null
                           }
                           <div>
-                            {index.message.split("\n") > 1 || index.message.length > 78 ?
+                            {index.message.split("\n").length > 1 || index.message.length > 78 ?
                               <div>
                                 {!index.attachment ?
-                                  <div className = "senderMessage">
+                                  <div className = "senderMessage" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                    onMouseLeave={() => this.handleMouseHover(1,null)} >
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverTextContainer">
+                                        <div className = "hoverText" onClick = {() => this.MenuMessage()}>
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
                                     <p>{index.message}
                                       <div className = "timeSenderMessageManyLine">
                                         {this.getTimefromLog(index.time)}
@@ -274,12 +349,29 @@ export default class Content extends React.Component {
                                     </p>
                                   </div>
                                   :
-                                  <div className = "senderMessageWithPic">
+                                  <div className = "senderMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)} onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                              <li onClick ={() => this.downloadFile(index.attachment.name)} >Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
                                     <div>
                                       {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                          <img src = {doc}/>
                                         </div>
                                         :
                                         <div className = "attachment-picture">
@@ -298,7 +390,22 @@ export default class Content extends React.Component {
                               :
                               <div>
                                 {!index.attachment ?
-                                  <div className = "senderMessage"  >
+                                  <div className = "senderMessage" onMouseEnter={() =>this.handleMouseHover(0,index.time)} onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverTextContainer">
+                                        <div className = "hoverText" onClick = {() => this.MenuMessage()}>
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :null
+                                    }
                                     <p>{index.message}
                                       <div className = "timeSenderMessageOneLine">
                                         {this.getTimefromLog(index.time)}
@@ -306,18 +413,30 @@ export default class Content extends React.Component {
                                     </p>
                                   </div>
                                   : index.attachment && !index.message ?
-                                  <div className = "senderMessagePicOnly" onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseHover}>
+                                  <div className = "senderMessagePicOnly" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                    onMouseLeave={() => this.handleMouseHover(1,null)}>
                                     {
-                                      this.state.isHovering &&
-                                      <div className = "hoverPic">
-                                        Hovering right meow!
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                              <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
                                       </div>
+                                      :
+                                      null
                                     }
                                     <div>
-                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                          <img src = {doc}/>
                                         </div>
                                         :
                                         <div className = "attachment-picture">
@@ -330,12 +449,30 @@ export default class Content extends React.Component {
                                     </div>
                                   </div>
                                   :
-                                  <div className = "senderMessageWithPic"  >
+                                  <div className = "senderMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                    onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                    {
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                        <div className = "hoverAttachmentFile">
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                              <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :
+                                      null
+                                    }
                                     <div>
                                       {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                          <img src = {doc}/>
                                         </div>
                                         :
                                         <div className = "attachment-picture">
@@ -383,7 +520,7 @@ export default class Content extends React.Component {
                          }
                        </div>
                        <div className = "MessageReceiver">
-                         {index.message.split("\n") > 1 || index.message.length > 78 ?
+                         {index.message.split("\n").length > 1 || index.message.length > 78 ?
                            <div>
                              {!index.attachment ?
                                <div className = "receiverMessage">
@@ -394,12 +531,29 @@ export default class Content extends React.Component {
                                  </p>
                                </div>
                                :
-                               <div className = "receiverMessageWithPic">
+                               <div className = "receiverMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                 onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                 {
+                                   this.state.isHovering && this.state.timeDiv === index.time ?
+                                   <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                     <div className = "hoverAttachmentFile">
+                                       {this.state.openMenu ?
+                                         <div className = "MenuMessage">
+                                           <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                         </div>
+                                         :
+                                         null
+                                       }
+                                     </div>
+                                   </div>
+                                   :
+                                   null
+                                 }
                                  <div>
                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                       <img src = {doc}/>
                                      </div>
                                      :
                                      <div className = "attachment-picture">
@@ -426,12 +580,29 @@ export default class Content extends React.Component {
                                  </p>
                                </div>
                                : index.attachment && !index.message ?
-                               <div className = "receiverMessagePicOnly">
+                               <div className = "receiverMessagePicOnly" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                 onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                 {
+                                   this.state.isHovering && this.state.timeDiv === index.time ?
+                                   <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                     <div className = "hoverAttachmentFile">
+                                       {this.state.openMenu ?
+                                         <div className = "MenuMessage">
+                                           <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                         </div>
+                                         :
+                                         null
+                                       }
+                                     </div>
+                                   </div>
+                                   :
+                                   null
+                                 }
                                  <div>
                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                       <img src = {doc}/>
                                      </div>
                                      :
                                      <div className = "attachment-picture">
@@ -444,12 +615,29 @@ export default class Content extends React.Component {
                                  </div>
                                </div>
                                :
-                               <div className = "receiverMessageWithPic">
+                               <div className = "receiverMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                 onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                 {
+                                   this.state.isHovering && this.state.timeDiv === index.time ?
+                                   <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                     <div className = "hoverAttachmentFile">
+                                       {this.state.openMenu ?
+                                         <div className = "MenuMessage">
+                                           <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                         </div>
+                                         :
+                                         null
+                                       }
+                                     </div>
+                                   </div>
+                                   :
+                                   null
+                                 }
                                  <div>
                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                      <div className = "attachmentFileName">
                                        <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                       <img src = {doc}/>
                                      </div>
                                      :
                                      <div className = "attachment-picture">

@@ -32,17 +32,18 @@ export default class inputMessage extends React.Component{
 
   onSend(e){
     e.preventDefault();
-    const today = new Date();
+    const timeNow = Date.now()
+    const today = new Date(timeNow);
     const dd = (today.getDate() < 10 ? '0' : '')+today.getDate();
     const mm = ((today.getMonth()+1) < 10 ? '0' : '')+(today.getMonth()+1); //January is 0!
     const yyyy = today.getFullYear();
     const date = dd+'-'+mm+'-'+yyyy;
-    const message = this.state.message;
+    const message = this.state.message.trim();
     const attachment = this.state.file;
     const attachmentName = this.state.file.name;
     const attachmentType = this.state.file.type;
     if(message || attachment){
-      this.attachPhoto(attachment,attachmentName,attachmentType,message,today,date);
+      this.attachPhoto(attachment,attachmentName,attachmentType,message,timeNow,date);
     }
   }
 
@@ -62,7 +63,6 @@ export default class inputMessage extends React.Component{
     const sender = this.props.sender;
     const chatId = this.props.chatId;
     const receive = this.props.recieve;
-
     var formData = new FormData();
     formData.append ('chatId', chatId);
     formData.append ('senderUsername', senderUsername);
@@ -90,7 +90,7 @@ export default class inputMessage extends React.Component{
               name:this.props.sender
             },
             chatId:this.props.chatId,
-            message:this.state.message,
+            message:this.state.message.trim(),
             attachment: {
               name : response.filename,
               type : attachmentType
@@ -107,7 +107,7 @@ export default class inputMessage extends React.Component{
               name:this.props.sender
             },
             chatId:this.props.chatId,
-            message:this.state.message,
+            message:this.state.message.trim(),
             time : today,
             date : date
           }
