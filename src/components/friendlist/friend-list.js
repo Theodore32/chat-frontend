@@ -7,7 +7,7 @@ import {
 }from "../../socket/socketconnect";
 import {Modal} from 'semantic-ui-react';
 import chat from '../../picture/chat.png'
-import block from '../../picture/block.png'
+import del from '../../picture/block.png'
 var crypto = require("crypto");
 
 
@@ -21,7 +21,8 @@ export default class FriendList extends React.Component{
       open : false,
       chated : false,
       blocked : false,
-      openchat : false
+      openchat : false,
+      del:false
     }
 
     this.activeSocket = this.activeSocket.bind(this);
@@ -206,6 +207,36 @@ export default class FriendList extends React.Component{
     })
   }
 
+  HandlerdeleteAccount = () =>{
+    this.setState({
+      del:!this.state.del
+    })
+  }
+
+  deleteAccount = () =>{
+    fetch('/deleteAccount',{
+      credentials : 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method:'DELETE',
+      body: JSON.stringify({
+        deletedUsername : this.props.friend.username
+      }),
+    }).then(res => res.json())
+      .then(response =>{
+        if(response.success){
+          let data = {
+            photo : response.picture,
+            username : response.username,
+            description : response.description,
+            name : response.name
+          }
+          sendSocket("editprofile",data)
+        }
+    })
+  }
+
     open = () =>{
       this.setState({
         open : true
@@ -214,7 +245,14 @@ export default class FriendList extends React.Component{
 
     close = () => {
       this.setState({
-        open : false
+        open : false,
+        del:false
+      })
+    }
+
+    closeDeleteOption = () =>{
+      this.setState({
+        del : false
       })
     }
 
@@ -246,15 +284,33 @@ export default class FriendList extends React.Component{
             {friend.description}
           </div>
           <div className = "chat-block-container">
-            <div onClick={() => this.openChatRoom(friend)} className = "chat-button">
-              <img src = {chat}/><br/>
-              Chat
-            </div>
-            <div className = "block-button">
-              <img src = {block} /><br/>
-              Block
-            </div>
+            {this.props.isAdmin ?
+              <div>
+                <div onClick={() => this.openChatRoom(friend)} className = "admin-chat-button">
+                  <img src = {chat}/><br/>
+                  Chat
+                </div>
+                <div onClick ={this.HandlerdeleteAccount} className = "delete-button" >
+                  <img src = {del} /><br/>
+                  Delete this account
+                </div>
+              </div> :
+              <div>
+                <div onClick={() => this.openChatRoom(friend)} className = "user-chat-button">
+                  <img src = {chat}/><br/>
+                  Chat
+                </div>
+              </div>
+            }
           </div>
+          {this.state.del ?
+            <div className = "deleteContainer">
+              <button onClick = {this.deleteAccount} className = "yesButton">Yes delete this account</button>
+              <button onClick = {this.closeDeleteOption} className = "noButton">No don't delete this account</button>
+            </div>
+            :
+            null
+          }
         </center>
       </Modal>
     );

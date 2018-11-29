@@ -78,7 +78,7 @@ import setting from '../../picture/menu.png';
               profilePicture = {this.props.profilePicture}
               change = {this.props.change}
               history = {this.props.history}
-              blocklist = {this.props.blocklist}
+              isAdmin = {this.props.isAdmin}
             />
           </div>
       :
@@ -92,7 +92,7 @@ import setting from '../../picture/menu.png';
             profilePicture = {this.props.profilePicture}
             change = {this.props.change}
             history = {this.props.history}
-            blocklist = {this.props.blocklist}
+            isAdmin = {this.props.isAdmin}
             />
         </div>
       }

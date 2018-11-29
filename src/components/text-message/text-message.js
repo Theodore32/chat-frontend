@@ -16,7 +16,8 @@ export default class inputMessage extends React.Component{
       message:'',
       file: '',
       imagePreviewUrl: '',
-      error: ''
+      error: '',
+      enterPressed : false
     }
 
     this.messageOnChange =this.messageOnChange.bind(this);
@@ -84,7 +85,7 @@ export default class inputMessage extends React.Component{
       if(response.success){
         if(response.filename){
           let send = {
-            reciever:this.props.sender,
+            reciever:this.props.recieve,
             sender:{
               username: this.props.senderUsername,
               name:this.props.sender
@@ -101,7 +102,7 @@ export default class inputMessage extends React.Component{
           sendSocket('sendChat',send);
         } else {
           let send = {
-            reciever:this.props.sender,
+            reciever:this.props.recieve,
             sender:{
               username: this.props.senderUsername,
               name:this.props.sender
@@ -132,7 +133,17 @@ export default class inputMessage extends React.Component{
 
 onEnterPress = (e) => {
   if(e.keyCode === 13 && e.shiftKey === false) {
-    this.onSend(e);
+    if(!this.state.enterPressed){
+      this.onSend(e);
+    }
+    this.setState({
+      enterPressed : true
+    })
+    setTimeout(function(){
+      this.setState({
+        enterPressed : false
+      })
+    }.bind(this), 0.00000001);
   }
 }
 

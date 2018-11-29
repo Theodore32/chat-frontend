@@ -17,6 +17,12 @@
   height: 100%;
 }
 
+.content img{
+  height : 410px;
+  width : 410px;
+  border-radius: 5px;
+}
+
 .header-image-position{
   padding-left: 10px;
   width: 50%;
@@ -49,6 +55,11 @@
   cursor: pointer;
   display: inline-block;
   margin-right: 10px;
+}
+
+#profileImage{
+  height : 450px;
+  width : 450px;
 }
 
 .setting-icon{

@@ -11,7 +11,8 @@ export default class HeaderChat extends React.Component{
           <Modal
             trigger={<img src={this.props.picture}
             className = "profileImage" alt=""/>}
-            centered={false}>
+            centered={false}
+            id = "profileImage">
             <Modal.Header centered>{this.props.name}</Modal.Header>
             <Modal.Content>
               <img src = {this.props.picture}/>

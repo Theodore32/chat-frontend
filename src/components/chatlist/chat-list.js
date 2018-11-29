@@ -83,6 +83,7 @@ export default class FriendList extends React.Component{
 
   activeSocket(port){
     recieveSocket(port,(err,recieve)=>{
+      console.log(recieve);
       let time = new Date(recieve.message.time);
       const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
       const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
@@ -94,11 +95,11 @@ export default class FriendList extends React.Component{
         lastMessageText = recieve.message.message
       }
       // this.props.updateSort(recieve.message.time,this.props.chat)
-      if(this.state.openchat){
+      if(recieve.message.sender.username === this.props.myUser.username || this.state.openchat){
         if(recieve.message.attachment){
           this.setState({
             chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
-              receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time ,date: recieve.message.date}),
+              receiver:[{username :recieve.message.recieve,read : false}],attachment:recieve.message.attachment,time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
               message:lastMessageText,
@@ -109,7 +110,7 @@ export default class FriendList extends React.Component{
         }else {
           this.setState({
             chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
-              receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time ,date: recieve.message.date}),
+              receiver:[{username :recieve.message.recieve,read : false}],time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
               message:lastMessageText,
@@ -132,7 +133,7 @@ export default class FriendList extends React.Component{
         if(recieve.message.attachment){
           this.setState({
             chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
-              receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date}),
+              receiver:[{username :recieve.message.recieve,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
               message:lastMessageText,
@@ -144,7 +145,7 @@ export default class FriendList extends React.Component{
         } else {
           this.setState({
             chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
-              receiver:[{username :recieve.message.sender.username,read : false}],time: recieve.message.time,date : recieve.message.date}),
+              receiver:[{username :recieve.message.recieve,read : false}],time: recieve.message.time,date : recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
               message:lastMessageText,
@@ -156,7 +157,6 @@ export default class FriendList extends React.Component{
         }
         this.props.notifTotal(1);
       }
-
     })
   }
 

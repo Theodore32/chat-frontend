@@ -81,36 +81,6 @@ export default class RequestFriend extends React.Component{
    })
  }
 
- block = (event) => {
-   event.preventDefault()
-   const data = {
-     myUsername : this.props.myUser.username,
-     username : this.props.otherUser.username,
-     name : this.props.otherUser.name,
-     picture : this.props.otherUser.picture,
-     description : this.props.otherUser.description
-   }
-
-   fetch('/block',{
-     credentials:'include',
-     method:'PUT',
-     headers:{
-       'Content-Type' : 'application/json'
-     },
-     body:JSON.stringify({
-       data : data
-     })
-   }).then(res => res.json())
-   .then(res=>{
-     this.setState({
-       showRequest : false
-     })
-     this.props.checkrequestfriend(0);
-     sendSocket('blockfriend',data);
-     sendSocket('blockchat',data.username);
-   })
- }
-
   render(){
     if(!this.state.showRequest){
       return null;
@@ -119,14 +89,10 @@ export default class RequestFriend extends React.Component{
       return (
         <div className = "requestContainer">
           <div className = "requestFriendBox">
-            <div className = "Add-Button" onClick = {this.add}>
-              <p>ADD</p>
-            </div>
-            <div className = "Divider">
-              |
-            </div>
-            <div className = "Block-Button" onClick = {this.block}>
-              <p>BLOCK</p>
+            <div className = "Add-Button-Container" onClick = {this.add}>
+              <div className = "Add-Button">
+                <p>Add this user to your friendlist</p>
+              </div>
             </div>
           </div>
         </div>

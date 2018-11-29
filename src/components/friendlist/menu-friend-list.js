@@ -214,6 +214,8 @@ export default class SideNav extends Component {
                           blocklist = {blocklist}
                           notifTotal = {this.notifTotal}
                           editfriendSocket = {this.editFriendChatSocket}
+                          history = {this.props.history}
+                          isAdmin = {this.props.isAdmin}
                           />
                         )
                       )}

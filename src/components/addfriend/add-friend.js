@@ -92,7 +92,6 @@ export default class AddFriend extends React.Component{
       picture : picture,
       description : description
     }
-    console.log(message);
     sendSocket('newfriend',message);
    }
 
@@ -121,59 +120,10 @@ export default class AddFriend extends React.Component{
        this.setState({
          searchResult : res,
        })
+       console.log(this.state.searchResult);
        this.newFriend(username,name,picture,description)
      })
    }
-
-   add = (event) => {
-    event.preventDefault()
-    const data = {
-      username : this.state.search,
-      name : this.state.searchResult.name,
-      picture : this.state.searchResult.picture,
-      description : this.state.searchResult.description
-    }
-    fetch('/add',{
-      credentials:'include',
-      method:'PUT',
-      headers:{
-        'Content-Type' : 'application/json'
-      },
-      body:JSON.stringify({
-        data : data
-      })
-    }).then(res => res.json())
-    .then(res=>{
-      this.setState({
-        searchResult : res
-      })
-    })
-  }
-
-  block = (event) => {
-    event.preventDefault()
-    const data = {
-      username : this.state.search,
-      name : this.state.searchResult.name,
-      picture : this.state.searchResult.picture,
-      description : this.state.searchResult.description
-    }
-    fetch('/block',{
-      credentials:'include',
-      method:'PUT',
-      headers:{
-        'Content-Type' : 'application/json'
-      },
-      body:JSON.stringify({
-        data : data
-      })
-    }).then(res => res.json())
-    .then(res=>{
-      this.setState({
-        searchResult : res
-      })
-    })
-  }
 
 
   render(){
@@ -215,13 +165,7 @@ export default class AddFriend extends React.Component{
                     {this.state.searchResult.name}
                   </div><br/>
                   {!this.state.searchResult.message ?
-                      !this.state.searchResult.request ?
-                        <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
-                        :
-                        <div>
-                          <button onClick = {this.add} className = "addfriend-button-setting">Add</button>
-                          <button onClick = {this.block} className = "addfriend-button-setting">Block</button>
-                        </div>
+                    <button onClick = {this.addFriend} className = "addfriend-button-setting">Add Friend</button>
                     :
                     this.state.searchResult.message
                   }

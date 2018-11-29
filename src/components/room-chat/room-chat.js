@@ -29,21 +29,21 @@ export default class RoomChat extends React.Component{
   }
 
   componentDidMount(){
-       fetch('/getdata',{
-         credentials:'include'
+   fetch('/getdata',{
+     credentials:'include'
+   })
+   .then(res => res.json())
+   .then(json => {
+     if(!json.success){
+       this.props.history.push('/')
+     }
+     else{
+       this.setState({
+         account:json.akun,
+         isLoading:false
        })
-       .then(res => res.json())
-       .then(json => {
-         if(!json.success){
-           this.props.history.push('/')
-         }
-         else{
-           this.setState({
-             account:json.akun,
-             isLoading:false
-           })
-         }
-       })
+     }
+   })
   }
 
   afterchange = () =>{
@@ -88,7 +88,6 @@ export default class RoomChat extends React.Component{
 
   openChatRoom = (item,chatId,log) => {
     if(item !== null){
-      console.log(this.state.username);
       if(this.state.username !== item.username){
         sendSocket('closechatroom',this.state.username);
         sendSocket('changechatroom');
@@ -184,7 +183,7 @@ export default class RoomChat extends React.Component{
                 url = {this.props.match.url}
                 change={this.afterchange}
                 close = {this.state.isOpen}
-                blocklist = {account.blacklist}
+                isAdmin = {account.isAdmin}
               />
               <div className = "searchBarContent">
                 <SearchFriend
@@ -210,6 +209,8 @@ export default class RoomChat extends React.Component{
                   }
                 }
                 checkReadChat = {this.checkReadChat}
+                history = {this.props.history}
+                isAdmin = {account.isAdmin}
               />
           </div>
         </div>

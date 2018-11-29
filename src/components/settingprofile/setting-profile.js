@@ -1,11 +1,8 @@
 import React from 'react';
 import './settingprofile.css';
-
-import BlockedFriend from '../blockedfriend/block-friend';
 import ChangePassword from '../change-password/change-password';
 import AddFriend from '../addfriend/add-friend';
 import EditProfile from '../edit-profile/edit-profile';
-import DeleteAccount from '../delete-account/delete-account';
 
 
 export default class SettingProfile extends React.Component{
@@ -14,7 +11,8 @@ export default class SettingProfile extends React.Component{
 
     this.state = {
       open : false,
-      search : ''
+      search : '',
+      isAdmin : this.props.isAdmin
     }
 
     this.logout = this.logout.bind(this)
@@ -64,30 +62,33 @@ export default class SettingProfile extends React.Component{
   render(){
     return(
       <div className = {"popup-container "+ this.props.modal}>
-        <EditProfile
-          username = {this.props.username}
-          name = {this.props.name}
-          email = {this.props.email}
-          status = {this.props.status}
-          profilePicture = {this.props.profilePicture}
-          click = {this.props.click}
-          change = {this.props.change}/>
-        <AddFriend
-          click = {this.props.click}
-          username = {this.props.username}/>
-        <BlockedFriend
-          blocklist = {this.props.blocklist}
-          username = {this.props.username}
-          click = {this.props.click}/>
-        <ChangePassword
-          onClick = {this.props.click}
-          open = {this.props.open}
-        />
-        <DeleteAccount
-          onClick = {this.props.click}
-          history = {this.props.history}
-        />
-        <li onClick={this.logout}>Log Out</li>
+        {this.state.isAdmin ?
+          <div>
+            <ChangePassword
+              onClick = {this.props.click}
+              open = {this.props.open}
+            />
+            <li onClick={this.logout}>Log Out</li>
+          </div> :
+          <div>
+            <EditProfile
+              username = {this.props.username}
+              name = {this.props.name}
+              email = {this.props.email}
+              status = {this.props.status}
+              profilePicture = {this.props.profilePicture}
+              click = {this.props.click}
+              change = {this.props.change}/>
+            <AddFriend
+              click = {this.props.click}
+              username = {this.props.username}/>
+            <ChangePassword
+              onClick = {this.props.click}
+              open = {this.props.open}
+            />
+            <li onClick={this.logout}>Log Out</li>
+          </div>
+        }
       </div>
     );
   }

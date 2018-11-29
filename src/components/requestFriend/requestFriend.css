@@ -9,61 +9,30 @@
   height: 40px;
 }
 
-.Add-Button{
+.Add-Button-Container{
   height: 40px;
+  line-height: 40px;
   background-color: rgb(143, 143, 143);
   border: none;
   color: white;
-  width: 49.5%;
+  width: 100%;
   text-align: center;
   text-decoration: none;
   font-size: 14px;
-  float: left;
   font-family: HelveticaNeue;
+  text-align: center;
+}
+
+.Add-Button{
   display: inline-block;
+  width : 300px;
+  background-color:#3f3f3f;
+  padding : 5px 0 5px 0;
+  border-radius: .28571429rem;
 }
 
 .Add-Button:hover{
-  color: rgba(0, 0, 0, 1);
-  transition: all 800ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
-}
-
-
-.Add-Button p{
+  background-color: rgba(62, 62, 62, 0.76);
   cursor: pointer;
-  line-height: 40px;
-}
-
-.Divider {
-  width : 1%;
-  height: 40px;
-  font-size: 30px;
-  line-height: 35px;
-  color : white;
-  background-color: rgb(143, 143, 143);
-  display: inline-block;
-}
-
-.Block-Button{
-  height: 40px;
-  background-color: rgb(143, 143, 143);
-  border: none;
-  color: white;
-  width: 49.5%;
-  text-align: center;
-  text-decoration: none;
-  font-size: 14px;
-  font-family: HelveticaNeue;
-  float: right;
-  display: inline-block;
-}
-
-.Block-Button:hover{
-  color: rgba(0, 0, 0, 1);
   transition: all 800ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
-}
-
-.Block-Button p{
-  cursor: pointer;
-  line-height: 40px;
 }

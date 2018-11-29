@@ -3,6 +3,9 @@ import './register.css';
 import { Button, Form } from 'semantic-ui-react';
 import {Link} from "react-router-dom";
 import logo from '../../picture/logo2.png';
+import {
+  sendSocket
+}from "../../socket/socketconnect";
 
 class RegisterForm extends React.Component{
   constructor(props){
@@ -179,6 +182,7 @@ class RegisterForm extends React.Component{
         if(json.success){
           console.log(json);
           this.props.history.push('/LoginForm')
+          sendSocket("newfriend",json.newUser)
         }
         else{
           this.setState({
@@ -192,7 +196,6 @@ class RegisterForm extends React.Component{
   }
 
   render(){
-    console.log("ini success beda: "+this.state.success);
     return(
       <div className = "background-top">
         {!this.state.success ?

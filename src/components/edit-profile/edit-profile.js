@@ -2,6 +2,7 @@ import React from 'react'
 import './editprofile.css'
 import {Image, Modal, Form, Button} from 'semantic-ui-react';
 import profile from '../../picture/boy.png';
+import notSupported from '../../picture/notSupported.png';
 import {
   sendSocket
 }from "../../socket/socketconnect";
@@ -35,16 +36,15 @@ export default class EditProfile extends React.Component{
   }
 
   updateProfile = (name,photo,status) =>{
+    this.setState({
+      error : ''
+    })
 
     var formData = new FormData();
 
     formData.append ('Image', photo)
     formData.append ('name', name)
     formData.append ('description', status)
-
-    console.log("Nama : ",name);
-    console.log("foto : ",photo);
-    console.log("status : ",status);
 
     fetch('/editprofile',{
       credentials : 'include',
@@ -77,49 +77,37 @@ export default class EditProfile extends React.Component{
       else{
         this.setState({
           success: false,
-          currentPhoto : this.state.currentPhoto
+          currentPhoto : this.state.currentPhoto,
+          error : response.message
         })
-        console.log(response.message);
       }
     })
   }
 
   fileSelectedHandler = (event) => {
-        // Check kalo ada file nya (image)
-
-        if (event.target.files[0] != null){
-            // ini buat get image nya
-            this.setState({
-                changePhoto: event.target.files[0]
-            });
-
-            // manage tampilan view pake javascript
-            if(event.target.files[0]){
-                var reader = new FileReader();
-                // ketika image nya ke load
-                reader.onload = (event) => {
-                    document.getElementById("coverPhoto").setAttribute('src', reader.result)
-                }
-                // iniii let the browser get data nya
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        } else {
-            console.log("No data on the field..");
-        }
-        console.log("photo: ", event.target.files);
+    event.preventDefault();
+    console.log(event);
+    let reader = new FileReader();
+    let file = event.target.files[0];
+    reader.onloadend = () => {
+      document.getElementById("coverPhoto").setAttribute('src', reader.result)
+      this.setState({
+        changePhoto: file,
+        imagePreviewUrl: reader.result
+      })
     }
-
-    changePicture = () =>{
-      let imageUrl = '';
-        if(imageUrl !== ''){
-          return(<img alt=" " src={require(`../../uploads/${imageUrl}`)} />)
-        }
-        else{
-          return(<h2>No Image</h2>)
-        }
-    }
+    if(file){
+      reader.readAsDataURL(file);
+    }
+    event.target.value = '';
+  }
 
   render(){
+    let {imagePreviewUrl} = this.state;
+    let $imagePreview = null;
+    if (imagePreviewUrl) {
+      $imagePreview = (<img src={imagePreviewUrl} />);
+    }
     return (
       <Modal trigger={
             <li onClick = {this.props.click}>
@@ -134,17 +122,26 @@ export default class EditProfile extends React.Component{
               <center>
                 <div className= "containerImageProfile">
                   <label for = "changePicture">
-                    {this.state.changePhoto
-                      ?   <Image id = "coverPhoto" src={this.state.currentPhoto} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}>
-                    </Image> :
-                    <Image id = "coverPhoto" src={profile} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}>
-                    </Image>
+                    {$imagePreview ?
+                      this.state.changePhoto.type === "image/jpeg" || this.state.changePhoto.type === "image/jpg" || this.state.changePhoto.type === "image/gif" || this.state.changePhoto.type === "image/png" ?
+                        <Image id = "coverPhoto" src={imagePreviewUrl} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}/>
+                        :
+                        <Image id = "coverPhoto" src={notSupported} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}/>
+                      :
+                    <Image id = "coverPhoto" src={this.state.currentPhoto} alt="" className = "imageEditProfile" onChange = {this.fileSelectedHandler}/>
                     }
                   <div className = "textPosition">
                     <div className = "text"><b>Change Photo</b></div>
                   </div>
                   </label>
                   <input id = "changePicture" type = "file" onChange = {this.fileSelectedHandler}/>
+                  {this.state.error ?
+                    <div className = "errorImageType">
+                      {this.state.error}
+                    </div>
+                    :
+                    null
+                  }
                 </div>
               </center>
             </Form.Field>
