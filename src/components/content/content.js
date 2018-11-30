@@ -61,7 +61,6 @@ export default class Content extends React.Component {
         if((scrollTop + offsetHeight) === scrollHeight) {
           this.scrollToBottom()
         }
-
     })
   }
 
@@ -356,32 +355,49 @@ export default class Content extends React.Component {
                                   </div>
                                   :
                                   <div className = "senderMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)} onMouseLeave={() => this.handleMouseHover(1,null)}>
-                                    {
-                                      this.state.isHovering && this.state.timeDiv === index.time ?
-                                      <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
-                                        <div className = "hoverAttachmentFile">
-                                          {this.state.openMenu ?
-                                            <div className = "MenuMessage">
-                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
-                                              <li onClick ={() => this.downloadFile(index.attachment.name)} >Download</li>
-                                            </div>
-                                            :
-                                            null
-                                          }
-                                        </div>
-                                      </div>
-                                      :
-                                      null
-                                    }
                                     <div>
                                       {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
                                         <div className = "attachmentFileName">
                                           <p>{this.fileName(index.attachment.name)}</p>
                                           <img src = {doc}/>
+                                            {
+                                              this.state.isHovering && this.state.timeDiv === index.time ?
+                                              <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                <div className = "hoverAttachmentFile">
+                                                  {this.state.openMenu ?
+                                                    <div className = "MenuMessage">
+                                                      <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                      <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                    </div>
+                                                    :
+                                                    null
+                                                  }
+                                                </div>
+                                              </div>
+                                              :
+                                              null
+                                            }
                                         </div>
                                         :
                                         <div className = "attachment-picture">
                                           <img src = {index.attachment.name}/>
+                                            {
+                                              this.state.isHovering && this.state.timeDiv === index.time ?
+                                              <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                <div className = "hoverAttachmentFile">
+                                                  {this.state.openMenu ?
+                                                    <div className = "MenuMessage">
+                                                      <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                      <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                    </div>
+                                                    :
+                                                    null
+                                                  }
+                                                </div>
+                                              </div>
+                                              :
+                                              null
+                                            }
                                         </div>
                                       }
                                     </div>

@@ -31,6 +31,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
+    this.socketForNotification(this.props.chat.username);
     this.unsendMessageSocket(this.props.chat.chatId);
     for(var block in this.props.blacklist){
       if(this.props.blacklist[block].username === this.props.chat.username){
@@ -50,6 +51,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
+    this.socketForNotification(this.props.chat.username);
     this.unsendMessageSocket(this.props.chat.chatId);
   }
 
@@ -83,7 +85,6 @@ export default class FriendList extends React.Component{
 
   activeSocket(port){
     recieveSocket(port,(err,recieve)=>{
-      console.log(recieve);
       let time = new Date(recieve.message.time);
       const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
       const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
@@ -95,6 +96,7 @@ export default class FriendList extends React.Component{
         lastMessageText = recieve.message.message
       }
       // this.props.updateSort(recieve.message.time,this.props.chat)
+      console.log(this.state.openchat);
       if(recieve.message.sender.username === this.props.myUser.username || this.state.openchat){
         if(recieve.message.attachment){
           this.setState({
@@ -122,11 +124,12 @@ export default class FriendList extends React.Component{
         if(recieve.message.sender.username !== this.props.myUser.username){
           this.readChat(this.props.chat,this.props.myUser.username);
           sendSocket('readchat',recieve.message.chatId);
+          console.log(recieve);
+          sendSocket('openRoomforNotification',recieve.message.sender.username);
         }
         this.props.changeName(null,this.props.chatId,this.state.chatlog);
         if(recieve.message.sender.username === this.props.myUser.username){
           sendSocket('scrollMyChatroom');
-          sendSocket('scrollOtherChatroom');
         }
       }
       else{
@@ -214,6 +217,11 @@ export default class FriendList extends React.Component{
     })
   }
 
+  socketForNotification = (port) => {
+    recieveSocket('openRoomforNotification'+port, (err,recieve) => {
+      console.log(port);
+    })
+  }
 
   openChatRoom = (item,log) => {
     this.setState({
