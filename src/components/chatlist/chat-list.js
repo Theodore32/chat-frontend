@@ -31,7 +31,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
-    this.socketForNotification(this.props.chat.username);
+    this.socketForNotification(this.props.myUser.username);
     this.unsendMessageSocket(this.props.chat.chatId);
     for(var block in this.props.blacklist){
       if(this.props.blacklist[block].username === this.props.chat.username){
@@ -51,7 +51,7 @@ export default class FriendList extends React.Component{
     this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
     this.socketEditFriend(this.props.chat.username);
-    this.socketForNotification(this.props.chat.username);
+    this.socketForNotification(this.props.myUser.username);
     this.unsendMessageSocket(this.props.chat.chatId);
   }
 
