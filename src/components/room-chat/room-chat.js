@@ -5,7 +5,6 @@ import SearchFriend from '../searchfriend/search-friend';
 import MenuFriendList from'../friendlist/menu-friend-list';
 import HeaderChat from '../header-roomchat/header';
 import Content from '../content/content';
-import RequestFriend from '../requestFriend/requestFriend';
 import {
   sendSocket
 }from "../../socket/socketconnect";
@@ -18,14 +17,9 @@ export default class RoomChat extends React.Component{
       search : '',
       isOpen : false,
       isLoading: true,
-      ulang:[],
       account:[],
-      chatlog:[],
-      open : false,
-      checkrequest:false,
-      readStatus : false
+      chatlog:[]
     }
-    this.escClicked = this.escClicked.bind(this)
   }
 
   componentDidMount(){
@@ -44,46 +38,6 @@ export default class RoomChat extends React.Component{
            })
          }
        })
-  }
-
-  afterchange = () =>{
-    this.setState({
-      isLoading:true
-    })
-    fetch('/getdata',{
-      credentials:'include'
-    })
-    .then(res => res.json())
-    .then(json => {
-      if(!json.success){
-        this.props.history.push('/')
-      }
-      else{
-        this.setState({
-          account:json.akun,
-          isLoading:false
-        })
-      }
-    })
-  }
-
-  checkrequestfriend = (flag) =>{
-    if(flag === 1 ){
-      this.setState({
-        checkrequest:true
-      })
-    }
-    else{
-      this.setState({
-        checkrequest:false
-      })
-    }
-  }
-
-  checkReadChat = (readStatus) =>{
-    this.setState({
-      readStatus : readStatus
-    })
   }
 
   openChatRoom = (item,chatId,log) => {
@@ -115,14 +69,14 @@ export default class RoomChat extends React.Component{
     })
   }
 
-  escClicked(){
+  escClicked = () => {
     this.setState({
       isOpen:false
     })
   }
 
   render(){
-    const {account,isLoading,chatlist} = this.state
+    const {account,isLoading} = this.state
     if(isLoading){
       return(
         <div>Loading.....</div>
@@ -140,23 +94,6 @@ export default class RoomChat extends React.Component{
                 name = {this.state.name}
                 picture = {this.state.picture}
               />
-              <RequestFriend
-                request = {this.state.checkrequest}
-                otherUser = {
-                  {
-                    username : this.state.username,
-                    name : this.state.name,
-                    picture : this.state.picture,
-                    description : this.state.description
-                  }
-                }
-                myUser = {
-                  {
-                    username : account.username
-                  }
-                }
-                checkrequestfriend = {this.checkrequestfriend}
-              />
               <Content
                 escClicked = {this.escClicked}
                 chatlog = {this.state.chatlog}
@@ -172,18 +109,9 @@ export default class RoomChat extends React.Component{
           }
           <div className = "left-column">
               <Profile
-                togglePopup = {this.togglePopup}
                 history = {this.props.history}
-                isClose = {this.state.isOpen}
-                username = {account.username}
                 name = {account.name}
-                email = {account.email}
-                status = {account.description}
                 profilePicture = {account.profilePicture}
-                url = {this.props.match.url}
-                change={this.afterchange}
-                close = {this.state.isOpen}
-                blocklist = {account.blacklist}
               />
               <div className = "searchBarContent">
                 <SearchFriend
@@ -194,11 +122,7 @@ export default class RoomChat extends React.Component{
               <MenuFriendList
                 changeName={this.openChatRoom}
                 searchValue = {this.state.search}
-                friendlist = {account.friends}
                 chatlist = {account.chatList}
-                description = {account.description}
-                chatId = {this.state.chatId}
-                blocklist = {account.blacklist}
                 myUser = {
                   {
                     username:account.username,
@@ -208,7 +132,6 @@ export default class RoomChat extends React.Component{
                     description : account.description
                   }
                 }
-                checkReadChat = {this.checkReadChat}
               />
           </div>
         </div>

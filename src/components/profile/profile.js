@@ -12,7 +12,6 @@ import setting from '../../picture/menu.png';
         isOpen : false,
         showPopup : 'popup-show',
         name : this.props.name,
-        email : this.props.email
       }
    }
 
@@ -24,13 +23,6 @@ import setting from '../../picture/menu.png';
    componentWillUnmount() {
      document.removeEventListener('mousedown', this.handleClickOutside);
    }
-
-  handleChange = (event) =>{
-    const inputUser = event.target.name
-    this.setState({
-      [inputUser] : event.target.value
-    })
-  }
 
   handleOpen = () => {
       this.setState(prevState => (
@@ -59,7 +51,6 @@ import setting from '../../picture/menu.png';
         <div className = "profileImageClick">
           <ShowProfilePicture
             name = {this.props.name}
-            email = {this.props.email}
             profilePicture = {this.props.profilePicture}/>
         </div>
         <div className = "profile-setting-icon-position" >
@@ -68,31 +59,17 @@ import setting from '../../picture/menu.png';
         {this.state.isOpen ?
           <div ref={node => this.node = node}>
             <SettingProfile
-              username = {this.props.username}
               modal = {this.state.showPopup}
               click = {this.handleOpen}
               open = {this.state.isOpen}
-              name = {this.props.name}
-              email = {this.props.email}
-              status = {this.props.status}
-              profilePicture = {this.props.profilePicture}
-              change = {this.props.change}
               history = {this.props.history}
-              blocklist = {this.props.blocklist}
             />
           </div>
       :
         <div ref={node => this.node = node}>
           <SettingProfile
-            username = {this.props.username}
             open = {this.state.isOpen}
-            name = {this.props.name}
-            email = {this.props.email}
-            status = {this.props.status}
-            profilePicture = {this.props.profilePicture}
-            change = {this.props.change}
             history = {this.props.history}
-            blocklist = {this.props.blocklist}
             />
         </div>
       }

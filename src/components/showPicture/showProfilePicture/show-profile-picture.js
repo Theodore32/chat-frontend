@@ -9,9 +9,7 @@ export default class showProfilePicture extends React.Component{
     this.state = {
       isOpen : false,
       name : this.props.name,
-      email : this.props.email,
       currentPhoto : this.props.profilePicture,
-      changePhoto : []
     }
   }
 
@@ -36,11 +34,7 @@ export default class showProfilePicture extends React.Component{
         >
           <Modal.Content id = "modalProfileImage">
             <center>
-              {this.state.changePhoto ?
-                <img src={this.state.currentPhoto} className = "showProfileImage" alt="" />
-                :
-                <img src={profile} className = "showProfileImage" alt="" />
-              }
+              <img src={this.state.currentPhoto} className = "showProfileImage" alt="" />
             </center>
           </Modal.Content>
         </Modal>

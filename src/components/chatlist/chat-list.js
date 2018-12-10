@@ -3,8 +3,7 @@ import './chatlist.css';
 
 import {
   recieveSocket,
-  sendSocket,
-  closeSocket
+  sendSocket
 }from "../../socket/socketconnect";
 
 export default class FriendList extends React.Component{
@@ -28,17 +27,7 @@ export default class FriendList extends React.Component{
     this.socketopenChatroom();
     this.socketcloseChatroom();
     this.getChatData(this.props.chat);
-    this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
-    this.socketEditFriend(this.props.chat.username);
-    for(var block in this.props.blacklist){
-      if(this.props.blacklist[block].username === this.props.chat.username){
-        this.setState({
-          blocked: true
-        })
-        break;
-      }
-    }
   }
 
   componentWillUnmount(){
@@ -46,13 +35,11 @@ export default class FriendList extends React.Component{
     this.activeSocket(this.props.chat.chatId);
     this.socketopenChatroom();
     this.socketcloseChatroom();
-    this.socketblacklistChat();
     this.readChatSocket(this.props.chat.chatId);
-    this.socketEditFriend(this.props.chat.username);
   }
 
   socketcloseChatroom=()=>{
-    recieveSocket('closechatroom'+this.props.chat.username,(err,recieve)=>{
+    recieveSocket('closechatroom'+this.props.chat.chatId,(err,recieve)=>{
         this.setState({
           openchat:false
         })
@@ -64,18 +51,6 @@ export default class FriendList extends React.Component{
         this.setState({
           openchat:true
         })
-    })
-  }
-
-  socketblacklistChat = () =>{
-    recieveSocket('blockchat'+this.props.chat.username,(err,recieve)=>{
-      closeSocket()
-    })
-  }
-
-  socketEditFriend = (port) => {
-    recieveSocket('edit'+port, (err,recieve) => {
-      this.props.editfriendSocket(recieve.message)
     })
   }
 
@@ -149,7 +124,6 @@ export default class FriendList extends React.Component{
             notif:this.state.notif+1
           })
         }
-        this.props.notifTotal(1);
       }
     })
   }
@@ -164,7 +138,6 @@ export default class FriendList extends React.Component{
   }
 
   getChatData = (chat) => {
-
     fetch('/getchat',{
       method:'POST',
       headers: {
@@ -203,11 +176,9 @@ export default class FriendList extends React.Component{
             timeStamp :timeStamp,
             notif : notif
           })
-          this.props.notifTotal(this.state.notif)
         }
     })
   }
-
 
   openChatRoom = (item,log) => {
     this.setState({
@@ -217,7 +188,6 @@ export default class FriendList extends React.Component{
     sendSocket('openchatroom',this.props.chat.username);
     this.props.changeName(item,item.chatId,log);
     if(this.state.lastMessage.sender !== this.props.myUser.username){
-      this.props.notifMinus(this.state.notif);
       this.readChat(item,this.props.myUser.username);
       sendSocket('readchat',item.chatId);
     }
@@ -272,12 +242,10 @@ export default class FriendList extends React.Component{
     return(
         <div>
           <li className = "chat-list-text"
-            onClick={() =>
-              this.openChatRoom(chat,this.state.chatlog)
-            }
+            onClick={() =>this.openChatRoom(chat,this.state.chatlog)}
           >
           <div className = "chat-list-picture">
-            <img src = {chat.picture}/>
+            <img src = {chat.picture} alt=""/>
           </div>
           <div>
             <div className = "chat-name">

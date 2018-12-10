@@ -25,3 +25,7 @@
 .popup-container li:hover{
   background-color: rgba(170,170,170,0.1)
 }
+
+.popup-show{
+  display: block;
+}

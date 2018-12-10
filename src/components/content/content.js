@@ -22,12 +22,7 @@ export default class Content extends React.Component {
   }
 
   componentDidMount() {
-
     document.addEventListener("keydown", this.escOnClick, false);
-    // this.picture.addEventListener("contextmenu", this.rightClick, false);
-    // this.contextContainer.addEventListener('click', this._handleClick,false);
-    // this.contextContainer.addEventListener('scroll', this._handleScroll,false);
-    // document.getElementById("content-container").addEventListener("scroll", this.Scrolling,false);
     this.contextContainer.addEventListener('scroll',this.handleScroll,false);
     this.scrollToBottom();
     this.changeChatroomSocket();
@@ -39,102 +34,15 @@ export default class Content extends React.Component {
   componentWillUnmount(){
     document.removeEventListener("keydown", this.escOnClick, false);
     this.contextContainer.removeEventListener('scroll',this.handleScroll,false);
-    // this.picture.removeEventListener("contextmenu", this.rightClick,false);
-    // this.contextContainer.removeEventListener('click', this._handleClick,false);
-    // this.contextContainer.removeEventListener('scroll', this._handleScroll,false);
-    // document.getElementById("content-container").removeEventListener("scroll", this.Scrolling,false);
   }
 
   handleScroll = (event) =>{
     console.log(this.contextContainer.scrollTop);
     console.log("Height:",this.contextContainer.scrollHeight);
   }
-  // rightClick(event){
-  //   if (event.type === 'click') {
-  //     console.log('Left click');
-  //   } else if (event.type === 'contextmenu') {
-  //     event.preventDefault();
-  //     this.setState({
-  //       visible: true
-  //     });
-  //
-  //       const clickX = event.clientX;
-  //       const clickY = event.clientY;
-  //       const screenW = this.picture.offsetWidth;
-  //       const screenH = this.picture.offsetHeight;
-  //       const rootW = this.context.clientWidth;
-  //       const rootH = this.context.clientHeight;
-  //       const right = (screenW - clickX) > rootW;
-  //       const left = !right;
-  //       const top = (screenH - clickY) > rootH;
-  //       const bottom = !top;
-  //       console.log(right);
-  //       console.log(left);
-  //       console.log(top);
-  //       console.log(bottom);
-  //       console.log(this);
-  //       console.log(clickX);
-  //       console.log(clickY);
-  //       console.log(screenW);
-  //       console.log(screenH);
-  //       console.log(rootW);
-  //       console.log(rootH);
-  //       if (right) {
-  //           this.context.style.left = `${clickX + 5}px`;
-  //       }
-  //
-  //       if (left) {
-  //           this.context.style.left = `${clickX - rootW - 5}px`;
-  //       }
-  //
-  //       if (top) {
-  //           this.context.style.top = `${clickY + 5}px`;
-  //       }
-  //
-  //       if (bottom) {
-  //           this.context.style.top = `${clickY - rootH - 5}px`;
-  //       }
-  //   }
-  // }
-  //
-  // _handleClick = (event) => {
-  //       const { visible } = this.state;
-  //       const wasOutside = !(event.target.contains === this.context);
-  //
-  //       if (wasOutside && visible) this.setState({ visible: false });
-  //   };
-  //
-  // _handleScroll = () => {
-  //   const { visible } = this.state;
-  //   if (visible) this.setState({ visible: false });
-  // };
-
-  // Scrolling = (event) => {
-  //   var doc = document.getElementById("content-container")
-  //   var x = doc.scrollTop;
-  //   var y = event.timeStamp;
-  //
-  //   const { timeFixed } = this.state
-  //
-  //   if(y > this.prev) {
-  //     !timeFixed && this.setState({ timeFixed: true })
-  //   }
-  //   if(x !== 0){
-  //     !timeFixed && this.setState({ timeFixed: true })
-  //   }
-  //   else{
-  //     this.setState({ timeFixed: false })
-  //   }
-  //   this.prev = y
-  //
-  //   console.log("ini y ",y);
-  //   console.log("ini x ",x);
-  //   console.log("ini prev: ",this.prev);
-  // }
 
   escOnClick(event){
     if(event.keyCode === 27) {
-      //Do whatever when esc is pressed
       this.props.escClicked()
     }
   }
@@ -194,15 +102,6 @@ export default class Content extends React.Component {
     return name;
   }
 
-
-  // timeFloatFixed = () =>{
-  //   let classHide = this.state.timeFixed ? "hide" : ""
-  //   return(
-  //     <div className = {"timeFixed-"+classHide}>
-  //       ASD
-  //     </div>
-  //   )
-  // }
   handleMouseHover() {
     this.setState(this.toggleHoverState);
   }

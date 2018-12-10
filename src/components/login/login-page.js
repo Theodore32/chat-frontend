@@ -1,13 +1,11 @@
 import React from 'react'
 import { Button, Checkbox, Form } from 'semantic-ui-react';
-import {Link} from 'react-router-dom';
 import logo from '../../picture/logo2.png';
 import './login.css';
 
 class LoginForm extends React.Component{
   constructor(props){
     super(props);
-
     this.state = {
       loginUsername:'',
       loginPassword:'',
@@ -16,7 +14,6 @@ class LoginForm extends React.Component{
     }
     this.ChangeHandler = this.ChangeHandler.bind(this)
     this.onLogin = this.onLogin.bind(this)
-
   }
 
   componentDidMount(){
@@ -132,12 +129,6 @@ class LoginForm extends React.Component{
             >
               LOG IN
             </Button>
-            <p>
-
-
-              {"Need an account? "}
-              <Link to = '/RegisterForm'>Register!</Link>
-            </p>
           </Form>
         </div>
       </div>
