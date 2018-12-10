@@ -1,11 +1,6 @@
 import React from 'react'
 import './changepassword.css'
 import {Modal,Button, Form,Loader} from 'semantic-ui-react';
-<<<<<<< HEAD
-=======
-
-
->>>>>>> f6a3e2d16ad970d5a65f34807938e8a9981a13f9
 
 export default class ChangePassword extends React.Component{
   constructor(props){
