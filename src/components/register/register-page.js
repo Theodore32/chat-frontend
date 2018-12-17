@@ -29,7 +29,7 @@ class RegisterForm extends React.Component{
   }
 
   usernameValidation = (username,regex) => {
-    if(username.length < 5){
+    if(username.length < 6){
       this.setState({
         usernameIsValid : false,
         messageUsername : "Username must at least 5 characters"
@@ -103,13 +103,15 @@ class RegisterForm extends React.Component{
       this.setState({
         passwordIsValid : false,
         messagePass : "This field is required"
-      })
+      });
+      return false;
     }
-    else if(password.length < 6){
+    if(password.length < 6){
       this.setState({
         passwordIsValid : false,
         messagePass : "Password must at least 6 characters"
       });
+      return false;
     }
     else if (password !== "" && password.length >= 6) {
       this.setState({
