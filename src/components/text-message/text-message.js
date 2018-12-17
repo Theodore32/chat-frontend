@@ -24,6 +24,7 @@ export default class inputMessage extends React.Component{
   }
 
   componentDidMount(){
+    console.log(this.props);
     document.addEventListener("keydown", this.onEnterPress, false);
   }
   componentWillUnmount(){

@@ -122,7 +122,7 @@ export default class Content extends React.Component {
     const { visible } = this.state;
     return (
       <div>
-        <div className = {"content-container-"+this.props.checkrequest} id = "content-container" ref={ref => {this.contextContainer = ref}}>
+        <div className = {"content-container"} id = "content-container" ref={ref => {this.contextContainer = ref}}>
           <div className = "content-chat" id = "content-chat">
               {this.props.chatlog.length < 1 ?
                  null

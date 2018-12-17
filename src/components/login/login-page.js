@@ -48,7 +48,8 @@ class LoginForm extends React.Component{
          loginPassword,
        } = this.state;
        this.setState({
-         isLoading:true
+         signInError:'',
+         // isLoading:true
        })
        // Post request to backend
        fetch('/login', {
@@ -64,13 +65,21 @@ class LoginForm extends React.Component{
        }).then(res => res.json())
          .then(json => {
            if (json.success) {
-             this.setState({
-               isLoading: false,
-               loginUsername: '',
-               loginPassword: '',
-               token: json.token,
-             });
-             this.props.history.push("/ChatRoom")
+             if(json.isAdmin){
+               this.setState({
+                 isLoading: false,
+                 loginUsername: '',
+                 loginPassword: '',
+                 token: json.token,
+               });
+               this.props.history.push("/ChatRoom");
+             }
+             else{
+               this.setState({
+                 signInError:"Username or password is wrong.",
+                 isLoading: false,
+               });
+             }
            } else {
              this.setState({
                signInError: json.message,
