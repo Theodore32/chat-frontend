@@ -50,7 +50,7 @@ export default class RoomChat extends React.Component{
       name : item.name,
       isOpen : true,
       username:item.username,
-      picture : item.picture,
+      picture : item.profilePicture,
       description : item.description,
       chatId : chatId,
       chatlog : log

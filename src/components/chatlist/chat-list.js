@@ -14,6 +14,11 @@ export default class FriendList extends React.Component{
       openchat:false,
       lastMessage : '',
       notif : 0,
+      intervalChatBot : '',
+      chatBot:[
+        'Selamat datang di layanan customer service kami, mohon tunggu sebentar admin kami sedang melayani user lain',
+        'Mohon maaf menunggu lama, admin kami sedang melayani user lain, dimohon kesediaannya untuk menunggu sebentar'
+      ]
     }
   }
 
@@ -42,7 +47,6 @@ export default class FriendList extends React.Component{
 
   activeSocket(port){
     recieveSocket(port,(err,recieve)=>{
-      console.log(this.state.openchat);
       let time = new Date(recieve.message.time);
       const getHours = (time.getHours() < 10 ? '0' : '') + time.getHours();
       const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
@@ -81,6 +85,7 @@ export default class FriendList extends React.Component{
         this.readChat(this.props.chat,this.props.myUser.username);
         if(recieve.message.sender.username === this.props.myUser.username){
           sendSocket('changechatroom');
+          this.clearIntervalChatBot();
         }
         else{
           sendSocket('readchat',recieve.message.chatId);
@@ -116,7 +121,55 @@ export default class FriendList extends React.Component{
           })
         }
       }
+      if(this.state.chatlog.length === 1){
+        setTimeout((()=>this.chatBotHandler(recieve,0)) , 1000)
+        this.setState({
+          intervalChatBot : setInterval((()=>this.chatBotHandler(recieve,1)),3000)
+        })
+      }
     })
+  }
+
+  chatBotHandler = (recieve,angka) =>{
+    let send = {
+      reciever:{
+        username:recieve.message.sender.username,
+        name:recieve.message.sender.name
+      },
+      sender:{
+        username: "chatBot",
+        name:"chatBot"
+      },
+      chatId:recieve.message.chatId,
+      message:this.state.chatBot[angka].trim(),
+      time : recieve.message.time,
+      date : recieve.message.date
+    }
+    fetch('/chat',{
+      credentials : 'include',
+      method : "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chatId : recieve.message.chatId,
+        message : this.state.chatBot[angka].trim(),
+        senderUsername : "chatBot",
+        sender: "chatBot",
+        timeStamp : recieve.message.time,
+        date : recieve.message.date,
+        recieve : recieve.message.sender.username
+      })
+    }).then(res => res.json())
+    .then(response =>{
+      if(response.success){
+        sendSocket('sendChat',send);
+      }
+    })
+  }
+
+  clearIntervalChatBot = () =>{
+    clearInterval(this.state.intervalChatBot);
   }
 
   escOnClick = (e) =>{
@@ -171,16 +224,14 @@ export default class FriendList extends React.Component{
   }
 
   openChatRoom = (item,log) => {
-    console.log(item.chatId);
     this.setState({
       openchat:true,
       notif:0
     })
     this.props.changeName(item,item.chatId,log);
     if(this.state.lastMessage.sender !== this.props.myUser.username){
-      console.log('masuk read',this.state.lastMessage);
       this.readChat(item,this.props.myUser.username);
-       sendSocket('readchat',item);
+       sendSocket('readchat',item.chatId);
     }
   }
 
@@ -235,7 +286,7 @@ export default class FriendList extends React.Component{
             onClick={() =>this.openChatRoom(chat,this.state.chatlog)}
           >
           <div className = "chat-list-picture">
-            <img src = {chat.picture} alt=""/>
+            <img src = {chat.profilePicture} alt=""/>
           </div>
           <div>
             <div className = "chat-name">

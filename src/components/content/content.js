@@ -24,11 +24,12 @@ export default class Content extends React.Component {
   componentDidMount() {
     document.addEventListener("keydown", this.escOnClick, false);
     this.contextContainer.addEventListener('scroll',this.handleScroll,false);
-    this.scrollToBottom();
     this.changeChatroomSocket();
+    this.scrollToBottom();
   }
 
   componentDidUpdate(){
+    
   }
 
   componentWillUnmount(){
