@@ -134,10 +134,13 @@ export default class FriendList extends React.Component{
 
   chatBotHandler = (recieve,angka) =>{
     let send = {
-      receiver:{
-        username:recieve.message.sender.username,
-        name:recieve.message.sender.name
-      },
+      receiver:[
+        {
+          username:recieve.message.sender.username,
+          name:recieve.message.sender.name,
+          read : true
+        }
+      ],
       sender:{
         username: "chatBot",
         name:"chatBot"
