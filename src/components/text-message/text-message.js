@@ -16,7 +16,8 @@ export default class inputMessage extends React.Component{
       message:'',
       file: '',
       imagePreviewUrl: '',
-      error: ''
+      error: '',
+      enterPressed : false
     }
 
     this.messageOnChange =this.messageOnChange.bind(this);
@@ -33,7 +34,8 @@ export default class inputMessage extends React.Component{
 
   onSend(e){
     e.preventDefault();
-    const today = new Date();
+    const timeNow = Date.now()
+    const today = new Date(timeNow);
     const dd = (today.getDate() < 10 ? '0' : '')+today.getDate();
     const mm = ((today.getMonth()+1) < 10 ? '0' : '')+(today.getMonth()+1); //January is 0!
     const yyyy = today.getFullYear();
@@ -43,7 +45,7 @@ export default class inputMessage extends React.Component{
     const attachmentName = this.state.file.name;
     const attachmentType = this.state.file.type;
     if(message || attachment){
-      this.attachPhoto(attachment,attachmentName,attachmentType,message,today,date);
+      this.attachPhoto(attachment,attachmentName,attachmentType,message,timeNow,date);
     }
   }
 
@@ -85,13 +87,16 @@ export default class inputMessage extends React.Component{
       if(response.success){
         if(response.filename){
           let send = {
-            reciever:this.props.sender,
+            receiver:[
+              {username:this.props.recieve,
+              read:false}
+            ],
             sender:{
               username: this.props.senderUsername,
               name:this.props.sender
             },
             chatId:this.props.chatId,
-            message:this.state.message,
+            message:this.state.message.trim(),
             attachment: {
               name : response.filename,
               type : attachmentType
@@ -102,13 +107,16 @@ export default class inputMessage extends React.Component{
           sendSocket('sendChat',send);
         } else {
           let send = {
-            reciever:this.props.sender,
+            receiver:[
+              {username:this.props.recieve,
+              read:false}
+            ],
             sender:{
               username: this.props.senderUsername,
               name:this.props.sender
             },
             chatId:this.props.chatId,
-            message:this.state.message,
+            message:this.state.message.trim(),
             time : today,
             date : date
           }
@@ -133,7 +141,17 @@ export default class inputMessage extends React.Component{
 
 onEnterPress = (e) => {
   if(e.keyCode === 13 && e.shiftKey === false) {
-    this.onSend(e);
+    if(!this.state.enterPressed){
+      this.onSend(e);
+    }
+    this.setState({
+      enterPressed : true
+    })
+    setTimeout(function(){
+      this.setState({
+        enterPressed : false
+      })
+    }.bind(this), 0.00000001);
   }
 }
 

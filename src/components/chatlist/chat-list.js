@@ -28,6 +28,7 @@ export default class FriendList extends React.Component{
     this.socketcloseChatroom();
     this.getChatData(this.props.chat);
     this.readChatSocket(this.props.chat.chatId);
+    this.unsendMessageSocket(this.props.chat.chatId);
   }
 
   componentWillUnmount(){
@@ -35,6 +36,7 @@ export default class FriendList extends React.Component{
     this.activeSocket(this.props.chat.chatId);
     this.socketcloseChatroom();
     this.readChatSocket(this.props.chat.chatId);
+    this.unsendMessageSocket(this.props.chat.chatId);
   }
 
   socketcloseChatroom=()=>{
@@ -60,7 +62,7 @@ export default class FriendList extends React.Component{
       if(this.state.openchat){
         if(recieve.message.attachment){
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -71,7 +73,7 @@ export default class FriendList extends React.Component{
           })
         }else {
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time ,date: recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -94,7 +96,7 @@ export default class FriendList extends React.Component{
       else{
         if(recieve.message.attachment){
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],attachment:recieve.message.attachment,time: recieve.message.time,date : recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -105,7 +107,7 @@ export default class FriendList extends React.Component{
           })
         } else{
           this.setState({
-            chatlog:this.state.chatlog.concat({message:recieve.message.message,sender:recieve.message.sender,
+            chatlog:this.state.chatlog.concat({chatId:recieve.message.chatId,message:recieve.message.message,sender:recieve.message.sender,
               receiver:[{username :recieve.message.sender,read : false}],time: recieve.message.time,date : recieve.message.date}),
             lastMessage:{
               chatId: recieve.message.chatId,
@@ -132,7 +134,7 @@ export default class FriendList extends React.Component{
 
   chatBotHandler = (recieve,angka) =>{
     let send = {
-      reciever:{
+      receiver:{
         username:recieve.message.sender.username,
         name:recieve.message.sender.name
       },
@@ -167,6 +169,29 @@ export default class FriendList extends React.Component{
       }
     })
   }
+
+  unsendMessageSocket (port) {
+   recieveSocket ('unsendMessage'+port, (err,recieve) =>{
+       let chatlog = this.state.chatlog;
+       for(var index in chatlog){
+         if(new Date(chatlog[index].time).getTime() === new Date(recieve).getTime()){
+           if(chatlog[index].sender.username === this.props.myUser.username ){
+             chatlog.splice(index,1);
+           }
+           else{
+             let notif = this.state.notif
+             if(chatlog[index].receiver[0].read === false){
+               chatlog.splice(index,1);
+             }
+           }
+         }
+         this.setState({
+           chatlog : chatlog
+         })
+       }
+       this.props.changeName(null,this.props.chatId,this.state.chatlog);
+   })
+ }
 
   clearIntervalChatBot = () =>{
     clearInterval(this.state.intervalChatBot);
@@ -237,7 +262,6 @@ export default class FriendList extends React.Component{
 
   readChatSocket (port) {
     recieveSocket ('readchat'+port, (err,recieve) =>{
-      console.log("asda");
       if(this.state.chatlog.length !== 0){
         let chatlog = this.state.chatlog;
         for(var index = chatlog.length-1 ; index >= 0 ; index--){

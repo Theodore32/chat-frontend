@@ -3,7 +3,7 @@ import './content.css';
 import Message from '../text-message/text-message';
 import doc from '../../picture/doc.png';
 import {
-  recieveSocket
+  recieveSocket,sendSocket
 }from "../../socket/socketconnect";
 
 export default class Content extends React.Component {
@@ -15,6 +15,7 @@ export default class Content extends React.Component {
       showTime : false,
       visible : false,
       isHovering: false,
+      openMenu: false,
       length:0
     }
     this.escOnClick= this.escOnClick.bind(this);
@@ -23,23 +24,15 @@ export default class Content extends React.Component {
 
   componentDidMount() {
     document.addEventListener("keydown", this.escOnClick, false);
-    this.contextContainer.addEventListener('scroll',this.handleScroll,false);
-    this.changeChatroomSocket();
     this.scrollToBottom();
   }
 
   componentDidUpdate(){
-    
+    this.scrollToBottom();
   }
 
   componentWillUnmount(){
     document.removeEventListener("keydown", this.escOnClick, false);
-    this.contextContainer.removeEventListener('scroll',this.handleScroll,false);
-  }
-
-  handleScroll = (event) =>{
-    console.log(this.contextContainer.scrollTop);
-    console.log("Height:",this.contextContainer.scrollHeight);
   }
 
   escOnClick(event){
@@ -89,6 +82,10 @@ export default class Content extends React.Component {
     }
   }
 
+  viewImage = (name) =>{
+    window.open('http://localhost:3000/'+name);
+  }
+
   downloadFile = (name) => {
     window.open('http://localhost:3000/'+name, '_top');
   }
@@ -103,13 +100,20 @@ export default class Content extends React.Component {
     return name;
   }
 
-  handleMouseHover() {
-    this.setState(this.toggleHoverState);
+  handleMouseHover(flag,time) {
+    if(flag === 0){
+      this.setState(this.toggleHoverState(true,time));
+    }
+    else{
+      this.setState(this.toggleHoverState(false,time));
+    }
   }
 
-  toggleHoverState(state) {
+  toggleHoverState(state,time) {
     return {
-      isHovering: !state.isHovering,
+      isHovering: state,
+      openMenu : false,
+      timeDiv : time
     };
   }
 
@@ -119,265 +123,558 @@ export default class Content extends React.Component {
     })
   }
 
+  unsendMessage = (chatId,timeStamp) =>{
+    fetch('/unsendMessage',{
+      credentials : 'include',
+      method:'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chatId : chatId,
+        timeStamp:timeStamp
+      })
+    }).then(res => res.json())
+      .then(response =>{
+        if(response.success){
+          this.handleMouseHover(1,null);
+          sendSocket('unsendMessage',{chatId,timeStamp});
+        }
+    })
+  }
+
+  MenuMessage = () =>{
+    this.setState(this.toggleMenuMessage)
+  }
+
+  toggleMenuMessage(state){
+    return{
+      openMenu : !state.openMenu
+    }
+  }
+
   render(){
     const { visible } = this.state;
     return (
       <div>
-        <div className = {"content-container"} id = "content-container" ref={ref => {this.contextContainer = ref}}>
-          <div className = "content-chat" id = "content-chat">
-              {this.props.chatlog.length < 1 ?
-                 null
-                 :
-                 this.props.chatlog.map((index,urutan) =>{
-                   if(index.sender.username === this.props.senderUsername){
-                     return(
-                      <div className = "MessageHeader">
-                        {this.getDateandTime(index.time,this.props.chatlog,urutan)}
-                        <div className = "senderMessageName">
-                          {this.props.chatlog.length >= 0 ?
-                            urutan === 0 ?
-                              this.props.chatlog[urutan-1] === "undefined" ?
-                                index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
-                                    <p>{index.sender.name}</p>
-                                  :
-                                  null
-                                :
-                                <p>{index.sender.name}</p>
-                              :
-                              this.props.chatlog[urutan-1] !== "undefined" ?
-                                index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
-                                    <p>{index.sender.name}</p>
-                                  :
-                                  null
+      <div className = {"content-container"} id = "content-container">
+        <div className = "content-chat" id = "content-chat">
+            {this.props.chatlog.length < 1 ?
+               null
+               :
+               this.props.chatlog.map((index,urutan) =>{
+                 if(index.sender.username === this.props.senderUsername){
+                   return(
+                    <div className = "MessageHeader">
+                      {this.getDateandTime(index.time,this.props.chatlog,urutan)}
+                      <div className = "senderMessageName">
+                        {this.props.chatlog.length >= 0 ?
+                          urutan === 0 ?
+                            this.props.chatlog[urutan-1] === "undefined" ?
+                              index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                  <p>{index.sender.name}</p>
                                 :
                                 null
-                            :
-                            null
-                          }
-                        </div>
-                        <div className = "MessageSender">
-                          {this.props.chatlog[urutan].receiver[0].read === true ?
-                            <div className = "readChat">
-                              Read
-                            </div> :
-                            null
-                          }
-                          <div>
-                            {index.message.split("\n") > 1 || index.message.length > 78 ?
-                              <div>
-                                {!index.attachment ?
-                                  <div className = "senderMessage">
-                                    <p>{index.message}
-                                      <div className = "timeSenderMessageManyLine">
-                                        {this.getTimefromLog(index.time)}
-                                      </div>
-                                    </p>
-                                  </div>
-                                  :
-                                  <div className = "senderMessageWithPic">
-                                    <div>
-                                      {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                        <div className = "attachmentFileName">
-                                          <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
-                                        </div>
-                                        :
-                                        <div className = "attachment-picture">
-                                          <img src = {index.attachment.name}/>
-                                        </div>
-                                      }
-                                    </div>
-                                    <p>{index.message}
-                                      <div className = "timeSenderMessageManyLine">
-                                        {this.getTimefromLog(index.time)}
-                                      </div>
-                                    </p>
-                                  </div>
-                                }
-                              </div>
                               :
-                              <div>
-                                {!index.attachment ?
-                                  <div className = "senderMessage"  >
-                                    <p>{index.message}
-                                      <div className = "timeSenderMessageOneLine">
-                                        {this.getTimefromLog(index.time)}
+                              <p>{index.sender.name}</p>
+                            :
+                            this.props.chatlog[urutan-1] !== "undefined" ?
+                              index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                  <p>{index.sender.name}</p>
+                                :
+                                null
+                              :
+                              null
+                          :
+                          null
+                        }
+                      </div>
+                      <div className = "MessageSender">
+                        {this.props.chatlog[urutan].receiver[0].read === true ?
+                          <div className = "readChat">
+                            Read
+                          </div> :
+                          null
+                        }
+                        <div>
+                          {index.message.split("\n").length > 1 || index.message.length > 78 ?
+                            <div>
+                              {!index.attachment ?
+                                <div className = "senderMessage" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                  onMouseLeave={() => this.handleMouseHover(1,null)} >
+                                  {
+                                    this.state.isHovering && this.state.timeDiv === index.time ?
+                                    <div className = "hoverTextContainer">
+                                      <div className = "hoverText" onClick = {() => this.MenuMessage()}>
+                                        {this.state.openMenu ?
+                                          <div className = "MenuMessage">
+                                            <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                          </div>
+                                          :
+                                          null
+                                        }
                                       </div>
-                                    </p>
-                                  </div>
-                                  : index.attachment && !index.message ?
-                                  <div className = "senderMessagePicOnly" onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseHover}>
-                                    {
-                                      this.state.isHovering &&
-                                      <div className = "hoverPic">
-                                        Hovering right meow!
+                                    </div>
+                                    :
+                                    null
+                                  }
+                                  <p>{index.message}
+                                    <div className = "timeSenderMessageManyLine">
+                                      {this.getTimefromLog(index.time)}
+                                    </div>
+                                  </p>
+                                </div>
+                                :
+                                <div className = "senderMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)} onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                  <div>
+                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      <div className = "attachmentFileName">
+                                        <p>{this.fileName(index.attachment.name)}</p>
+                                        <img src = {doc}/>
+                                          { this.props.chatlog[urutan].receiver[0].read === false ?
+                                              this.state.isHovering && this.state.timeDiv === index.time ?
+                                              <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                <div className = "hoverAttachmentFile">
+                                                  {
+                                                    this.state.openMenu ?
+                                                    <div className = "MenuMessage">
+                                                      <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                      <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                    </div>
+                                                    :
+                                                    null
+                                                  }
+                                                </div>
+                                              </div>
+                                              :
+                                              null
+                                              :
+                                            null
+                                          }
+                                      </div>
+                                      :
+                                      <div className = "attachment-picture">
+                                        <img src = {index.attachment.name}/>
+                                          {this.props.chatlog[urutan].receiver[0].read === false ?
+                                            this.state.isHovering && this.state.timeDiv === index.time ?
+                                            <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                              <div className = "hoverAttachmentFile">
+                                                {this.state.openMenu ?
+                                                  <div className = "MenuMessage">
+                                                    <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                    <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                  </div>
+                                                  :
+                                                  null
+                                                }
+                                              </div>
+                                            </div>
+                                            :
+                                            null
+                                          :
+                                          null
+                                          }
                                       </div>
                                     }
-                                    <div>
-                                      {index.attachment.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                        <div className = "attachmentFileName">
-                                          <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
-                                        </div>
-                                        :
-                                        <div className = "attachment-picture">
-                                          <img src = {index.attachment.name}/>
-                                        </div>
-                                      }
+                                  </div>
+                                  <p>{index.message}
+                                    <div className = "timeSenderMessageManyLine">
+                                      {this.getTimefromLog(index.time)}
                                     </div>
+                                  </p>
+                                </div>
+                              }
+                            </div>
+                            :
+                            <div>
+                              {!index.attachment ?
+                                <div className = "senderMessage" onMouseEnter={() =>this.handleMouseHover(0,index.time)} onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                  {this.props.chatlog[urutan].receiver[0].read === false ?
+                                      this.state.isHovering && this.state.timeDiv === index.time ?
+                                      <div className = "hoverTextContainer">
+                                        <div className = "hoverText" onClick = {() => this.MenuMessage()}>
+                                          {this.state.openMenu ?
+                                            <div className = "MenuMessage">
+                                              <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                            </div>
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                      :null
+                                    :null
+                                  }
+                                  <p>{index.message}
                                     <div className = "timeSenderMessageOneLine">
                                       {this.getTimefromLog(index.time)}
                                     </div>
-                                  </div>
-                                  :
-                                  <div className = "senderMessageWithPic"  >
-                                    <div>
-                                      {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                        <div className = "attachmentFileName">
-                                          <p>{this.fileName(index.attachment.name)}</p>
-                                          <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
+                                  </p>
+                                </div>
+                                : index.attachment && !index.message ?
+                                <div className = "senderMessagePicOnly" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                  onMouseLeave={() => this.handleMouseHover(1,null)}>
+
+                                  <div>
+                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      <div className = "attachmentFileName">
+                                        <p>{this.fileName(index.attachment.name)}</p>
+                                        <img src = {doc}/>
+                                        <div>
+                                          {this.props.chatlog[urutan].receiver[0].read === false ?
+                                            this.state.isHovering && this.state.timeDiv === index.time ?
+                                              <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                <div className = "hoverAttachmentFile">
+                                                  {this.state.openMenu ?
+                                                    <div className = "MenuMessage">
+                                                      <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                      <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                    </div>
+                                                    :
+                                                    null
+                                                  }
+                                                </div>
+                                              </div>
+                                              :
+                                              null
+                                            :
+                                            null
+                                          }
                                         </div>
-                                        :
-                                        <div className = "attachment-picture">
-                                          <img src = {index.attachment.name}/>
-                                        </div>
-                                      }
-                                    </div>
-                                    <p>{index.message}
-                                      <div className = "timeSenderMessageOneLine">
-                                        {this.getTimefromLog(index.time)}
                                       </div>
-                                    </p>
+                                      :
+                                      <div className = "attachment-picture">
+                                        <img src = {index.attachment.name}/>
+                                        <div>
+                                          {this.props.chatlog[urutan].receiver[0].read === false ?
+                                            this.state.isHovering && this.state.timeDiv === index.time ?
+                                              <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                <div className = "hoverAttachmentFile">
+                                                  {this.state.openMenu ?
+                                                    <div className = "MenuMessage">
+                                                      <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                      <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                    </div>
+                                                    :
+                                                    null
+                                                  }
+                                                </div>
+                                              </div>
+                                              :
+                                              null
+                                            :
+                                            null
+                                          }
+                                        </div>
+                                      </div>
+                                    }
                                   </div>
-                                }
-                              </div>
-                            }
-                          </div>
+                                  <div className = "timeSenderMessageOneLine">
+                                    {this.getTimefromLog(index.time)}
+                                  </div>
+                                </div>
+                                :
+                                <div className = "senderMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                                  onMouseLeave={() => this.handleMouseHover(1,null)}>
+                                  <div>
+                                    {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                      <div className = "attachmentFileName">
+                                        <p>{this.fileName(index.attachment.name)}</p>
+                                        <img src = {doc}/>
+                                          <div>
+                                            {this.props.chatlog[urutan].receiver[0].read === false ?
+                                              this.state.isHovering && this.state.timeDiv === index.time ?
+                                                <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                  <div className = "hoverAttachmentFile">
+                                                    {this.state.openMenu ?
+                                                      <div className = "MenuMessage">
+                                                        <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                        <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                      </div>
+                                                      :
+                                                      null
+                                                    }
+                                                  </div>
+                                                </div>
+                                                :
+                                                null
+                                              :
+                                              null
+                                            }
+                                          </div>
+                                      </div>
+                                      :
+                                      <div className = "attachment-picture">
+                                        <img src = {index.attachment.name}/>
+                                          <div>
+                                            {this.props.chatlog[urutan].receiver[0].read === false ?
+                                              this.state.isHovering && this.state.timeDiv === index.time ?
+                                                <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                                  <div className = "hoverAttachmentFile">
+                                                    {this.state.openMenu ?
+                                                      <div className = "MenuMessage">
+                                                        <li onClick = {() => this.unsendMessage(index.chatId,index.time)}>Unsend</li>
+                                                        <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                      </div>
+                                                      :
+                                                      null
+                                                    }
+                                                  </div>
+                                                </div>
+                                                :
+                                                null
+                                              :
+                                              null
+                                            }
+                                          </div>
+                                      </div>
+                                    }
+                                  </div>
+                                  <p>{index.message}
+                                    <div className = "timeSenderMessageOneLine">
+                                      {this.getTimefromLog(index.time)}
+                                    </div>
+                                  </p>
+                                </div>
+                              }
+                            </div>
+                          }
                         </div>
                       </div>
-                     )
-                   }else{
-                     return(
-                      <div>
-                        {this.getDateandTime(index.time,this.props.chatlog,urutan)}
-                       <div className = "receiverMessageName">
-                         {this.props.chatlog.length >= 0 ?
-                           urutan === 0 ?
-                             this.props.chatlog[urutan-1] === "undefined" ?
-                               index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
-                                   <p>{index.sender.name}</p>
-                                 :
-                                 null
-                               :
-                               <p>{index.sender.name}</p>
-                             :
-                             this.props.chatlog[urutan-1] !== "undefined" ?
-                               index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
-                                   <p>{index.sender.name}</p>
-                                 :
-                                 null
+                    </div>
+                   )
+                 }else{
+                   return(
+                    <div>
+                      {this.getDateandTime(index.time,this.props.chatlog,urutan)}
+                     <div className = "receiverMessageName">
+                       {this.props.chatlog.length >= 0 ?
+                         urutan === 0 ?
+                           this.props.chatlog[urutan-1] === "undefined" ?
+                             index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                 <p>{index.sender.name}</p>
                                :
                                null
+                             :
+                             <p>{index.sender.name}</p>
                            :
-                           null
-                         }
-                       </div>
-                       <div className = "MessageReceiver">
-                         {index.message.split("\n") > 1 || index.message.length > 78 ?
-                           <div>
-                             {!index.attachment ?
-                               <div className = "receiverMessage">
-                                 <p>{index.message}
-                                   <div className = "timeReceiverMessageManyLine">
-                                     {this.getTimefromLog(index.time)}
-                                   </div>
-                                 </p>
-                               </div>
+                           this.props.chatlog[urutan-1] !== "undefined" ?
+                             index.sender.name !== this.props.chatlog[urutan-1].sender.name ?
+                                 <p>{index.sender.name}</p>
                                :
-                               <div className = "receiverMessageWithPic">
-                                 <div>
-                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                     <div className = "attachmentFileName">
-                                       <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
-                                     </div>
-                                     :
-                                     <div className = "attachment-picture">
-                                       <img src = {index.attachment.name}/>
-                                     </div>
-                                   }
+                               null
+                             :
+                             null
+                         :
+                         null
+                       }
+                     </div>
+                     <div className = "MessageReceiver">
+                       {index.message.split("\n").length > 1 || index.message.length > 78 ?
+                         <div>
+                           {!index.attachment ?
+                             <div className = "receiverMessage">
+                               <p>{index.message}
+                                 <div className = "timeReceiverMessageManyLine">
+                                   {this.getTimefromLog(index.time)}
                                  </div>
-                                 <p>{index.message}
-                                   <div className = "timeReceiverMessageManyLine">
-                                     {this.getTimefromLog(index.time)}
+                               </p>
+                             </div>
+                             :
+                             <div className = "receiverMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                               onMouseLeave={() => this.handleMouseHover(1,null)}>
+                               <div>
+                                 {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   <div className = "attachmentFileName">
+                                     <p>{this.fileName(index.attachment.name)}</p>
+                                     <img src = {doc}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
                                    </div>
-                                 </p>
-                               </div>
-                             }
-                           </div>
-                           :
-                           <div>
-                             {!index.attachment ?
-                               <div className = "receiverMessage">
-                                 <p>{index.message}
-                                   <div className = "timeReceiverMessageOneLine">
-                                     {this.getTimefromLog(index.time)}
+                                   :
+                                   <div className = "attachment-picture">
+                                     <img src = {index.attachment.name}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
                                    </div>
-                                 </p>
+                                 }
                                </div>
-                               : index.attachment && !index.message ?
-                               <div className = "receiverMessagePicOnly">
-                                 <div>
-                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                     <div className = "attachmentFileName">
-                                       <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
-                                     </div>
-                                     :
-                                     <div className = "attachment-picture">
-                                       <img src = {index.attachment.name}/>
-                                     </div>
-                                   }
+                               <p>{index.message}
+                                 <div className = "timeReceiverMessageManyLine">
+                                   {this.getTimefromLog(index.time)}
                                  </div>
+                               </p>
+                             </div>
+                           }
+                         </div>
+                         :
+                         <div>
+                           {!index.attachment ?
+                             <div className = "receiverMessage">
+                               <p>{index.message}
                                  <div className = "timeReceiverMessageOneLine">
                                    {this.getTimefromLog(index.time)}
                                  </div>
-                               </div>
-                               :
-                               <div className = "receiverMessageWithPic">
-                                 <div>
-                                   {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
-                                     <div className = "attachmentFileName">
-                                       <p>{this.fileName(index.attachment.name)}</p>
-                                       <img src = {doc} onClick ={()=>this.downloadFile(index.attachment.name)}/>
-                                     </div>
-                                     :
-                                     <div className = "attachment-picture">
-                                       <img src = {index.attachment.name}/>
-                                     </div>
-                                   }
-                                 </div>
-                                 <p>{index.message}
-                                   <div className = "timeReceiverMessageOneLine">
-                                     {this.getTimefromLog(index.time)}
+                               </p>
+                             </div>
+                             : index.attachment && !index.message ?
+                             <div className = "receiverMessagePicOnly" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                               onMouseLeave={() => this.handleMouseHover(1,null)}>
+                               <div>
+                                 {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   <div className = "attachmentFileName">
+                                     <p>{this.fileName(index.attachment.name)}</p>
+                                     <img src = {doc}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
                                    </div>
-                                 </p>
+                                   :
+                                   <div className = "attachment-picture">
+                                     <img src = {index.attachment.name}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
+                                   </div>
+                                 }
                                </div>
-                             }
-                           </div>
-                         }
-                       </div>
+                               <div className = "timeReceiverMessageOneLine">
+                                 {this.getTimefromLog(index.time)}
+                               </div>
+                             </div>
+                             :
+                             <div className = "receiverMessageWithPic" onMouseEnter={() =>this.handleMouseHover(0,index.time)}
+                               onMouseLeave={() => this.handleMouseHover(1,null)}>
+                               <div>
+                                 {index.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ?
+                                   <div className = "attachmentFileName">
+                                     <p>{this.fileName(index.attachment.name)}</p>
+                                     <img src = {doc}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.downloadFile(index.attachment.name)}>Download</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
+                                   </div>
+                                   :
+                                   <div className = "attachment-picture">
+                                     <img src = {index.attachment.name}/>
+                                       <div>
+                                         {
+                                           this.state.isHovering && this.state.timeDiv === index.time ?
+                                           <div className = "hoverAttachmentFileContainer" onClick = {() => this.MenuMessage()}>
+                                             <div className = "hoverAttachmentFile">
+                                               {this.state.openMenu ?
+                                                 <div className = "MenuMessage">
+                                                   <li onClick ={() => this.viewImage(index.attachment.name)}>View</li>
+                                                 </div>
+                                                 :
+                                                 null
+                                               }
+                                             </div>
+                                           </div>
+                                           :
+                                           null
+                                         }
+                                       </div>
+                                   </div>
+                                 }
+                               </div>
+                               <p>{index.message}
+                                 <div className = "timeReceiverMessageOneLine">
+                                   {this.getTimefromLog(index.time)}
+                                 </div>
+                               </p>
+                             </div>
+                           }
+                         </div>
+                       }
                      </div>
-                     )
-                    }
+                   </div>
+                   )
                   }
-                )
-              }
-          </div>
-          <div style={{ float:"right", clear: "both"}}
-            ref={(asd) => { this.messagesEnd = asd; }}>
+                }
+              )
+            }
         </div>
-        </div>
+        <div style={{ float:"right", clear: "both"}}
+          ref={(asd) => { this.messagesEnd = asd; }}/>
+      </div>
         <Message
           senderUsername = {this.props.senderUsername}
           sender = {this.props.sender}
