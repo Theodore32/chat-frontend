@@ -54,11 +54,21 @@ export default class FriendList extends React.Component{
       const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
       const timeStamp = getHours + ':' + getMinute;
       let lastMessageText;
-      if(recieve.message.message.length > 30){
-        lastMessageText = recieve.message.message.substring(0,30) +'. . .'
-      } else {
-        lastMessageText = recieve.message.message
+      if(recieve.message.message && recieve.message.message !== ""){
+        if(recieve.message.message.length < 30){
+          lastMessageText = recieve.message.message
+        } else {
+          lastMessageText = recieve.message.message.substring(0,30) +'. . .'
+        }
+      } else if (recieve.message.attachment){
+        if(recieve.message.attachment.type === "image/jpeg" || recieve.message.attachment.type === "image/jpg" || recieve.message.attachment.type === "image/gif" || recieve.message.attachment.type === "image/png"){
+          lastMessageText = "You sent a photo to "+recieve.message.receiver[0].name
+        }
+        else if (recieve.message.attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+          lastMessageText = "You sent a file to "+recieve.message.receiver[0].name
+        }
       }
+
       if(this.state.openchat){
         if(recieve.message.attachment){
           this.setState({
@@ -163,7 +173,8 @@ export default class FriendList extends React.Component{
         sender: "chatBot",
         timeStamp : recieve.message.time,
         date : recieve.message.date,
-        recieve : recieve.message.sender.username
+        receiveUsername : recieve.message.sender.username,
+        receiveName : recieve.message.sender.name
       })
     }).then(res => res.json())
     .then(response =>{
@@ -232,10 +243,23 @@ export default class FriendList extends React.Component{
           const getMinute = (time.getMinutes() < 10 ? '0' : '') + time.getMinutes();
           const timeStamp = getHours + ':' + getMinute;
           let lastMessageText;
-          if(json.message.slice(-1).pop().message.length > 30){
-            lastMessageText = json.message.slice(-1).pop().message.substring(0,30) +'. . .'
-          } else {
-            lastMessageText = json.message.slice(-1).pop().message
+          if(json.message.slice(-1).pop().message && json.message.slice(-1).pop().message !== ""){
+            if(json.message.slice(-1).pop().message.length < 30){
+              lastMessageText = json.message.slice(-1).pop().message
+            }
+            else {
+              lastMessageText = json.message.slice(-1).pop().message.substring(0,30) +'. . .'
+            }
+          } else if (json.message.slice(-1).pop().attachment){
+            if(json.message.slice(-1).pop().attachment.type === "image/jpeg" ||
+            json.message.slice(-1).pop().attachment.type === "image/jpg" ||
+            json.message.slice(-1).pop().attachment.type === "image/gif" ||
+            json.message.slice(-1).pop().attachment.type === "image/png"){
+              lastMessageText = "You sent a photo to "+json.message.slice(-1).pop().receiver[0].name
+            }
+            else if (json.message.slice(-1).pop().attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+              lastMessageText = "You sent a file to "+json.message.slice(-1).pop().receiver[0].name
+            }
           }
           this.setState({
             chatlog : json.message,
@@ -274,7 +298,7 @@ export default class FriendList extends React.Component{
                   date : chatlog[index].date,
                   message : chatlog[index].message,
                   attachment : chatlog[index].attachment,
-                  receiver:[{username :chatlog[index].receiver[0].username, read : true}],
+                  receiver:[{username :chatlog[index].receiver[0].username, name :chatlog[index].receiver[0].name, read : true}],
                   sender : {username : chatlog[index].sender.username,  name : chatlog[index].sender.name},
                   time : chatlog[index].time
                 });

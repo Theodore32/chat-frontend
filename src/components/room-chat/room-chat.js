@@ -99,7 +99,12 @@ export default class RoomChat extends React.Component{
                 chatlog = {this.state.chatlog}
                 senderUsername = {account.username}
                 sender={account.name}
-                recieve={this.state.username}
+                recieve={
+                  {
+                    username : this.state.username,
+                    name : this.state.name
+                  }
+                }
                 chatId = {this.state.chatId}
                 time = {this.state.time}
                 checkrequest = {this.state.checkrequest}

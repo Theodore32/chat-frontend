@@ -76,7 +76,8 @@ export default class inputMessage extends React.Component{
     formData.append ('message', message);
     formData.append ('timeStamp', today);
     formData.append ('date', date);
-    formData.append ('recieve',receive);
+    formData.append ('receiveUsername',receive.username);
+    formData.append ('receiveName',receive.name);
 
     fetch('/chat',{
       credentials : 'include',
@@ -88,7 +89,8 @@ export default class inputMessage extends React.Component{
         if(response.filename){
           let send = {
             receiver:[
-              {username:this.props.recieve,
+              {username:this.props.recieve.username,
+              name : this.props.recieve.name,
               read:false}
             ],
             sender:{
@@ -108,7 +110,8 @@ export default class inputMessage extends React.Component{
         } else {
           let send = {
             receiver:[
-              {username:this.props.recieve,
+              {username:this.props.recieve.username,
+              name : this.props.recieve.name,
               read:false}
             ],
             sender:{
@@ -141,6 +144,7 @@ export default class inputMessage extends React.Component{
 
 onEnterPress = (e) => {
   if(e.keyCode === 13 && e.shiftKey === false) {
+    e.preventDefault();
     if(!this.state.enterPressed){
       this.onSend(e);
     }
@@ -151,7 +155,7 @@ onEnterPress = (e) => {
       this.setState({
         enterPressed : false
       })
-    }.bind(this), 0.00000001);
+    }.bind(this), 4000);
   }
 }
 
