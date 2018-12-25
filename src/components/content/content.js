@@ -17,7 +17,9 @@ export default class Content extends React.Component {
       isHovering: false,
       openMenu: false,
       length:0,
-      chatlogLength : 0
+      chatlogLength : 0,
+      scrollTop : null,
+      scrollHeight : null
     }
     this.escOnClick= this.escOnClick.bind(this);
     this.handleMouseHover = this.handleMouseHover.bind(this);
@@ -29,19 +31,45 @@ export default class Content extends React.Component {
     this.setState({
       chatlogLength:this.props.chatlog.length
     })
+    this.contextContainer.addEventListener('scroll',this.handleScroll,false);
   }
 
   componentDidUpdate(){
-    if(this.state.chatlogLength !== this.props.chatlog.length){
+    if(this.state.scrollTop !== null || this.state.scrollHeight !== null){
+      if(this.state.chatlogLength !== this.props.chatlog.length && this.props.senderUsername === this.props.chatlog[this.props.chatlog.length - 1].sender.username){
+        this.scrollToBottom();
+        this.setState({
+          chatlogLength:this.props.chatlog.length
+        })
+      }
+      else if(this.state.chatlogLength !== this.props.chatlog.length && ((this.state.scrollHeight - this.state.scrollTop) <= 473 || (this.state.scrollHeight - this.state.scrollTop) === 474)){
+        this.scrollToBottom();
+        this.setState({
+          chatlogLength:this.props.chatlog.length
+        })
+      }
+    }
+    else {
       this.scrollToBottom();
-      this.setState({
-        chatlogLength:this.props.chatlog.length
-      })
     }
   }
 
   componentWillUnmount(){
     document.removeEventListener("keydown", this.escOnClick, false);
+  }
+
+  handleScroll = (event) =>{
+      let scrollTop = Math.round(this.contextContainer.scrollTop);
+      let scrollHeight = this.contextContainer.scrollHeight;
+      let offsetHeight = this.contextContainer.offsetHeight;
+      let clientHeight = this.contextContainer.clientHeight;
+      let oneLastMessage =  Math.round(scrollHeight - scrollTop);
+      console.log(scrollTop);
+      console.log(scrollHeight);
+      this.setState({
+        scrollTop : scrollTop,
+        scrollHeight : scrollHeight
+      })
   }
 
   changeState = (change) =>{
@@ -170,9 +198,10 @@ export default class Content extends React.Component {
 
   render(){
     const { visible } = this.state;
+    console.log(this.props.chatlog);
     return (
       <div>
-      <div className = {"content-container"} id = "content-container">
+      <div className = {"content-container"} id = "content-container" ref={ref => {this.contextContainer = ref}}>
         <div className = "content-chat" id = "content-chat">
             {this.props.chatlog.length < 1 ?
                null
