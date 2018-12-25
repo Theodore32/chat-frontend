@@ -247,6 +247,7 @@ _handleImageChange(event) {
               name = "message"
               value = {this.state.message}
               onChange = {this.messageOnChange}
+              spellcheck="false"
             />
           </form>
         </div>
