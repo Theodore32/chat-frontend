@@ -100,7 +100,7 @@ export default class FriendList extends React.Component{
           this.clearIntervalChatBot();
         }
         else{
-          sendSocket('readchat',recieve.message.chatId);
+          sendSocket('readchat',{chatId:recieve.message.chatId,sender:this.props.myUser.username});
         }
       }
       else{
@@ -187,22 +187,41 @@ export default class FriendList extends React.Component{
   unsendMessageSocket (port) {
    recieveSocket ('unsendMessage'+port, (err,recieve) =>{
        let chatlog = this.state.chatlog;
+       let lastMessageText = ''
        for(var index in chatlog){
-         if(new Date(chatlog[index].time).getTime() === new Date(recieve).getTime()){
-           if(chatlog[index].sender.username === this.props.myUser.username ){
-             chatlog.splice(index,1);
+         if(new Date(chatlog[index].time).getTime() === new Date(recieve).getTime() && chatlog[index].sender.username === this.props.myUser.username && chatlog[index].receiver[0].read === false){
+           chatlog.splice(index,1);
+           break;
+         }
+       }
+       if(chatlog.length !== 0){
+         if (chatlog.slice(-1).pop().attachment){
+           if(chatlog.slice(-1).pop().attachment.type === "image/jpeg" ||
+           chatlog.slice(-1).pop().attachment.type === "image/jpg" ||
+           chatlog.slice(-1).pop().attachment.type === "image/gif" ||
+           chatlog.slice(-1).pop().attachment.type === "image/png"){
+             lastMessageText = "You sent a photo to "+chatlog.slice(-1).pop().receiver[0].name
            }
-           else{
-             let notif = this.state.notif
-             if(chatlog[index].receiver[0].read === false){
-               chatlog.splice(index,1);
-             }
+           else if (chatlog.slice(-1).pop().attachment.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+             lastMessageText = "You sent a file to "+chatlog.slice(-1).pop().receiver[0].name
+           }
+         }else{
+           if(chatlog.slice(-1).pop().message.length < 30){
+             lastMessageText = chatlog.slice(-1).pop().message
+           }
+           else {
+             lastMessageText = chatlog.slice(-1).pop().message.substring(0,30) +'. . .'
            }
          }
-         this.setState({
-           chatlog : chatlog
-         })
        }
+       this.setState({
+         lastMessage:{
+           chatId: this.props.chat.chatId,
+           message:lastMessageText,
+           sender:chatlog.slice(-1).pop().sender
+         },
+         chatlog : chatlog
+       });
        this.props.changeName(null,this.props.chatId,this.state.chatlog);
    })
  }
@@ -283,13 +302,19 @@ export default class FriendList extends React.Component{
     this.props.changeName(item,item.chatId,log);
     if(this.state.lastMessage.sender !== this.props.myUser.username){
       this.readChat(item,this.props.myUser.username);
-       sendSocket('readchat',item.chatId);
+      sendSocket('readchat',{chatId:item.chatId,sender:this.props.myUser.username});
     }
   }
 
   readChatSocket (port) {
     recieveSocket ('readchat'+port, (err,recieve) =>{
       if(this.state.chatlog.length !== 0){
+        if(recieve.sender === this.props.myUser.username){
+          console.log("masuk");
+          this.setState({
+            notif:0
+          })
+        }
         let chatlog = this.state.chatlog;
         for(var index = chatlog.length-1 ; index >= 0 ; index--){
             if(chatlog[index].receiver[0].read === false){

@@ -198,7 +198,6 @@ export default class Content extends React.Component {
 
   render(){
     const { visible } = this.state;
-    console.log(this.props.chatlog);
     return (
       <div>
       <div className = {"content-container"} id = "content-container" ref={ref => {this.contextContainer = ref}}>
